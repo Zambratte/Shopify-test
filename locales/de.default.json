@@ -1,0 +1,56 @@
+{
+  "accessibility": {
+    "skip_to_content": "Zum Inhalt springen",
+    "main_navigation": "Hauptnavigation",
+    "mobile_navigation": "Mobile Navigation",
+    "menu": "Menü"
+  },
+  "general": {
+    "search": {
+      "search": "Suchen"
+    },
+    "cart": {
+      "view": "Warenkorb",
+      "item_count": "{{ count }} Artikel im Warenkorb"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "In den Warenkorb",
+      "sold_out": "Ausverkauft",
+      "variant": "Ausführung",
+      "media_gallery": "Produktbilder",
+      "image_placeholder": "Bild folgt",
+      "demo_name": "Premium Produkt",
+      "demo_title": "Produktname"
+    },
+    "assurances": {
+      "delivery": "Sichere, versicherte Lieferung",
+      "support": "Persönlicher Produktsupport",
+      "returns": "30 Tage Rückgaberecht",
+      "warranty": "Herstellergarantie inklusive"
+    }
+  },
+  "collections": {
+    "general": {
+      "view_all": "Alle ansehen",
+      "discover": "Entdecken",
+      "empty": "Dieser Kollektion wurden noch keine Produkte hinzugefügt."
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Ihr Warenkorb",
+      "quantity": "Menge",
+      "subtotal": "Zwischensumme",
+      "checkout": "Sicher zur Kasse",
+      "empty": "Ihr Warenkorb ist noch leer.",
+      "continue_shopping": "Produkte entdecken"
+    }
+  },
+  "footer": {
+    "general": {
+      "legal_line": "Sichere Zahlung · Datenschutz · Impressum"
+    }
+  }
+}

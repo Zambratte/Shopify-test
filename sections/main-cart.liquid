@@ -1,0 +1,51 @@
+<section class="page-width cart-page">
+  <h1 class="section-title">{{ 'cart.general.title' | t }}</h1>
+
+  {% if cart.item_count > 0 %}
+    <form action="{{ routes.cart_url }}" method="post">
+      <div class="cart-items">
+        {% for item in cart.items %}
+          <div class="cart-row">
+            {% if item.image %}
+              {{
+                item.image
+                | image_url: width: 220
+                | image_tag: loading: 'lazy', alt: item.image.alt
+              }}
+            {% endif %}
+            <div>
+              <a href="{{ item.url }}"><strong>{{ item.product.title | escape }}</strong></a>
+              {% unless item.product.has_only_default_variant %}
+                <div>{{ item.variant.title | escape }}</div>
+              {% endunless %}
+              <label for="quantity-{{ item.key }}">{{ 'cart.general.quantity' | t }}</label>
+              <input
+                id="quantity-{{ item.key }}"
+                type="number"
+                name="updates[]"
+                value="{{ item.quantity }}"
+                min="0"
+                inputmode="numeric"
+              >
+            </div>
+            <strong class="cart-line-price">{{ item.final_line_price | money }}</strong>
+          </div>
+        {% endfor %}
+      </div>
+      <div class="cart-summary">
+        <p>{{ 'cart.general.subtotal' | t }}: <strong>{{ cart.total_price | money }}</strong></p>
+        <button class="button" type="submit" name="checkout">{{ 'cart.general.checkout' | t }}</button>
+      </div>
+    </form>
+  {% else %}
+    <p>{{ 'cart.general.empty' | t }}</p>
+    <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'cart.general.continue_shopping' | t }}</a>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Warenkorb",
+  "settings": []
+}
+{% endschema %}

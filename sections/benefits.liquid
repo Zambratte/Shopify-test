@@ -1,0 +1,85 @@
+<section class="section">
+  <div class="page-width">
+    <div class="section-head">
+      <h2 class="section-title">{{ section.settings.heading | escape }}</h2>
+    </div>
+    <div class="benefits">
+      {% for block in section.blocks %}
+        <article class="benefit" {{ block.shopify_attributes }}>
+          <span class="benefit-icon" aria-hidden="true">{{ block.settings.icon }}</span>
+          <h3>{{ block.settings.title | escape }}</h3>
+          <p>{{ block.settings.text | escape }}</p>
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Service-Vorteile",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Überschrift",
+      "default": "Premium heißt: an alles gedacht."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "benefit",
+      "name": "Vorteil",
+      "settings": [
+        {
+          "type": "text",
+          "id": "icon",
+          "label": "Symbol",
+          "default": "◇"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titel"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Service-Vorteile",
+      "blocks": [
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "◇",
+            "title": "Beratung, die weiterhilft",
+            "text": "Produktfragen? Wir beraten persönlich und ehrlich vor dem Kauf."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "⌂",
+            "title": "Lieferung mit Sorgfalt",
+            "text": "Nachverfolgte Zustellung und transparente Kommunikation bei großen Artikeln."
+          }
+        },
+        {
+          "type": "benefit",
+          "settings": {
+            "icon": "↻",
+            "title": "Langfristig abgesichert",
+            "text": "Klare Garantie, Ersatzteilservice und Support auch nach dem Kauf."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

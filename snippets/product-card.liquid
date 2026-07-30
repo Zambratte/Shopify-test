@@ -1,0 +1,26 @@
+{% doc %}
+Renders a product card with image, title and price.
+@param {product} product - Product to display.
+{% enddoc %}
+
+<a class="product-card" href="{{ product.url }}">
+  <div class="product-media">
+    {% if product.featured_image %}
+      {{
+        product.featured_image
+        | image_url: width: 900
+        | image_tag:
+          loading: 'lazy',
+          widths: '360, 540, 720, 900',
+          sizes: '(max-width: 700px) calc(100vw - 30px), (max-width: 1200px) 33vw, 400px',
+          alt: product.featured_image.alt
+      }}
+    {% else %}
+      <div class="placeholder">{{ 'products.product.image_placeholder' | t }}</div>
+    {% endif %}
+  </div>
+  <div class="product-meta">
+    <h3>{{ product.title | escape }}</h3>
+    <span class="price">{{ product.price | money }}</span>
+  </div>
+</a>
