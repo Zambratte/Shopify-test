@@ -1,0 +1,122 @@
+{% comment %}
+	@pp sections/pagepilot-announcement-bar 1.0.8
+{% endcomment %}
+
+{% liquid
+	assign cycletime = section.settings.cycling_speed | default: 5
+
+	capture properties
+		echo '--padding-top: ' | append: section.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: section.settings.padding_bottom | append: 'px;'
+		if section.settings.background_color != blank
+			echo 'background: ' | append: section.settings.background_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-announcement-bar pp:relative pp:grid pp:[&>*]:col-start-1 pp:[&>*]:row-start-1'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pb-(--padding-bottom)'
+
+	if section.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' ' | append: section.id
+%}
+
+{% liquid
+	assign announcement_classes = 'pp:transition-opacity pp:duration-300 pp:ease-in-out pp:opacity-100 pp:aria-hidden:opacity-0'
+%}
+
+{% if section.blocks.size >= 1 %}
+	<pagepilot-announcement-bar
+		{{ section.shopify_attributes }}
+		data-autoplay='{{ cycletime }}'
+		data-block-size='{{ section.blocks.size }}'
+		class='{{ container_classes }}'
+		style='{{ properties }}'
+		dir='{{ settings.pagepilot.dir }}'
+	>
+		{% for block in section.blocks %}
+			<div
+				ref='slides[]'
+				class='{{ announcement_classes }}'
+				aria-hidden='true'
+				{{ block.shopify_attributes }}
+			>
+				{% render block %}
+			</div>
+		{% endfor %}
+	</pagepilot-announcement-bar>
+{% endif %}
+
+{% schema %}
+{
+	"name": "Announcement Bar (PP)",
+	"class": "pagepilot-section",
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	},
+	"blocks": [
+		{
+			"type": "pagepilot_group"
+		}
+	],
+	"settings": [
+		{
+			"type": "range",
+			"id": "cycling_speed",
+			"label": "Speed",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "sec",
+			"default": 5
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the section. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Announcement Bar (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

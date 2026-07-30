@@ -1,0 +1,786 @@
+{% comment %}
+	@pp blocks/pagepilot-video 1.0.9
+{% endcomment %}
+
+{% liquid
+	assign is_tiktok = false
+	if block.settings.video_url contains 'tiktok.com'
+		assign is_tiktok = true
+	endif
+
+	capture styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--controls-size: ' | append: block.settings.controls_size | default: 16 | append: 'px;'
+		echo '--controls-size-mobile: ' | append: block.settings.controls_size_mobile | default: 16 | append: 'px;'
+
+		case block.settings.video_ratio
+			when 'adapt'
+				if is_tiktok
+					echo '--ratio: 9 / 16;'
+				else
+					echo '--ratio: auto;'
+				endif
+			when 'square'
+				echo '--ratio: ' | append: '1 / 1' | append: ';'
+			when 'portrait'
+				echo '--ratio: ' | append: '4 / 5' | append: ';'
+			when 'landscape'
+				echo '--ratio: ' | append: '16 / 9' | append: ';'
+		endcase
+
+		case block.settings.width
+			when 'fit-content'
+				echo '--video-width: ' | append: 'fit-content' | append: ';'
+			when 'fill'
+				echo '--video-width: ' | append: '100%' | append: ';'
+			when 'custom'
+				echo '--video-width: ' | append: block.settings.custom_width | append: '%;'
+		endcase
+
+		case block.settings.width_mobile
+			when 'fit-content'
+				echo '--video-width-mobile: ' | append: 'fit-content' | append: ';'
+			when 'fill'
+				echo '--video-width-mobile: ' | append: '100%' | append: ';'
+			when 'custom'
+				echo '--video-width-mobile: ' | append: block.settings.custom_width_mobile | append: '%;'
+		endcase
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | default: 0 | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		echo 'opacity: 0;'
+	endcapture
+
+	assign container_classes = 'pp-video pp:group pp:relative'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pb-(--padding-bottom) pp:pl-(--padding-left) pp:pr-(--padding-right)'
+	assign container_classes = container_classes | append: ' pp:w-full pp:max-w-(--video-width-mobile)! pp:@3xl:max-w-(--video-width)!'
+	assign container_classes = container_classes | append: ' pp:aspect-(--ratio)'
+
+	if block.settings.video_ratio == 'adapt' and is_tiktok == false
+		case block.settings.height
+			when 'fit'
+				assign container_classes = container_classes | append: ' pp:@3xl:h-fit'
+			when 'fill'
+				assign container_classes = container_classes | append: ' pp:@3xl:h-full'
+		endcase
+	endif
+
+	assign video_classes = 'pp:w-full pp:h-full pp:object-center'
+
+	capture object_fit
+		render 'pagepilot-object-fit', value: block.settings.video_object_fit
+	endcapture
+	assign video_classes = video_classes | append: ' ' | append: object_fit
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign video_classes = video_classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign video_classes = video_classes | append: ' ' | append: border_radius
+
+	assign controls_classes = 'pp:absolute pp:inset-0 pp:z-10 pp:flex pp:p-2 pp:opacity-100 pp:transition-opacity pp:duration-300 pp:group-hover:opacity-100 pp:@3xl:opacity-0'
+	assign controls_pos_mobile = block.settings.controls_position_mobile | default: 'end'
+	assign controls_pos_desktop = block.settings.controls_position | default: 'center'
+	if controls_pos_mobile == 'start'
+		assign controls_classes = controls_classes | append: ' pp:items-start pp:justify-start'
+	else
+		assign controls_classes = controls_classes | append: ' pp:items-start pp:justify-end'
+	endif
+	if controls_pos_desktop == 'start'
+		assign controls_classes = controls_classes | append: ' pp:@3xl:items-start pp:@3xl:justify-start'
+	elsif controls_pos_desktop == 'end'
+		assign controls_classes = controls_classes | append: ' pp:@3xl:items-start pp:@3xl:justify-end'
+	else
+		assign controls_classes = controls_classes | append: ' pp:@3xl:items-center pp:@3xl:justify-center'
+	endif
+	if block.settings.controls != true
+		assign controls_classes = controls_classes | append: ' pp:hidden'
+	endif
+%}
+
+{% liquid
+	assign video_url = block.settings.video_url | default: ''
+	assign video_platform = 'direct'
+	assign video_id = ''
+	assign embed_url = ''
+
+	if video_url != blank
+		if video_url contains 'youtube.com' or video_url contains 'youtu.be'
+			assign video_platform = 'youtube'
+			assign video_id = video_url
+			if video_url contains 'youtu.be/'
+				assign video_id_parts = video_url | split: 'youtu.be/'
+				assign video_id = video_id_parts[1] | split: '?' | first
+			elsif video_url contains 'youtube.com/watch?v='
+				assign video_id_parts = video_url | split: 'v='
+				assign video_id = video_id_parts[1] | split: '&' | first
+			elsif video_url contains 'youtube.com/embed/'
+				assign video_id_parts = video_url | split: 'embed/'
+				assign video_id = video_id_parts[1] | split: '?' | first
+			endif
+
+			assign params = 'rel=0&modestbranding=1&showinfo=0&controls=0'
+			if block.settings.controls
+				assign params = params | append: '&controls=1'
+			endif
+			if block.settings.autoplay
+				assign params = params | append: '&autoplay=1'
+			endif
+			if block.settings.muted
+				assign params = params | append: '&mute=1'
+			endif
+			if block.settings.loop
+				assign params = params | append: '&loop=1'
+			endif
+
+			assign embed_url = 'https://www.youtube.com/embed/' | append: video_id | append: '?' | append: params
+		elsif video_url contains 'vimeo.com'
+			assign video_platform = 'vimeo'
+			assign video_id = video_url
+			if video_url contains 'vimeo.com/'
+				assign video_id_parts = video_url | split: 'vimeo.com/'
+				assign video_id = video_id_parts[1] | split: '/' | last | split: '?' | first
+			endif
+
+			assign params = 'title=0&byline=0&portrait=0&controls=0'
+			if block.settings.controls
+				assign params = params | append: '&controls=1'
+			endif
+			if block.settings.autoplay
+				assign params = params | append: '&autoplay=1'
+			endif
+			if block.settings.muted
+				assign params = params | append: '&muted=1'
+			endif
+			if block.settings.loop
+				assign params = params | append: '&loop=1'
+			endif
+
+			assign embed_url = 'https://player.vimeo.com/video/' | append: video_id | append: '?' | append: params
+		elsif video_url contains 'tiktok.com'
+			assign video_id = ''
+			if video_url contains '/video/'
+				assign video_id = video_url | split: '/video/' | last | split: '?' | first | split: '/' | first
+			elsif video_url contains '/embed/v2/'
+				assign video_id = video_url | split: '/embed/v2/' | last | split: '?' | first | split: '/' | first
+			elsif video_url contains '/player/v1/'
+				assign video_id = video_url | split: '/player/v1/' | last | split: '?' | first | split: '/' | first
+			elsif video_url contains '/embed/'
+				assign video_id = video_url | split: '/embed/' | last | split: '?' | first | split: '/' | first
+			endif
+
+			if video_id != blank
+				assign video_platform = 'tiktok'
+
+				assign params = 'rel=0&description=0&music_info=0&controls=0'
+				if block.settings.controls
+					assign params = params | append: '&controls=1'
+				endif
+				if block.settings.autoplay
+					assign params = params | append: '&autoplay=1'
+				endif
+				if block.settings.muted
+					assign params = params | append: '&muted=1'
+				endif
+				if block.settings.loop
+					assign params = params | append: '&loop=1'
+				endif
+
+				assign embed_url = 'https://www.tiktok.com/player/v1/' | append: video_id | append: '?' | append: params
+			else
+				assign video_platform = 'iframe'
+				assign embed_url = video_url
+			endif
+		elsif video_url contains '.mp4' or video_url contains '.mov' or video_url contains '.webm'
+			assign video_platform = 'direct'
+			assign embed_url = video_url
+		endif
+	endif
+%}
+
+<pagepilot-video
+	data-show-controls='{{ block.settings.controls }}'
+	data-autoplay='{{ block.settings.autoplay }}'
+>
+	<div class='{{ container_classes }}' style='{{ styles }}' {{ block.shopify_attributes }}>
+		{% if video_url == blank %}
+			<img
+				src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+				alt='Placeholder video'
+				width='1024'
+				height='1024'
+				class='{{ video_classes }}'
+			>
+
+		{% elsif video_platform == 'direct' %}
+			{% liquid
+				assign video_type = 'mp4'
+				if video_url contains '.mov'
+					assign video_type = 'mp4'
+				elsif video_url contains '.webm'
+					assign video_type = 'webm'
+				elsif video_url contains '.mp4'
+					assign video_type = 'mp4'
+				endif
+			%}
+
+			<video
+				ref='video'
+				class='{{ video_classes }}'
+				preload='metadata'
+				playsinline
+				{% if block.settings.autoplay %}
+					autoplay
+				{% endif %}
+				{% if block.settings.muted %}
+					muted
+				{% endif %}
+				{% if block.settings.loop %}
+					loop
+				{% endif %}
+				{% if block.settings.video_poster %}
+					poster='{{ block.settings.video_poster | image_url: width: 1920 }}'
+				{% endif %}
+			>
+				<source src='{{ embed_url }}' type='video/{{ video_type }}'>
+				Your browser does not support the video tag.
+			</video>
+
+			<div
+				ref='controlsOverlay'
+				class='{{ controls_classes }}'
+				data-visible='{% if block.settings.autoplay %}false{% else %}true{% endif %}'
+			>
+				<div class='pp:relative pp:z-20 pp:flex pp:items-center pp:gap-2 pp:@3xl:gap-3 [&>button]:pp:shrink-0'>
+					<button
+						ref='playPauseButton'
+						type='button'
+						on:click='togglePlayPause'
+						class='pp:rounded-full pp:bg-black/70 pp:p-2 pp:text-white pp:transition-all pp:duration-200 hover:pp:scale-110 hover:pp:bg-black/90 pp:@3xl:p-3'
+						aria-label='Play video'
+						data-playing='false'
+					>
+						<i
+							data-lucide='play'
+							class='pp:size-(--controls-size-mobile) pp:@3xl:size-(--controls-size)'
+							data-playing='false'
+						></i>
+						<i
+							data-lucide='pause'
+							class='pp:size-(--controls-size-mobile) pp:@3xl:size-(--controls-size)'
+							data-playing='true'
+						></i>
+					</button>
+
+					<button
+						ref='muteButton'
+						type='button'
+						on:click='toggleMute'
+						class='pp:rounded-full pp:bg-black/70 pp:p-2 pp:text-white pp:transition-all pp:duration-200 hover:pp:scale-110 hover:pp:bg-black/90 pp:@3xl:p-3'
+						aria-label='{% if block.settings.muted %}Unmute video{% else %}Mute video{% endif %}'
+						data-muted='{{ block.settings.muted }}'
+					>
+						<i
+							data-lucide='volume-2'
+							class='pp:size-(--controls-size-mobile) pp:@3xl:size-(--controls-size)'
+							data-muted='false'
+						></i>
+						<i
+							data-lucide='volume-off'
+							class='pp:size-(--controls-size-mobile) pp:@3xl:size-(--controls-size)'
+							data-muted='true'
+						></i>
+					</button>
+				</div>
+			</div>
+
+		{% else %}
+			<iframe
+				src='{{ embed_url }}'
+				class='{{ video_classes }}'
+				frameborder='0'
+				allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+				allowfullscreen
+				title='Video player'
+			></iframe>
+		{% endif %}
+	</div>
+</pagepilot-video>
+
+{% stylesheet %}
+	pagepilot-video {
+		display: block;
+	}
+
+	pagepilot-video [ref='controlsOverlay'] {
+		pointer-events: none;
+		z-index: 10;
+	}
+
+	pagepilot-video [ref='controlsOverlay'] button {
+		pointer-events: auto;
+		position: relative;
+		z-index: 11;
+		cursor: pointer;
+	}
+
+	pagepilot-video video {
+		position: relative;
+		z-index: 1;
+	}
+
+	pagepilot-video [ref='controlsOverlay'][data-visible='false'] {
+		opacity: 0;
+	}
+
+	pagepilot-video [ref='controlsOverlay'][data-visible='true'] {
+		opacity: 1;
+	}
+
+	pagepilot-video > div:hover [ref='controlsOverlay'] {
+		opacity: 1;
+	}
+
+	pagepilot-video [ref='controlsOverlay'] > div {
+		opacity: inherit;
+	}
+
+	pagepilot-video [ref='controlsOverlay'] button {
+		opacity: 1;
+		position: relative;
+	}
+
+	pagepilot-video [ref='playPauseButton'] [data-playing='false'] {
+		display: block;
+	}
+
+	pagepilot-video [ref='playPauseButton'] [data-playing='true'] {
+		display: none;
+	}
+
+	pagepilot-video [ref='playPauseButton'][data-playing='true'] [data-playing='false'] {
+		display: none;
+	}
+
+	pagepilot-video [ref='playPauseButton'][data-playing='true'] [data-playing='true'] {
+		display: block;
+	}
+
+	pagepilot-video [ref='muteButton'] [data-muted='true'] {
+		display: block;
+	}
+
+	pagepilot-video [ref='muteButton'] [data-muted='false'] {
+		display: none;
+	}
+
+	pagepilot-video [ref='muteButton'][data-muted='false'] [data-muted='true'] {
+		display: none;
+	}
+
+	pagepilot-video [ref='muteButton'][data-muted='false'] [data-muted='false'] {
+		display: block;
+	}
+{% endstylesheet %}
+
+{% schema %}
+{
+	"name": "Video (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "url",
+			"id": "video_url",
+			"label": "Video URL",
+			"info": "Direct link to .mp4, .mov or .webm or Youtube, Vimeo and TikTok links."
+		},
+		{
+			"type": "image_picker",
+			"id": "video_poster",
+			"label": "Video Thumbnail",
+			"info": "Optional. Thumbnail image works when no autoplay is enabled and also only for direct links to .mp4, .mov or .webm videos."
+		},
+		{
+			"type": "checkbox",
+			"id": "controls",
+			"label": "Show controls",
+			"default": true,
+			"info": "Show controls works only for external videos."
+		},
+		{
+			"type": "select",
+			"id": "controls_position",
+			"label": "Controls Position",
+			"options": [
+				{
+					"value": "start",
+					"label": "Top Left"
+				},
+				{
+					"value": "end",
+					"label": "Top Right"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				}
+			],
+			"default": "center",
+			"visible_if": "{{ block.settings.controls == true }}"
+		},
+		{
+			"type": "select",
+			"id": "controls_position_mobile",
+			"label": "Mobile Controls Position",
+			"options": [
+				{
+					"value": "start",
+					"label": "Top Left"
+				},
+				{
+					"value": "end",
+					"label": "Top Right"
+				}
+			],
+			"default": "end",
+			"visible_if": "{{ block.settings.controls == true }}"
+		},
+		{
+			"type": "range",
+			"id": "controls_size",
+			"label": "Controls Size",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "controls_size_mobile",
+			"label": "Mobile Controls Size",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "checkbox",
+			"id": "autoplay",
+			"label": "Autoplay",
+			"default": true,
+			"info": "Autoplay works only if the video is muted."
+		},
+		{
+			"type": "checkbox",
+			"id": "muted",
+			"label": "Muted",
+			"default": true,
+			"info": "Start video muted (recommended for autoplay)"
+		},
+		{
+			"type": "checkbox",
+			"id": "loop",
+			"label": "Loop",
+			"default": true,
+			"info": "Repeat video when it ends (works only for direct links to .mp4, .mov or .webm videos)"
+		},
+		{
+			"type": "header",
+			"content": "Size"
+		},
+		{
+			"type": "select",
+			"id": "video_ratio",
+			"options": [
+				{
+					"value": "adapt",
+					"label": "Auto"
+				},
+				{
+					"value": "portrait",
+					"label": "Portrait"
+				},
+				{
+					"value": "square",
+					"label": "Square"
+				},
+				{
+					"value": "landscape",
+					"label": "Landscape"
+				}
+			],
+			"default": "adapt",
+			"label": "Aspect ratio"
+		},
+		{
+			"type": "select",
+			"id": "width",
+			"label": "Desktop Width",
+			"options": [
+				{
+					"value": "fit-content",
+					"label": "Fit"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "custom",
+					"label": "Custom"
+				}
+			],
+			"default": "fill"
+		},
+		{
+			"type": "range",
+			"id": "custom_width",
+			"label": "Custom width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.width == \"custom\" }}"
+		},
+		{
+			"type": "select",
+			"id": "width_mobile",
+			"label": "Mobile Width",
+			"options": [
+				{
+					"value": "fit-content",
+					"label": "Fit"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "custom",
+					"label": "Custom"
+				}
+			],
+			"default": "fill"
+		},
+		{
+			"type": "range",
+			"id": "custom_width_mobile",
+			"label": "Custom width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.width_mobile == \"custom\" }}"
+		},
+		{
+			"type": "select",
+			"id": "height",
+			"label": "Height",
+			"options": [
+				{
+					"value": "fit",
+					"label": "Fit"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "fit",
+			"visible_if": "{{ block.settings.video_ratio == \"adapt\" }}"
+		},
+		{
+			"type": "select",
+			"id": "video_object_fit",
+			"options": [
+				{
+					"value": "contain",
+					"label": "Contain"
+				},
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "scale-down",
+					"label": "Scale down"
+				}
+			],
+			"default": "cover",
+			"label": "Object fit"
+		},
+		{
+			"type": "header",
+			"content": "Borders"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 70
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the video. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Video (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,405 @@
+{% comment %}
+	@pp blocks/pagepilot-drawer-summary 1.0.8
+{% endcomment %}
+
+{% liquid
+	capture container_styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--subtotal-text-size: ' | append: block.settings.subtotal_text_size | append: 'px;'
+		echo '--subtotal-text-size-mobile: ' | append: block.settings.subtotal_text_size_mobile | append: 'px;'
+		echo '--subtotal-text-color: ' | append: block.settings.subtotal_text_color | append: ';'
+		echo '--subtotal-text-weight: ' | append: block.settings.subtotal_text_weight | append: ';'
+		echo '--subtotal-text-gap: ' | append: block.settings.subtotal_text_gap | append: 'px;'
+		echo '--subtotal-text-gap-mobile: ' | append: block.settings.subtotal_text_gap_mobile | append: 'px;'
+
+		echo '--discounts-text-size: ' | append: block.settings.discounts_text_size | append: 'px;'
+		echo '--discounts-text-size-mobile: ' | append: block.settings.discounts_text_size_mobile | append: 'px;'
+		echo '--discounts-text-color: ' | append: block.settings.discounts_text_color | append: ';'
+		echo '--discounts-text-weight: ' | append: block.settings.discounts_text_weight | append: ';'
+		echo '--discounts-text-gap: ' | append: block.settings.discounts_text_gap | append: 'px;'
+		echo '--discounts-text-gap-mobile: ' | append: block.settings.discounts_text_gap_mobile | append: 'px;'
+
+		echo '--total-text-size: ' | append: block.settings.total_text_size | append: 'px;'
+		echo '--total-text-size-mobile: ' | append: block.settings.total_text_size_mobile | append: 'px;'
+		echo '--total-text-color: ' | append: block.settings.total_text_color | append: ';'
+		echo '--total-text-weight: ' | append: block.settings.total_text_weight | append: ';'
+	endcapture
+%}
+
+{% liquid
+	assign subtotal_text_classes = 'pp-drawer-summary-subtotal-text'
+	assign subtotal_text_classes = subtotal_text_classes | append: ' pp:text-(length:--subtotal-text-size-mobile) pp:font-(--subtotal-text-weight) pp:text-(--subtotal-text-color) pp:@3xl:text-(length:--subtotal-text-size)'
+
+	assign total_text_classes = 'pp-drawer-summary-total-text'
+	assign total_text_classes = total_text_classes | append: ' pp:text-(length:--total-text-size-mobile) pp:font-(--total-text-weight) pp:text-(--total-text-color) pp:@3xl:text-(length:--total-text-size)'
+
+	assign discounts_text_classes = 'pp-drawer-summary-discounts-text'
+	assign discounts_text_classes = discounts_text_classes | append: ' pp:text-(length:--discounts-text-size-mobile) pp:font-(--discounts-text-weight) pp:text-(--discounts-text-color) pp:@3xl:text-(length:--discounts-text-size)'
+%}
+
+{% if cart.empty? == false %}
+	<div
+		class='pp-drawer-summary pp:w-full pp:text-sm pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) {{ block.settings.custom_class | strip }}'
+		role='list'
+		aria-label='Discounts'
+		style='{{ container_styles }}'
+	>
+		{% comment %}
+			{%- if block.settings.subtotal_text_show and cart.original_total_price != cart.total_price -%}
+				<div class='pp:mb-(--subtotal-text-gap-mobile) pp:flex pp:w-full pp:justify-between pp:@3xl:mb-(--subtotal-text-gap)'>
+					<span
+						class='{{ subtotal_text_classes }}'
+						data-live-text-setting='sections--{{ section.id }}__{{ block.id }}.subtotal_text'
+					>
+						{{ block.settings.subtotal_text }}
+					</span>
+					<span class='{{ subtotal_text_classes }}'>
+						{{- cart.original_total_price | money -}}
+					</span>
+				</div>
+			{%- endif -%}
+		{% endcomment %}
+
+		{%- if block.settings.discounts_text_show and cart.cart_level_discount_applications.size > 0 -%}
+			{%- for discount in cart.cart_level_discount_applications -%}
+				<div class='pp:mb-(--discounts-text-gap-mobile) pp:flex pp:w-full pp:justify-between pp:text-gray-500 pp:@3xl:mb-(--discounts-text-gap)'>
+					<span class='pp:inline-flex pp:items-center pp:gap-2 {{ discounts_text_classes }}'>
+						<i data-lucide='ticket-percent' class='pp:size-3.5 pp:rotate-45' aria-hidden='true'></i>
+						{{ discount.title | escape }}
+					</span>
+					<span class='{{ discounts_text_classes }}'
+						>-{{ discount.total_allocated_amount | money -}}
+					</span>
+				</div>
+			{%- endfor -%}
+		{%- endif -%}
+
+		<div class='pp:flex pp:w-full pp:items-center pp:justify-between' role='status'>
+			<span class='{{ total_text_classes }}'>{{ block.settings.total_text }}</span>
+			<text-component
+				ref='cartTotal'
+				value='{{ cart.total_price | money | strip_html }}'
+				class='{{ total_text_classes }}'
+				data-cart-subtotal
+			>
+				{{ cart.total_price | money }}
+			</text-component>
+		</div>
+	</div>
+{% endif %}
+
+{% schema %}
+{
+	"name": "Drawer Summary (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Subtotal"
+		},
+		{
+			"type": "checkbox",
+			"id": "subtotal_text_show",
+			"label": "Show",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "subtotal_text",
+			"label": "Text",
+			"default": "Subtotal"
+		},
+		{
+			"type": "color",
+			"id": "subtotal_text_color",
+			"label": "Color",
+			"default": "#363636"
+		},
+		{
+			"type": "range",
+			"id": "subtotal_text_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "subtotal_text_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "subtotal_text_weight",
+			"label": "Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "400"
+		},
+		{
+			"type": "range",
+			"id": "subtotal_text_gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "subtotal_text_gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "header",
+			"content": "Discounts"
+		},
+		{
+			"type": "checkbox",
+			"id": "discounts_text_show",
+			"label": "Show",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "discounts_text_color",
+			"label": "Color",
+			"default": "#7C7C7C"
+		},
+		{
+			"type": "range",
+			"id": "discounts_text_size",
+			"label": "Size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "discounts_text_size_mobile",
+			"label": "Mobile Size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "discounts_text_weight",
+			"label": "Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "300"
+		},
+		{
+			"type": "range",
+			"id": "discounts_text_gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "discounts_text_gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Total"
+		},
+		{
+			"type": "text",
+			"id": "total_text",
+			"label": "Text",
+			"default": "Total"
+		},
+		{
+			"type": "color",
+			"id": "total_text_color",
+			"label": "Color",
+			"default": "#363636"
+		},
+		{
+			"type": "range",
+			"id": "total_text_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "total_text_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "total_text_weight",
+			"label": "Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "500"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the drawer summary. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Drawer Summary",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

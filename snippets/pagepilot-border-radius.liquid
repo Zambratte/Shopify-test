@@ -1,0 +1,37 @@
+{% comment %}
+	@pp snippets/pagepilot-border-radius 1.0.5
+{% endcomment %}
+
+{%- comment -%}
+	Usage:
+	  {% render 'pagepilot-border-radius', value: block.settings.main_image_border_radius, prefix: '@3xl:pp:' %}
+	  {% render 'pagepilot-border-radius', value: block.settings.main_image_border_radius_mobile, prefix: 'pp:' %}
+{%- endcomment -%}
+
+{%- assign br_value = value | default: 0 -%}
+{%- assign br_prefix = prefix | default: 'pp:' -%}
+
+{%- case br_value -%}
+	{%- when 0 -%}
+		{{ br_prefix }}rounded-none
+	{%- when 10 -%}
+		{{ br_prefix }}rounded-xs
+	{%- when 20 -%}
+		{{ br_prefix }}rounded-sm
+	{%- when 30 -%}
+		{{ br_prefix }}rounded-md
+	{%- when 40 -%}
+		{{ br_prefix }}rounded-lg
+	{%- when 50 -%}
+		{{ br_prefix }}rounded-xl
+	{%- when 60 -%}
+		{{ br_prefix }}rounded-2xl
+	{%- when 70 -%}
+		{{ br_prefix }}rounded-3xl
+	{%- when 80 -%}
+		{{ br_prefix }}rounded-4xl
+	{%- when 90 -%}
+		{{ br_prefix }}rounded-5xl
+	{%- when 100 -%}
+		{{ br_prefix }}rounded-full
+{%- endcase -%}

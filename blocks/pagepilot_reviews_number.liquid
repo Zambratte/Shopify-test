@@ -1,0 +1,358 @@
+{% comment %}
+	@pp blocks/pagepilot-reviews-number 1.0.6
+{% endcomment %}
+ 
+{% liquid
+	capture container_properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+
+		echo '--icon-size: ' | append: block.settings.icon_size | append: 'px;'
+		echo '--icon-color: ' | append: block.settings.icon_color | default: 'transparent' | append: ';'
+		echo '--icon-color-inactive: ' | append: block.settings.icon_color_inactive | default: 'transparent' | append: ';'
+
+		echo '--text-color: ' | append: block.settings.text_color | default: 'transparent' | append: ';'
+		echo '--text-font-size: ' | append: block.settings.text_font_size | append: 'px;'
+		echo '--text-font-size-mobile: ' | append: block.settings.text_font_size_mobile | append: 'px;'
+		echo '--text-weight: ' | append: block.settings.text_weight | default: '400' | append: ';'
+		echo '--text-letter-spacing: ' | append: block.settings.text_letter_spacing | default: 'normal' | append: ';'
+	endcapture
+
+	assign container_classes = 'pp-reviews-number pp:flex pp:flex-wrap pp:items-center pp:gap-(--gap)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign stars_container_classes = 'pp:flex pp:gap-0.5'
+
+	assign text_classes = 'pp:text-(length:--text-font-size-mobile) pp:font-(--text-weight) pp:text-(--text-color) pp:@3xl:text-(length:--text-font-size)'
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.text_case
+	endcapture
+	assign text_classes = text_classes | append: ' ' | append: text_transform
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.text_letter_spacing
+	endcapture
+	assign text_classes = text_classes | append: ' ' | append: letter_spacing
+%}
+
+<pagepilot-reviews-number data-enabled='{{ block.settings.scroll_to_reviews }}'>
+	<div ref='trigger' class='{{ container_classes }}' style='{{ container_properties }}' {{ block.shopify_attributes }}>
+		<div class='{{ stars_container_classes }}'>
+			{% assign icon_count_floor = block.settings.icon_count | floor %}
+			{% assign icon_count_mod = block.settings.icon_count | modulo: 1 %}
+			{% assign icon_has_half = false %}
+			{% if icon_count_mod != 0 %}
+				{% assign icon_has_half = true %}
+				{% assign icon_half_position = icon_count_floor | plus: 1 %}
+			{% endif %}
+
+			{% for i in (1..5) %}
+				{% if i <= icon_count_floor %}
+					<i data-lucide='star' class='pp:size-(--icon-size) pp:fill-(--icon-color) pp:text-(--icon-color)'></i>
+				{% elsif icon_has_half and i == icon_half_position %}
+					<div class='pp:relative pp:size-(--icon-size)'>
+						<i data-lucide='star' class='pp:size-(--icon-size) pp:absolute pp:inset-0 pp:fill-(--icon-color-inactive) pp:text-(--icon-color-inactive)'></i>
+						<i data-lucide='star-half' class='pp:size-(--icon-size) pp:absolute pp:inset-0 pp:fill-(--icon-color) pp:text-(--icon-color)'></i>
+					</div>
+				{% else %}
+					<i data-lucide='star' class='pp:size-(--icon-size) pp:fill-(--icon-color-inactive) pp:text-(--icon-color-inactive)'></i>
+				{% endif %}
+			{% endfor %}
+		</div>
+
+		<div class='{{ text_classes }}'>
+			{{ block.settings.text }}
+		</div>
+	</div>
+</pagepilot-reviews-number>
+
+{% schema %}
+{
+	"name": "Reviews Number (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "scroll_to_reviews",
+			"label": "Scroll to Reviews",
+			"info": "If enabled, the page will scroll to the reviews section when the reviews number is clicked. The reviews section must have the custom class 'pp-reviews-section'.",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "header",
+			"content": "Text"
+		},
+		{
+			"type": "richtext",
+			"id": "text",
+			"label": "Text",
+			"default": "<p>Rated 4.9/5 by 2340 people</p>"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "text_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "text_font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Icons"
+		},
+		{
+			"type": "range",
+			"id": "icon_count",
+			"label": "Icon Count",
+			"min": 0,
+			"max": 5,
+			"step": 0.5,
+			"default": 5
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Icon Size",
+			"min": 10,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "color",
+			"id": "icon_color",
+			"label": "Icon Color",
+			"default": "#FFCD00"
+		},
+		{
+			"type": "color",
+			"id": "icon_color_inactive",
+			"label": "Icon Color Inactive",
+			"default": "#DFDFDF"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the reviews number block. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Reviews Number (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,290 @@
+{% comment %}
+	@pp blocks/pagepilot-percentage-circle 1.0.6
+{% endcomment %}
+
+{% liquid
+	assign percentage = block.settings.percentage | default: 35
+	assign size = block.settings.size | times: 5 | default: 50
+	assign stroke_width = block.settings.border_width | default: 30
+	assign radius = size | divided_by: 2 | minus: stroke_width
+	assign circumference = radius | times: 2 | times: 3.14159
+
+	assign stroke_dashoffset = circumference | times: percentage | divided_by: 100
+	assign stroke_dashoffset = circumference | minus: stroke_dashoffset
+
+	capture styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--border-color: ' | append: block.settings.border_color | default: '#000000' | append: ';'
+
+		echo '--text-size:' | append: block.settings.text_size | append: 'px;'
+		echo '--text-weight:' | append: block.settings.text_weight | default: 'normal' | append: ';'
+		echo '--text-color:' | append: block.settings.text_color | default: '#000000' | append: ';'
+
+		echo '--animation-duration: ' | append: block.settings.animation_duration | append: 's;'
+		echo '--stroke-dashoffset-initial: ' | append: circumference | append: ';'
+		echo '--stroke-dashoffset-end: ' | append: stroke_dashoffset | append: ';'
+	endcapture
+
+	assign container_classes = 'pp-percentage-circle pp:shrink-0'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:inline-flex'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:inline-flex'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign block_classes = 'pp:group pp:aspect-square pp:items-center pp:justify-center pp:rounded-full'
+	assign block_classes = block_classes | append: ' pp:pt-(--padding-top) pp:pr-(--padding-right) pp:pb-(--padding-bottom) pp:pl-(--padding-left)'
+	assign block_classes = block_classes | append: ' pp:text-(length:--text-size) pp:font-(--text-weight)'
+%}
+
+<pagepilot-percentage-circle
+	class='{{ container_classes }} {{ block_classes }} {{ block.id }} pp-percentage-circle'
+	style='{{ styles }}'
+	{{ block.shopify_attributes }}
+	data-percentage='{{ percentage }}'
+	data-animation-duration='{{ block.settings.animation_duration }}'
+>
+	<div class='pp:relative pp:flex pp:aspect-square pp:items-center pp:justify-center'>
+		<svg
+			class='pp:-rotate-90 pp:transform'
+			width='{{ size }}'
+			height='{{ size }}'
+			viewBox='0 0 {{ size }} {{ size }}'
+			aria-hidden='true'
+		>
+			<circle
+				cx="{{ size | divided_by: 2 }}"
+				cy="{{ size | divided_by: 2 }}"
+				r="{{ radius }}"
+				stroke="currentColor"
+				stroke-width="{{ stroke_width }}"
+				fill="transparent"
+				class="pp:text-(--border-color)/30"
+			/>
+
+			<circle
+				cx="{{ size | divided_by: 2 }}"
+				cy="{{ size | divided_by: 2 }}"
+				r="{{ radius }}"
+				stroke="currentColor"
+				stroke-width="{{ stroke_width }}"
+				stroke-dasharray="{{ circumference }}"
+				stroke-linecap="round"
+				fill="transparent"
+				class="pp:text-(--border-color) pp:[stroke-dashoffset:var(--stroke-dashoffset-initial)] pp:[transition:stroke-dashoffset_var(--animation-duration)_ease-out] pp:group-[.pp-animate--resetting]:transition-none pp:group-[.pp-animate--starting]:[stroke-dashoffset:var(--stroke-dashoffset-end)]"
+			/>
+		</svg>
+
+		<span ref='value' class='pp:absolute pp:text-(--text-color)' aria-hidden='true'>0%</span>
+	</div>
+</pagepilot-percentage-circle>
+
+{% schema %}
+{
+	"name": "Percentage Circle (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Animation"
+		},
+		{
+			"type": "range",
+			"id": "animation_duration",
+			"label": "Duration",
+			"min": 0,
+			"max": 5,
+			"step": 0.1,
+			"unit": "s",
+			"default": 2
+		},
+		{
+			"type": "range",
+			"id": "percentage",
+			"label": "Percentage",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 35
+		},
+		{
+			"type": "range",
+			"id": "size",
+			"label": "Size",
+			"min": 5,
+			"max": 50,
+			"step": 1,
+			"unit": "rem",
+			"default": 14
+		},
+		{
+			"type": "header",
+			"content": "Border"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border Thickness",
+			"min": 3,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 7
+		},
+		{
+			"type": "header",
+			"content": "Typography"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "text_size",
+			"label": "Size",
+			"min": 5,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "700"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Percentage Circle (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

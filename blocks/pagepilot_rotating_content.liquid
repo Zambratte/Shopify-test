@@ -1,0 +1,265 @@
+{% comment %}
+	@pp blocks/pagepilot-rotating-content 1.0.10
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: block.settings.gap_mobile | append: 'px;'
+
+		assign height = block.settings.height | times: 12
+		assign height_mobile = block.settings.height_mobile | times: 12
+
+		echo '--height: ' | append: height | append: 'px;'
+		echo '--height-mobile: ' | append: height_mobile | append: 'px;'
+
+		echo '--speed: ' | append: block.settings.speed | append: 's;'
+		case block.settings.reverse
+			when true
+				echo '--direction: reverse;'
+			else
+				echo '--direction: forwards;'
+		endcase
+		echo '--translate: -20%;'
+	endcapture
+
+	assign classes = 'pp-rotating-content pp:w-full'
+
+	if block.settings.show_on_mobile
+		assign classes = classes | append: ' pp:block'
+	else
+		assign classes = classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if block.settings.show_on_desktop
+		assign classes = classes | append: ' pp:@3xl:block'
+	else
+		assign classes = classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign classes = classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign classes = classes | append: ' pp:pt-(--padding-top) pp:pr-(--padding-right) pp:pb-(--padding-bottom) pp:pl-(--padding-left)'
+
+	assign wrapper_classes = 'pp:group'
+	if block.settings.fade_out_edges == true
+		assign wrapper_classes = wrapper_classes | append: ' pp:[mask-image:linear-gradient(to_right,transparent,black_5rem,black_calc(100%-5rem),transparent)]'
+	endif
+
+	assign rotating_content_wrapper_classes = 'pp:overflow-clip'
+
+	if block.settings.pause_on_hover == true
+		assign rotating_content_wrapper_classes = rotating_content_wrapper_classes | append: ' pp:transition-transform pp:duration-4000 pp:ease-out pp:group-hover:-translate-x-2 pp:group-hover:duration-2000'
+	endif
+
+	assign rotating_content_classes = 'pp-marquee-track pp-marquee-track--pending pp:flex pp:h-(--height-mobile) pp:min-w-max pp:animate-[marquee-move-text_var(--speed)_linear_infinite_var(--direction)] pp:gap-(--gap-mobile) pp:pl-(--gap-mobile) pp:@3xl:h-(--height) pp:@3xl:gap-(--gap) pp:@3xl:pl-(--gap)'
+
+	if block.settings.pause_on_hover == true
+		assign rotating_content_classes = rotating_content_classes | append: ' pp:group-hover:[animation-play-state:paused]'
+	endif
+%}
+
+<pagepilot-rotating-content
+	{{ block.shopify_attributes }}
+	class='{{ classes }}'
+	style='{{ properties }}'
+	dir='ltr'
+>
+	<div class='{{ wrapper_classes }}'>
+		<div class='{{ rotating_content_wrapper_classes }}'>
+			<div
+				ref='blocks'
+				class='{{ rotating_content_classes }}'
+			>
+				{% for child_block in block.blocks %}
+					<div class='pp:flex pp:items-center pp:justify-center'>
+						{% render child_block %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</pagepilot-rotating-content>
+
+{% stylesheet %}
+	.pp-marquee-track--pending {
+		animation-play-state: paused;
+	}
+{% endstylesheet %}
+
+{% schema %}
+{
+	"name": "Rotating Content (PP)",
+	"class": "pagepilot-block",
+	"blocks": [
+		{
+			"type": "pagepilot_image"
+		},
+		{
+			"type": "pagepilot_text"
+		},
+		{
+			"type": "pagepilot_icon"
+		},
+		{
+			"type": "pagepilot_group"
+		},
+		{
+			"type": "pagepilot_video"
+		}
+	],
+	"settings": [
+		{
+			"type": "range",
+			"id": "speed",
+			"label": "Speed",
+			"min": 1,
+			"max": 100,
+			"step": 1,
+			"unit": "s",
+			"default": 25
+		},
+		{
+			"type": "checkbox",
+			"id": "reverse",
+			"label": "Reverse",
+			"default": false
+		},
+		{
+			"type": "range",
+			"id": "height",
+			"label": "Height",
+			"min": 1,
+			"max": 50,
+			"step": 1,
+			"unit": "rem",
+			"default": 50
+		},
+		{
+			"type": "range",
+			"id": "height_mobile",
+			"label": "Mobile Height",
+			"min": 1,
+			"max": 50,
+			"step": 1,
+			"unit": "rem",
+			"default": 50
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "checkbox",
+			"id": "pause_on_hover",
+			"label": "Pause on hover",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "fade_out_edges",
+			"label": "Fade out edges",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Rotating Content (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

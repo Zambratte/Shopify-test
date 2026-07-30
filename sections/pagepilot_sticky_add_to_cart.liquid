@@ -1,0 +1,345 @@
+{% comment %}
+	@pp sections/pagepilot-sticky-add-to-cart 1.0.6
+{% endcomment %}
+
+{% liquid
+	if closest.product != null
+		assign product = closest.product
+	endif
+%}
+
+{% if product != blank %}
+	{% liquid
+		capture properties
+			echo '--padding-top: ' | append: section.settings.padding_top | append: 'px;'
+			echo '--padding-bottom: ' | append: section.settings.padding_bottom | append: 'px;'
+			echo '--padding-left: ' | append: section.settings.padding_left | append: 'px;'
+			echo '--padding-right: ' | append: section.settings.padding_right | append: 'px;'
+			echo '--padding-top-mobile: ' | append: section.settings.padding_top_mobile | append: 'px;'
+			echo '--padding-bottom-mobile: ' | append: section.settings.padding_bottom_mobile | append: 'px;'
+			echo '--padding-left-mobile: ' | append: section.settings.padding_left_mobile | append: 'px;'
+			echo '--padding-right-mobile: ' | append: section.settings.padding_right_mobile | append: 'px;'
+			assign margin_top = section.settings.margin_top | times: 2
+			assign margin_bottom = section.settings.margin_bottom | times: 2
+			assign margin_top_mobile = section.settings.margin_top_mobile | times: 2
+			assign margin_bottom_mobile = section.settings.margin_bottom_mobile | times: 2
+			echo '--margin-top: ' | append: margin_top | append: 'px;'
+			echo '--margin-bottom: ' | append: margin_bottom | append: 'px;'
+			echo '--margin-top-mobile: ' | append: margin_top_mobile | append: 'px;'
+			echo '--margin-bottom-mobile: ' | append: margin_bottom_mobile | append: 'px;'
+			if section.settings.background_color != blank
+				echo 'background: ' | append: section.settings.background_color | append: ';'
+			endif
+		endcapture
+
+		assign variant = product.selected_or_first_available_variant
+
+		assign has_single_variant = false
+		if product.has_only_default_variant or product.variants.size == 1
+			assign has_single_variant = true
+		endif
+
+		assign container_classes = 'pp:hidden pp:fixed pp:w-full pp:bottom-0 pp:left-0 pp:right-0 pp:z-50'
+
+		if section.settings.custom_class != blank
+			assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+		endif
+
+		assign container_classes = container_classes | append: ' ' | append: section.id
+		assign container_classes = container_classes | append: ' pp:transition-transform pp:duration-300'
+
+		assign wrapper_classes = 'pp:relative pp:w-full pp:mx-auto'
+		case section.settings.layout
+			when 'page'
+				assign wrapper_classes = wrapper_classes | append: ' pp:max-w-6xl'
+			when 'full'
+				assign wrapper_classes = wrapper_classes | append: ' pp:max-w-full'
+		endcase
+		assign wrapper_classes = wrapper_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+		assign wrapper_classes = wrapper_classes | append: ' pp:mt-(--margin-top-mobile) pp:mb-(--margin-bottom-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mb-(--margin-bottom)'
+
+		capture border_radius_mobile
+			render 'pagepilot-border-radius', value: section.settings.border_radius_mobile, prefix: 'pp:'
+		endcapture
+
+		capture border_radius_desktop
+			render 'pagepilot-border-radius', value: section.settings.border_radius, prefix: 'pp:@3xl:'
+		endcapture
+
+		assign wrapper_classes = wrapper_classes | append: ' ' | append: border_radius_mobile
+		assign wrapper_classes = wrapper_classes | append: ' ' | append: border_radius_desktop
+
+		assign inner_classes = 'pp:flex pp:items-center pp:justify-between pp:gap-3 pp:mx-auto'
+		case section.settings.content
+			when 'page'
+				assign inner_classes = inner_classes | append: ' pp:max-w-6xl'
+			when 'full'
+				assign inner_classes = inner_classes | append: ' pp:max-w-full'
+		endcase
+	%}
+
+	<pagepilot-sticky-add-to-cart
+		{{ section.shopify_attributes }}
+		data-threshold='{{ section.settings.threshold }}'
+		data-has-single-variant='{{ has_single_variant }}'
+		data-variant-id='{{ variant.id }}'
+		class='{{ container_classes }}'
+		style='{{ properties }}'
+		dir='{{ settings.pagepilot.dir }}'
+	>
+		<div class='{{ wrapper_classes }}'>
+			<div ref='container' class='{{ inner_classes }}'>
+				{% content_for 'blocks' %}
+			</div>
+		</div>
+	</pagepilot-sticky-add-to-cart>
+{% endif %}
+
+{% schema %}
+{
+	"name": "Sticky Add to Cart (PP)",
+	"class": "pagepilot-section",
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	},
+	"blocks": [
+		{
+			"type": "pagepilot_group"
+		},
+		{
+			"type": "pagepilot_image"
+		},
+		{
+			"type": "pagepilot_button"
+		}
+	],
+	"settings": [
+		{
+			"type": "product",
+			"id": "product",
+			"label": "Product"
+		},
+		{
+			"type": "header",
+			"content": "Behavior"
+		},
+		{
+			"type": "range",
+			"id": "threshold",
+			"label": "Scroll Threshold",
+			"min": 0,
+			"max": 90,
+			"step": 1,
+			"unit": "%",
+			"default": 30,
+			"info": "The bar will appear after scrolling this many percent from the top."
+		},
+		{
+			"type": "select",
+			"id": "layout",
+			"label": "Layout",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "full"
+		},
+		{
+			"type": "select",
+			"id": "content",
+			"label": "Content",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "page",
+			"visible_if": "{{ section.settings.layout == \"full\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "border_radius_mobile",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Background"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background color"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_top_mobile",
+			"label": "Mobile Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the section. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Sticky Add to Cart (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

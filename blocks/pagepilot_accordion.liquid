@@ -1,0 +1,157 @@
+{% comment %}
+	@pp blocks/pagepilot-accordion 1.0.5
+{% endcomment %}
+
+{% liquid
+	capture container_properties
+		echo '--section-icon-size: ' | append: block.settings.icon_size | append: 'px;'
+		echo '--section-icon-color: ' | append: block.settings.icon_color | append: ';'
+
+		echo '--section-gap-y: ' | append: block.settings.gap | append: 'px;'
+		if block.settings.divider_show and block.settings.divider_color != blank
+			echo '--divider-color: ' | append: block.settings.divider_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-accordion pp:relative pp:w-full pp:scroll-m-20 pp:flex pp:flex-col pp:gap-y-(--section-gap-y)'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	if block.settings.icon != blank
+		assign container_classes = container_classes | append: ' pp:' | append: block.settings.icon
+	else
+		assign container_classes = container_classes | append: ' pp:chevron-down'
+	endif
+%}
+
+<div
+	class='{{ container_classes }}'
+	style='{{ container_properties }}'
+	{{ block.shopify_attributes }}
+>
+	{% for nested_block in block.blocks %}
+		{% render nested_block %}
+
+		{% if block.settings.divider_show and block.settings.divider_color != blank and forloop.last == false %}
+			<svg
+				xmlns='http://www.w3.org/2000/svg'
+				viewBox='0 0 1200 120'
+				preserveAspectRatio='none'
+				class='pp:w-full pp:h-px pp:fill-(--divider-color)'
+			>
+				<path d='M0,0 L1200,0 L1200,120 L0,120 Z'></path>
+			</svg>
+		{% endif %}
+	{% endfor %}
+</div>
+
+{% schema %}
+{
+	"name": "Accordion (PP)",
+	"class": "pagepilot-block",
+	"blocks": [
+		{
+			"type": "pagepilot_accordion_row"
+		},
+		{
+			"type": "pagepilot_divider"
+		},
+		{
+			"type": "pagepilot_text"
+		}
+	],
+	"settings": [
+		{
+			"type": "select",
+			"id": "icon",
+			"label": "Icon",
+			"options": [
+				{
+					"value": "chevron-down",
+					"label": "Chevron Down"
+				},
+				{
+					"value": "plus",
+					"label": "Plus"
+				}
+			],
+			"default": "chevron-down"
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Icon Size",
+			"min": 10,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "color",
+			"id": "icon_color",
+			"label": "Icon Color",
+			"default": "#000000"
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "checkbox",
+			"id": "divider_show",
+			"label": "Show Dividers",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "divider_color",
+			"label": "Divider Color",
+			"default": "#dfdfdf",
+			"visible_if": "{{ block.settings.divider_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Accordion (PP)",
+			"category": "PagePilot",
+			"blocks": {
+				"pagepilot_accordion_row": {
+					"type": "pagepilot_accordion_row",
+					"settings": {
+						"heading_text": "Shipping Information"
+					},
+					"blocks": {
+						"pagepilot_text": {
+							"type": "pagepilot_text",
+							"settings": {
+								"text": "<p>We offer tracked and insured shipping for all of our orders. Order processing takes 1-3 business days before shipment.</p>"
+							}
+						}
+					},
+					"block_order": ["pagepilot_text"]
+				}
+			},
+			"block_order": ["pagepilot_accordion_row"]
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,391 @@
+{% comment %}
+	@pp sections/pagepilot-product-information 1.0.11
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: section.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: section.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: section.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: section.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: section.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: section.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: section.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: section.settings.padding_right_mobile | append: 'px;'
+
+		assign margin_top = section.settings.margin_top | times: 2
+		assign margin_bottom = section.settings.margin_bottom | times: 2
+		echo '--margin-top: ' | append: margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: margin_bottom | append: 'px;'
+		assign margin_top_mobile = section.settings.margin_top_mobile | times: 2
+		assign margin_bottom_mobile = section.settings.margin_bottom_mobile | times: 2
+		echo '--margin-top-mobile: ' | append: margin_top_mobile | append: 'px;'
+		echo '--margin-bottom-mobile: ' | append: margin_bottom_mobile | append: 'px;'
+
+		if section.settings.background_color != blank
+			echo 'background: ' | append: section.settings.background_color | append: ';'
+		endif
+
+		if section.settings.border != 'none' and section.settings.border_color != blank
+			echo '--border-width: ' | append: section.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: section.settings.border_color | append: ';'
+		endif
+
+		echo '--gap: ' | append: section.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: section.settings.gap_mobile | append: 'px;'
+		echo '--gallery-width: ' | append: section.settings.gallery_width | append: '%;'
+	endcapture
+
+	assign container_classes = 'pp-product-information pp:relative pp:mx-auto pp:w-full'
+
+	case section.settings.layout
+		when 'page'
+			assign container_classes = container_classes | append: ' pp:max-w-6xl'
+		when 'full'
+			assign container_classes = container_classes | append: ' pp:max-w-full'
+	endcase
+
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) pp:@3xl:pr-(--padding-right)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:pr-(--padding-right-mobile)'
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top-mobile) pp:mb-(--margin-bottom-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mb-(--margin-bottom)'
+
+	capture border
+		render 'pagepilot-border', value: section.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	capture border_radius_mobile
+		render 'pagepilot-border-radius', value: section.settings.border_radius_mobile, prefix: 'pp:'
+	endcapture
+	capture border_radius_desktop
+		render 'pagepilot-border-radius', value: section.settings.border_radius, prefix: '@3xl:pp:'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius_mobile | append: ' ' | append: border_radius_desktop
+	
+	if section.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+	endif
+	assign container_classes = container_classes | append: ' ' | append: section.id
+
+	assign block_classes = 'pp:mx-auto pp:grid pp:w-full pp:grid-cols-1 pp:gap-(--gap-mobile) pp:@3xl:grid-cols-[var(--gallery-width)_1fr] pp:@3xl:gap-(--gap)'
+
+	case section.settings.content
+		when 'page'
+			assign block_classes = block_classes | append: ' pp:max-w-6xl'
+		when 'full'
+			assign block_classes = block_classes | append: ' pp:max-w-full'
+	endcase
+
+	if section.settings.limit_details_width == true
+		assign block_classes = block_classes | append: ' pp:[&_.pp-product-details]:mx-auto pp:[&_.pp-product-details]:max-w-md'
+	endif
+%}
+
+<div
+	{{ section.shopify_attributes }}
+	class='{{ container_classes }}'
+	style='{{ properties }}'
+	dir='{{ settings.pagepilot.dir }}'
+>
+	<div class='{{ block_classes }}'>
+		{% content_for 'block', type: '_pagepilot_product_gallery', id: 'static-pagepilot_product_gallery' %}
+		{% content_for 'block', type: '_pagepilot_product_details', id: 'static-pagepilot_product_details' %}
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Product Information (PP)",
+	"class": "pagepilot-section",
+	"limit": 1,
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	},
+	"settings": [
+		{
+			"type": "product",
+			"id": "product",
+			"label": "Product"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "select",
+			"id": "layout",
+			"label": "Layout",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "full"
+		},
+		{
+			"type": "select",
+			"id": "content",
+			"label": "Content",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "page",
+			"visible_if": "{{ section.settings.layout == \"full\" }}"
+		},
+		{
+			"type": "range",
+			"id": "gallery_width",
+			"min": 50,
+			"max": 70,
+			"step": 1,
+			"unit": "%",
+			"label": "Gallery Width",
+			"default": 55
+		},
+		{
+			"type": "checkbox",
+			"id": "limit_details_width",
+			"label": "Narrow Product Information",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ section.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ section.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "border_radius_mobile",
+			"label": "Mobile Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background color"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 24
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 24
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 24
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 24
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_top_mobile",
+			"label": "Mobile Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the section. Multiple classes can be added by separating them with a space."
+		}
+	]
+}
+{% endschema %}

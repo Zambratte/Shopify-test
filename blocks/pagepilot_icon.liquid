@@ -1,0 +1,370 @@
+{% comment %}
+	@pp blocks/pagepilot-icon 1.0.6
+{% endcomment %}
+
+{% liquid
+	capture container_styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--icon-color: ' | append: block.settings.icon_color | default: 'transparent' | append: ';'
+		echo '--icon-fill-color: ' | append: block.settings.icon_fill_color | default: 'transparent' | append: ';'
+		echo '--icon-size: ' | append: block.settings.icon_size | append: 'px;'
+		echo '--icon-size-mobile: ' | append: block.settings.icon_size_mobile | append: 'px;'
+		echo '--background-size: ' | append: block.settings.background_size | append: 'px;'
+		echo '--background-size-mobile: ' | append: block.settings.background_size_mobile | append: 'px;'
+		if block.settings.background_color != blank
+			echo '--background-color: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.border != 'none'
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-icon pp:shrink-0 pp:items-center pp:justify-center'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:inline-flex'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:inline-flex'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:inline-flex'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pb-(--padding-bottom) pp:pl-(--padding-left) pp:pr-(--padding-right)'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if block.settings.background_color != blank
+		assign container_classes = container_classes | append: ' pp:bg-(--background-color)'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:bg-(--background-color) pp:size-(length:--background-size-mobile) pp:@3xl:size-(length:--background-size)'
+%}
+
+{% liquid
+	assign icon_classes = 'pp:size-(--icon-size-mobile) pp:text-(--icon-color) pp:@3xl:size-(--icon-size)'
+
+	case block.settings.icon_variant
+		when 'light'
+			assign icon_classes = icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign icon_classes = icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign icon_classes = icon_classes | append: ' pp:stroke-3'
+		when 'fill'
+			assign icon_classes = icon_classes | append: ' pp:fill-(--icon-fill-color)'
+	endcase
+
+	assign emoji_classes = 'pp:flex pp:items-center pp:justify-center pp:text-(length:--icon-size-mobile) pp:@3xl:text-(length:--icon-size)'
+
+	assign svg_classes = 'pp:contents pp:[&>svg]:w-full pp:[&>svg]:max-w-(length:--background-size-mobile) pp:@3xl:[&>svg]:max-w-(length:--background-size) [&>svg]:fill-(--icon-color)'
+%}
+
+<div class='{{ container_classes }}' style='{{ container_styles }}' {{ block.shopify_attributes }}>
+	{% if block.settings.type == 'icon' %}
+		<i data-lucide='{{ block.settings.icon }}' class='{{ icon_classes }}'></i>
+	{% elsif block.settings.type == 'emoji' %}
+		<span class='{{ emoji_classes }}'>{{ block.settings.emoji }}</span>
+	{% elsif block.settings.type == 'svg' %}
+		<div class='{{ svg_classes }}'>
+			{{ block.settings.svg }}
+		</div>
+	{% endif %}
+</div>
+
+{% schema %}
+{
+	"name": "Icon (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "select",
+			"id": "type",
+			"label": "Type",
+			"options": [
+				{
+					"value": "icon",
+					"label": "Icon"
+				},
+				{
+					"value": "emoji",
+					"label": "Emoji"
+				},
+				{
+					"value": "svg",
+					"label": "SVG"
+				}
+			],
+			"default": "icon"
+		},
+		{
+			"type": "text",
+			"id": "icon",
+			"label": "Icon",
+			"default": "user",
+			"visible_if": "{{ block.settings.type == \"icon\" }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji",
+			"label": "Emoji",
+			"default": "✨",
+			"visible_if": "{{ block.settings.type == \"emoji\" }}"
+		},
+		{
+			"type": "textarea",
+			"id": "svg",
+			"label": "SVG",
+			"info": "Enter the SVG icon you want to display.",
+			"visible_if": "{{ block.settings.type == \"svg\" }}"
+		},
+
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Icon Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 30
+		},
+		{
+			"type": "range",
+			"id": "icon_size_mobile",
+			"label": "Mobile Icon Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 30
+		},
+		{
+			"type": "select",
+			"id": "icon_variant",
+			"label": "Icon Variant",
+			"options": [
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "regular",
+					"label": "Regular"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "regular",
+			"visible_if": "{{ block.settings.type == \"icon\" }}"
+		},
+		{
+			"type": "color",
+			"id": "icon_color",
+			"label": "Icon Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.type == \"icon\" or block.settings.type == \"svg\" }}"
+		},
+		{
+			"type": "color",
+			"id": "icon_fill_color",
+			"label": "Icon Fill Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.type == \"icon\" and block.settings.icon_variant == \"fill\" }}"
+		},
+		{
+			"type": "header",
+			"content": "Background"
+		},
+		{
+			"type": "range",
+			"id": "background_size",
+			"label": "Background Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 35
+		},
+		{
+			"type": "range",
+			"id": "background_size_mobile",
+			"label": "Mobile Background Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 35
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "header",
+			"content": "Borders"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Icon (PP)",
+			"category": "PagePilot",
+			"settings": {
+				"icon": "sparkles"
+			}
+		}
+	]
+}
+{% endschema %}

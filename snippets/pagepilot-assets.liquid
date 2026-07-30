@@ -1,0 +1,39 @@
+{% comment %}
+	@pp snippets/pagepilot-assets 1.0.9
+{% endcomment %}
+
+{% liquid
+	assign timestamp = 'now' | date: '%s'
+	assign css = 'https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-bundle.min.css?v=' | append: timestamp
+	assign js = 'https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-bundle.min.js?v=' | append: timestamp
+%}
+
+{{ css | stylesheet_tag: preload: true }}
+
+<script
+	src='{{ js }}'
+	type='module'
+	fetchpriority='high'
+	defer
+></script>
+
+{% comment %} <script defer src='https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4' fetchpriority='high'></script>
+<style type='text/tailwindcss'>
+	@import 'tailwindcss' prefix(pp);
+</style> {% endcomment %}
+
+<script>
+	if (typeof Theme === 'undefined' || !window.Theme) {
+		window.Theme = {
+			routes: {
+				cart_add_url: '{{ routes.cart_add_url | append: '.js' }}',
+				cart_change_url: '{{ routes.cart_change_url }}',
+				cart_update_url: '{{ routes.cart_update_url }}',
+				cart_url: '{{ routes.cart_url }}'
+			},
+			template: {
+				name: '{{ template }}',
+			},
+		};
+	}
+</script>

@@ -1,0 +1,716 @@
+{% comment %}
+	@pp sections/pagepilot-recommended-products 1.0.13
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: section.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: section.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: section.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: section.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: section.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: section.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: section.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: section.settings.padding_right_mobile | append: 'px;'
+
+		assign margin_top_doubled = section.settings.margin_top | times: 2
+		assign margin_bottom_doubled = section.settings.margin_bottom | times: 2
+		assign margin_top_mobile_doubled = section.settings.margin_top_mobile | times: 2
+		assign margin_bottom_mobile_doubled = section.settings.margin_bottom_mobile | times: 2
+		echo '--margin-top: ' | append: margin_top_doubled | append: 'px;'
+		echo '--margin-bottom: ' | append: margin_bottom_doubled | append: 'px;'
+		echo '--margin-top-mobile: ' | append: margin_top_mobile_doubled | append: 'px;'
+		echo '--margin-bottom-mobile: ' | append: margin_bottom_mobile_doubled | append: 'px;'
+
+		if section.settings.background_color != blank
+			echo 'background: ' | append: section.settings.background_color | append: ';'
+		endif
+
+		echo '--columns: ' | append: section.settings.columns | append: ';'
+		echo '--columns-mobile: ' | append: section.settings.columns_mobile | append: ';'
+		echo '--gap: ' | append: section.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: section.settings.gap_mobile | append: 'px;'
+
+		echo '--carousel-navigation-offset: ' | append: section.settings.carousel_navigation_offset | append: 'px;'
+		echo '--carousel-navigation-size: calc(var(--carousel-navigation-icon-size) * 1.6);'
+		echo '--carousel-navigation-color: ' | append: section.settings.carousel_navigation_color | append: ';'
+		if section.settings.carousel_navigation_background_color != blank
+			echo '--carousel-navigation-background-color: ' | append: section.settings.carousel_navigation_background_color | append: ';'
+		else
+			echo '--carousel-navigation-background-color: transparent;'
+		endif
+
+		if section.settings.carousel_navigation_border != 'none'
+			echo '--carousel-navigation-border-width: ' | append: section.settings.carousel_navigation_border_width | append: 'px;'
+			echo '--carousel-navigation-border-color: ' | append: section.settings.carousel_navigation_border_color | default: 'transparent' | append: ';'
+		endif
+
+		echo '--carousel-navigation-icon-size: ' | append: section.settings.carousel_navigation_icon_size | append: 'px;'
+		echo '--carousel-navigation-spacing: calc(var(--carousel-navigation-size) + 10px);'
+	endcapture
+
+	assign container_classes = 'pp-recommended-products pp:relative pp:mx-auto pp:w-full pp:scroll-m-20 pp:overflow-hidden'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) pp:@3xl:pr-(--padding-right)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:pr-(--padding-right-mobile)'
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top-mobile) pp:mb-(--margin-bottom-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mb-(--margin-bottom)'
+
+	capture border_radius_mobile
+		render 'pagepilot-border-radius', value: section.settings.border_radius_mobile, prefix: 'pp:'
+	endcapture
+
+	capture border_radius_desktop
+		render 'pagepilot-border-radius', value: section.settings.border_radius, prefix: 'pp:@3xl:'
+	endcapture
+
+	assign container_classes = container_classes | append: ' ' | append: border_radius_mobile
+	assign container_classes = container_classes | append: ' ' | append: border_radius_desktop
+
+	case section.settings.layout
+		when 'page'
+			assign container_classes = container_classes | append: ' pp:max-w-6xl'
+		when 'full'
+			assign container_classes = container_classes | append: ' pp:max-w-full'
+	endcase
+
+	assign container_classes = container_classes | append: ' ' | append: section.id
+	if section.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+	endif
+%}
+
+{% liquid
+	assign wrapper_classes = 'pp:mx-auto pp:flex pp:w-full pp:flex-col pp:gap-(--gap-mobile) pp:@3xl:gap-(--gap)'
+
+	case section.settings.content
+		when 'page'
+			assign wrapper_classes = wrapper_classes | append: ' pp:max-w-6xl'
+		when 'full'
+			assign wrapper_classes = wrapper_classes | append: ' pp:max-w-full'
+	endcase
+
+	assign carousel_wrapper_classes = 'pp:relative pp:min-w-0'
+
+	if section.settings.carousel_navigation_show == true and section.settings.carousel_navigation_position == 'outside'
+		assign carousel_wrapper_classes = carousel_wrapper_classes | append: ' pp:@3xl:px-(--carousel-navigation-spacing)!'
+	endif
+
+	assign carousel_classes = 'swiper pp:overflow-hidden'
+
+	assign controls = 'previous,next' | split: ','
+
+	for control in controls
+		assign control_classes = 'swiper-custom-button-' | append: control
+		assign control_classes = control_classes | append: ' pp:absolute pp:top-1/2 pp:z-1 pp:-translate-y-1/2 pp:items-center pp:justify-center pp:cursor-pointer'
+
+		if section.settings.carousel_navigation_mobile_show
+			assign control_classes = control_classes | append: ' pp:flex!'
+		else
+			assign control_classes = control_classes | append: ' pp:hidden!'
+		endif
+
+		if section.settings.carousel_navigation_show
+			assign control_classes = control_classes | append: ' pp:@3xl:flex!'
+		else
+			assign control_classes = control_classes | append: ' pp:@3xl:hidden!'
+		endif
+
+		assign control_classes = control_classes | append: ' pp:size-(--carousel-navigation-size)'
+
+		if control == 'previous'
+			assign control_classes = control_classes | append: ' pp:left-(--carousel-navigation-offset)'
+		elsif control == 'next'
+			assign control_classes = control_classes | append: ' pp:right-(--carousel-navigation-offset)'
+		endif
+
+		case section.settings.carousel_navigation_border
+			when 'none'
+				assign control_classes = control_classes | append: ' pp:outline-none'
+			when 'solid'
+				assign control_classes = control_classes | append: ' pp:outline-solid'
+			when 'dashed'
+				assign control_classes = control_classes | append: ' pp:outline-dashed'
+			when 'dotted'
+				assign control_classes = control_classes | append: ' pp:outline-dotted'
+		endcase
+
+		if section.settings.carousel_navigation_border == 'solid' or section.settings.carousel_navigation_border == 'dashed' or section.settings.carousel_navigation_border == 'dotted'
+			assign control_classes = control_classes | append: ' pp:outline-(length:--carousel-navigation-border-width) pp:outline-(--carousel-navigation-border-color)'
+		endif
+
+		capture border_radius
+			render 'pagepilot-border-radius', value: section.settings.carousel_navigation_border_radius
+		endcapture
+		assign control_classes = control_classes | append: ' ' | append: border_radius
+
+		assign control_classes = control_classes | append: ' pp:[&_svg]:size-(--carousel-navigation-icon-size)'
+		assign control_classes = control_classes | append: ' pp:bg-(--carousel-navigation-background-color) pp:text-(--carousel-navigation-color)'
+
+		if control == 'previous'
+			assign carousel_controls_previous = control_classes
+		else
+			assign carousel_controls_next = control_classes
+		endif
+	endfor
+%}
+
+{% liquid
+	if closest.product != null
+		assign product = closest.product
+	endif
+
+	if section.settings.collection != blank
+		assign category_to_use = section.settings.collection
+		assign category_products = category_to_use.products | where: 'available'
+	elsif product.collections.size > 0
+		assign category_to_use = product.collections.first
+		assign category_products = category_to_use.products | where: 'available'
+	else
+		assign first_collection = collections | first
+		assign category_products = first_collection.products | where: 'available'
+	endif
+
+	assign filtered_products = category_products | where: 'available'
+
+	if product != null
+		assign filtered_products = filtered_products | reject: 'id', product.id
+	endif
+%}
+
+{% liquid
+	assign columns = section.settings.carousel_columns
+	if section.settings.carousel_reveal_last_slide == true
+		assign columns = columns | plus: 0.5
+	endif
+
+	assign columns_mobile = section.settings.carousel_columns_mobile
+	if section.settings.carousel_reveal_last_slide_mobile == true
+		assign columns_mobile = columns_mobile | plus: 0.5
+	endif
+%}
+
+{%- if filtered_products.size > 0 -%}
+	<div
+		{{ section.shopify_attributes }}
+		class='{{ container_classes }}'
+		style='{{ properties }}'
+		dir='{{ settings.pagepilot.dir }}'
+	>
+		<div class='{{ wrapper_classes }}'>
+			{% content_for 'blocks' %}
+
+			<div class='{{ carousel_wrapper_classes }}'>
+				<pagepilot-carousel
+					id='swiper-{{ section.id }}'
+				>
+					<div
+						ref='swiper'
+						class='{{ carousel_classes }}'
+						data-autoplay='{{ section.settings.carousel_autoplay }}'
+						data-columns='{{ columns }}'
+						data-columns-mobile='{{ columns_mobile }}'
+						data-gap='{{ section.settings.carousel_gap }}'
+						data-gap-mobile='{{ section.settings.carousel_gap_mobile }}'
+					>
+						<div class='swiper-wrapper'>
+							{% for product in filtered_products limit: section.settings.carousel_products_count %}
+								<div class='swiper-slide'>
+									<a href='{{ product.url }}'>
+										{% content_for 'block',
+											type: '_pagepilot_product_card',
+											id: 'static-pagepilot_product_card',
+											closest.product: product
+										%}
+									</a>
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+
+					{% if filtered_products.size > section.settings.carousel_columns %}
+						<button
+							ref='previous'
+							type='button'
+							class='{{ carousel_controls_previous }}'
+						>
+							<i data-lucide='chevron-left'></i>
+						</button>
+						<button
+							ref='next'
+							type='button'
+							class='{{ carousel_controls_next }}'
+						>
+							<i data-lucide='chevron-right'></i>
+						</button>
+					{% endif %}
+				</pagepilot-carousel>
+			</div>
+		</div>
+	</div>
+{%- endif -%}
+
+{% schema %}
+{
+	"name": "Recommended Products (PP)",
+	"class": "pagepilot-section",
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	},
+	"blocks": [
+		{
+			"type": "@theme"
+		},
+		{
+			"type": "@app"
+		}
+	],
+	"settings": [
+		{
+			"type": "collection",
+			"id": "collection",
+			"label": "Collection",
+			"info": "Select a collection to show products from. If its blank it gets the first available collection"
+		},
+		{
+			"type": "select",
+			"id": "layout",
+			"label": "Layout",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "full"
+		},
+		{
+			"type": "select",
+			"id": "content",
+			"label": "Content",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "page",
+			"visible_if": "{{ section.settings.layout == \"full\" }}"
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 50
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 25
+		},
+		{
+			"type": "header",
+			"content": "Carousel"
+		},
+		{
+			"type": "range",
+			"id": "carousel_products_count",
+			"label": "Products Count",
+			"min": 1,
+			"max": 20,
+			"step": 1,
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "carousel_autoplay",
+			"label": "Autoplay",
+			"info": "The number of seconds between each slide. 0 to disable.",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "s",
+			"default": 3
+		},
+		{
+			"type": "range",
+			"id": "carousel_columns",
+			"label": "Columns",
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"unit": "col",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "carousel_columns_mobile",
+			"label": "Mobile Columns",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "col",
+			"default": 2
+		},
+		{
+			"type": "checkbox",
+			"id": "carousel_reveal_last_slide",
+			"label": "Reveal Last Slide",
+			"info": "If enabled, the last slide will be revealed with a half column width",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "carousel_reveal_last_slide_mobile",
+			"label": "Mobile Reveal Last Slide",
+			"info": "If enabled, the last slide will be revealed with a half column width",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "carousel_gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "carousel_gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "header",
+			"content": "Navigation Arrows"
+		},
+		{
+			"type": "checkbox",
+			"id": "carousel_navigation_show",
+			"label": "Show Navigation",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "carousel_navigation_mobile_show",
+			"label": "Mobile Show Navigation",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "carousel_navigation_position",
+			"label": "Navigation position",
+			"options": [
+				{
+					"value": "outside",
+					"label": "Outside"
+				},
+				{
+					"value": "inside",
+					"label": "Inside"
+				}
+			],
+			"default": "outside",
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "carousel_navigation_background_color",
+			"label": "Background Color",
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "carousel_navigation_color",
+			"label": "Color",
+			"default": "#7C7C7C",
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "carousel_navigation_icon_size",
+			"label": "Icon size",
+			"min": 14,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 18,
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "carousel_navigation_offset",
+			"label": "Offset",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "carousel_navigation_border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "solid",
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "carousel_navigation_border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ section.settings.carousel_navigation_border != \"none\" and section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "carousel_navigation_border_color",
+			"label": "Border Color",
+			"default": "#DFDFDF",
+			"visible_if": "{{ section.settings.carousel_navigation_border != \"none\" and section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "carousel_navigation_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 30,
+			"visible_if": "{{ section.settings.carousel_navigation_show == true or section.settings.carousel_navigation_mobile_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background color"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "border_radius_mobile",
+			"label": "Mobile Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_top_mobile",
+			"label": "Mobile Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the section. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Recommended Products (PP)",
+			"category": "PagePilot",
+			"settings": {
+				"layout": "full",
+				"content": "page",
+				"gap": 50,
+				"gap_mobile": 50,
+				"carousel_products_count": 8,
+				"carousel_columns": 4
+			},
+			"blocks": {
+				"static-pagepilot_product_card": {
+					"type": "_pagepilot_product_card",
+					"static": true
+				}
+			}
+		}
+	]
+}
+{% endschema %}

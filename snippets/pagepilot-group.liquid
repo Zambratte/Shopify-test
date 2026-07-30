@@ -1,0 +1,368 @@
+{% comment %}
+	@pp snippets/pagepilot-group 1.0.9
+{% endcomment %}
+
+{%- doc -%}
+	@param {object} block - The block object (required)
+	@param {string} child_blocks - Pre-rendered nested block markup (optional)
+{%- enddoc -%}
+
+{% liquid
+	capture properties
+		assign columns = block.settings.columns | default: 1
+		assign columns_mobile = block.settings.columns_mobile | default: 1
+		echo '--columns: ' | append: columns | append: ';'
+		echo '--columns-mobile: ' | append: columns_mobile | append: ';'
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: block.settings.gap_mobile | append: 'px;'
+
+		assign margin_top = block.settings.margin_top | times: 2
+		assign margin_bottom = block.settings.margin_bottom | times: 2
+		assign margin_left = block.settings.margin_left | times: 2
+		assign margin_right = block.settings.margin_right | times: 2
+		echo '--margin-top: ' | append: margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: margin_bottom | append: 'px;'
+		echo '--margin-left: ' | append: margin_left | append: 'px;'
+		echo '--margin-right: ' | append: margin_right | append: 'px;'
+
+		assign margin_top_mobile = block.settings.margin_top_mobile | times: 2
+		assign margin_bottom_mobile = block.settings.margin_bottom_mobile | times: 2
+		assign margin_left_mobile = block.settings.margin_left_mobile | times: 2
+		assign margin_right_mobile = block.settings.margin_right_mobile | times: 2
+		echo '--margin-top-mobile: ' | append: margin_top_mobile | append: 'px;'
+		echo '--margin-bottom-mobile: ' | append: margin_bottom_mobile | append: 'px;'
+		echo '--margin-left-mobile: ' | append: margin_left_mobile | append: 'px;'
+		echo '--margin-right-mobile: ' | append: margin_right_mobile | append: 'px;'
+
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		if block.settings.custom_width_units == '%'
+			assign custom_width_val = block.settings.custom_width | times: 1
+			echo '--custom-width: ' | append: custom_width_val | append: '%;'
+		else
+			assign custom_width_val = block.settings.custom_width | times: 2
+			echo '--custom-width: ' | append: custom_width_val | append: 'px;'
+		endif
+		if block.settings.custom_width_units == '%'
+			assign custom_width_mobile_val = block.settings.custom_width_mobile | times: 1
+			echo '--custom-width-mobile: ' | append: custom_width_mobile_val | append: '%;'
+		else
+			assign custom_width_mobile_val = block.settings.custom_width_mobile | times: 2
+			echo '--custom-width-mobile: ' | append: custom_width_mobile_val | append: 'px;'
+		endif
+		if block.settings.custom_height_units == '%'
+			assign custom_height_val = block.settings.custom_height | times: 1
+			echo '--custom-height: ' | append: custom_height_val | append: '%;'
+		else
+			assign custom_height_val = block.settings.custom_height | times: 2
+			echo '--custom-height: ' | append: custom_height_val | append: 'px;'
+		endif
+		if block.settings.custom_height_units == '%'
+			assign custom_height_mobile_val = block.settings.custom_height_mobile | times: 1
+			echo '--custom-height-mobile: ' | append: custom_height_mobile_val | append: '%;'
+		else
+			assign custom_height_mobile_val = block.settings.custom_height_mobile | times: 2
+			echo '--custom-height-mobile: ' | append: custom_height_mobile_val | append: 'px;'
+		endif
+
+		echo '--order: ' | append: block.settings.order | append: ';'
+		echo '--order-mobile: ' | append: block.settings.order_mobile | append: ';'
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | append: ';'
+		endif
+
+		if block.settings.sticky
+			echo '--sticky-offset: ' | append: block.settings.sticky_offset | append: 'px;'
+		endif
+	endcapture
+
+	assign layout_type = block.settings.type | default: 'flex'
+	assign container_classes = 'pp-group pp:relative pp:min-w-0'
+
+	if block.settings.show_on_mobile
+		if layout_type == 'flex'
+			assign container_classes = container_classes | append: ' pp:flex'
+		else
+			assign container_classes = container_classes | append: ' pp:grid'
+		endif
+	else
+		assign container_classes = container_classes | append: ' pp:hidden'
+		if layout_type == 'flex'
+			assign container_classes = container_classes | append: ' pp:@3xl:flex'
+		else
+			assign container_classes = container_classes | append: ' pp:@3xl:grid'
+		endif
+	endif
+
+	if block.settings.show_on_desktop
+		if layout_type == 'flex'
+			assign container_classes = container_classes | append: ' pp:@3xl:flex'
+		else
+			assign container_classes = container_classes | append: ' pp:@3xl:grid'
+		endif
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top-mobile) pp:mr-(--margin-right-mobile) pp:mb-(--margin-bottom-mobile) pp:ml-(--margin-left-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mr-(--margin-right) pp:@3xl:mb-(--margin-bottom) pp:@3xl:ml-(--margin-left)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' pp:gap-(--gap-mobile) pp:@3xl:gap-(--gap)'
+	assign container_classes = container_classes | append: ' pp:order-(--order-mobile) pp:@3xl:order-(--order)'
+
+	if block.settings.margin_x_auto
+		assign container_classes = container_classes | append: ' pp:mx-auto pp:self-center pp:justify-self-center'
+	endif
+
+	if block.settings.margin_x_auto_mobile
+		assign container_classes = container_classes | append: ' pp:@3xl:mx-auto pp:@3xl:self-center pp:@3xl:justify-self-center'
+	endif
+
+	if layout_type == 'grid'
+		assign container_classes = container_classes | append: ' pp:grid-cols-[repeat(var(--columns-mobile),1fr)] pp:@3xl:grid-cols-[repeat(var(--columns),1fr)]'
+		case block.settings.grid_position_x_mobile
+			when 'start'
+				assign container_classes = container_classes | append: ' pp:justify-items-start'
+			when 'center'
+				assign container_classes = container_classes | append: ' pp:justify-items-center'
+			when 'end'
+				assign container_classes = container_classes | append: ' pp:justify-items-end'
+		endcase
+		case block.settings.grid_position_y_mobile
+			when 'start'
+				assign container_classes = container_classes | append: ' pp:items-start'
+			when 'center'
+				assign container_classes = container_classes | append: ' pp:items-center'
+			when 'end'
+				assign container_classes = container_classes | append: ' pp:items-end'
+		endcase
+		case block.settings.grid_position_x
+			when 'start'
+				assign container_classes = container_classes | append: ' pp:@3xl:justify-items-start'
+			when 'center'
+				assign container_classes = container_classes | append: ' pp:@3xl:justify-items-center'
+			when 'end'
+				assign container_classes = container_classes | append: ' pp:@3xl:justify-items-end'
+		endcase
+		case block.settings.grid_position_y
+			when 'start'
+				assign container_classes = container_classes | append: ' pp:@3xl:items-start'
+			when 'center'
+				assign container_classes = container_classes | append: ' pp:@3xl:items-center'
+			when 'end'
+				assign container_classes = container_classes | append: ' pp:@3xl:items-end'
+		endcase
+	endif
+
+	if layout_type == 'flex'
+		case block.settings.content_direction_mobile
+			when 'row'
+				assign container_classes = container_classes | append: ' pp:flex-row'
+			when 'column'
+				assign container_classes = container_classes | append: ' pp:flex-col'
+		endcase
+
+		case block.settings.content_direction
+			when 'row'
+				assign container_classes = container_classes | append: ' pp:@3xl:flex-row'
+			when 'column'
+				assign container_classes = container_classes | append: ' pp:@3xl:flex-col'
+		endcase
+
+		if block.settings.content_direction_mobile == 'row'
+			case block.settings.horizontal_alignment_mobile
+				when 'flex-start'
+					assign container_classes = container_classes | append: ' pp:justify-start'
+				when 'center'
+					assign container_classes = container_classes | append: ' pp:justify-center'
+				when 'flex-end'
+					assign container_classes = container_classes | append: ' pp:justify-end'
+				when 'space-between'
+					assign container_classes = container_classes | append: ' pp:justify-between'
+				when 'space-around'
+					assign container_classes = container_classes | append: ' pp:justify-around'
+			endcase
+
+			case block.settings.horizontal_position_mobile
+				when 'flex-start'
+					assign container_classes = container_classes | append: ' pp:items-start'
+				when 'center'
+					assign container_classes = container_classes | append: ' pp:items-center'
+				when 'flex-end'
+					assign container_classes = container_classes | append: ' pp:items-end'
+			endcase
+		endif
+
+		if block.settings.content_direction_mobile == 'column'
+			case block.settings.vertical_alignment_mobile
+				when 'justify-start'
+					assign container_classes = container_classes | append: ' pp:justify-start'
+				when 'justify-center'
+					assign container_classes = container_classes | append: ' pp:justify-center'
+				when 'justify-end'
+					assign container_classes = container_classes | append: ' pp:justify-end'
+				when 'space-between'
+					assign container_classes = container_classes | append: ' pp:justify-between'
+				when 'space-around'
+					assign container_classes = container_classes | append: ' pp:justify-around'
+			endcase
+
+			case block.settings.vertical_position_mobile
+				when 'flex-start'
+					assign container_classes = container_classes | append: ' pp:items-start'
+				when 'center'
+					assign container_classes = container_classes | append: ' pp:items-center'
+				when 'flex-end'
+					assign container_classes = container_classes | append: ' pp:items-end'
+			endcase
+		endif
+
+		if block.settings.content_direction == 'row'
+			case block.settings.horizontal_alignment
+				when 'flex-start'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-start'
+				when 'center'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-center'
+				when 'flex-end'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-end'
+				when 'space-between'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-between'
+				when 'space-around'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-around'
+			endcase
+
+			case block.settings.horizontal_position
+				when 'flex-start'
+					assign container_classes = container_classes | append: ' pp:@3xl:items-start'
+				when 'center'
+					assign container_classes = container_classes | append: ' pp:@3xl:items-center'
+				when 'flex-end'
+					assign container_classes = container_classes | append: ' pp:@3xl:items-end'
+			endcase
+		endif
+
+		if block.settings.content_direction == 'column'
+			case block.settings.vertical_alignment
+				when 'justify-start'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-start'
+				when 'justify-center'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-center'
+				when 'justify-end'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-end'
+				when 'space-between'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-between'
+				when 'space-around'
+					assign container_classes = container_classes | append: ' pp:@3xl:justify-around'
+			endcase
+
+			case block.settings.vertical_position
+				when 'flex-start'
+					assign container_classes = container_classes | append: ' pp:@3xl:items-start'
+				when 'center'
+					assign container_classes = container_classes | append: ' pp:@3xl:items-center'
+				when 'flex-end'
+					assign container_classes = container_classes | append: ' pp:@3xl:items-end'
+			endcase
+		endif
+
+		if block.settings.wrap_mobile
+			assign container_classes = container_classes | append: ' pp:flex-wrap'
+		endif
+
+		if block.settings.wrap
+			assign container_classes = container_classes | append: ' pp:@3xl:flex-wrap'
+		endif
+	endif
+
+	case block.settings.width_mobile
+		when 'fill'
+			assign container_classes = container_classes | append: ' pp:w-full'
+		when 'fit'
+			assign container_classes = container_classes | append: ' pp:w-fit'
+		when 'custom'
+			assign container_classes = container_classes | append: ' pp:w-(--custom-width-mobile)'
+	endcase
+	case block.settings.width
+		when 'fill'
+			assign container_classes = container_classes | append: ' pp:@3xl:w-full'
+		when 'fit'
+			assign container_classes = container_classes | append: ' pp:@3xl:w-fit'
+		when 'custom'
+			assign container_classes = container_classes | append: ' pp:@3xl:w-(--custom-width)'
+	endcase
+
+	case block.settings.height_mobile
+		when 'fill'
+			assign container_classes = container_classes | append: ' pp:h-full pp:self-stretch'
+		when 'fit'
+			assign container_classes = container_classes | append: ' pp:h-fit pp:self-auto'
+		when 'custom'
+			assign container_classes = container_classes | append: ' pp:h-(--custom-height-mobile)'
+	endcase
+	case block.settings.height
+		when 'fill'
+			assign container_classes = container_classes | append: ' pp:@3xl:h-full pp:@3xl:self-stretch'
+		when 'fit'
+			assign container_classes = container_classes | append: ' pp:@3xl:h-fit pp:@3xl:self-auto'
+		when 'custom'
+			assign container_classes = container_classes | append: ' pp:@3xl:h-(--custom-height)'
+	endcase
+
+	case block.settings.overflow
+		when 'visible'
+			assign container_classes = container_classes | append: ' pp:overflow-visible'
+		when 'hidden'
+			assign container_classes = container_classes | append: ' pp:overflow-hidden'
+		when 'scroll'
+			assign container_classes = container_classes | append: ' pp:overflow-scroll'
+	endcase
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	if block.settings.sticky
+		assign container_classes = container_classes | append: ' pp:@3xl:sticky pp:@3xl:top-(--sticky-offset)'
+	endif
+
+	assign container_classes = container_classes | append: ' ' | append: block.id
+%}
+
+<div
+	class='{{ container_classes }}'
+	style='{{ properties }}'
+	{{ block.shopify_attributes }}
+>
+	{{ child_blocks }}
+</div>

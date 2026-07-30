@@ -1,0 +1,924 @@
+{% comment %}
+	@pp blocks/pagepilot-product-price 1.1.0
+{% endcomment %}
+
+{% liquid
+	if closest.product != null
+		assign product = closest.product
+	endif
+
+	assign selected_variant = product.selected_or_first_available_variant
+	assign price = selected_variant.price | default: false
+	assign compare_at_price = selected_variant.compare_at_price | default: false
+
+	assign currency = 0 | money_with_currency | split: ' ' | last | default: 'USD'
+	assign symbol = 0 | money_without_trailing_zeros | replace: '0', '' | strip | default: '$'
+
+	if block.settings.badge_type == 'percentage' and compare_at_price > 0
+		assign savings = compare_at_price | minus: price | times: 100 | divided_by: compare_at_price | round | append: '%'
+	elsif block.settings.badge_type == 'value' and compare_at_price > 0
+		assign savings = compare_at_price | minus: price
+		if block.settings.badge_round_value
+			assign savings = savings | plus: 50 | divided_by: 100 | times: 100
+		endif
+	else
+		assign savings = false
+	endif
+
+	assign show_compare = false
+
+	if block.settings.compare_at_price_show == true and compare_at_price != false and price != false and compare_at_price > price
+		assign show_compare = true
+	endif
+
+	assign show_badge = false
+
+	if block.settings.badge_show == true and show_compare == true
+		assign show_badge = true
+	endif
+
+	capture container_properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+
+		echo '--compare-at-price-order:' | append: block.settings.compare_at_price_order | append: ';'
+		echo '--compare-at-price-text-color:' | append: block.settings.compare_at_price_text_color | default: 'transparent' | append: ';'
+		echo '--compare-at-price-font-size:' | append: block.settings.compare_at_price_font_size | append: 'px;'
+		echo '--compare-at-price-weight:' | append: block.settings.compare_at_price_weight | append: ';'
+		echo '--compare-at-price-color-background:' | append: block.settings.compare_at_price_background_color | default: 'transparent' | append: ';'
+		echo '--compare-at-price-background-padding-y:' | append: block.settings.compare_at_price_background_padding_y | append: 'px;'
+		echo '--compare-at-price-background-padding-x:' | append: block.settings.compare_at_price_background_padding_x | append: 'px;'
+		echo '--compare-at-price-strikethrough-height:' | append: block.settings.compare_at_price_strikethrough_height | append: 'px;'
+		echo '--compare-at-price-strikethrough-rotate:' | append: '-' | append: block.settings.compare_at_price_strikethrough_rotate | append: 'deg;'
+
+		echo '--price-order:' | append: block.settings.price_order | append: ';'
+		echo '--price-text-color:' | append: block.settings.price_text_color | default: 'transparent' | append: ';'
+		echo '--price-font-size:' | append: block.settings.price_font_size | append: 'px;'
+		echo '--price-weight:' | append: block.settings.price_weight | append: ';'
+		echo '--price-color-background:' | append: block.settings.price_background_color | default: 'transparent' | append: ';'
+		echo '--price-background-padding-y:' | append: block.settings.price_background_padding_y | append: 'px;'
+		echo '--price-background-padding-x:' | append: block.settings.price_background_padding_x | append: 'px;'
+
+		echo '--badge-order:' | append: block.settings.badge_order | append: ';'
+		echo '--badge-text-color:' | append: block.settings.badge_text_color | default: 'transparent' | append: ';'
+		echo '--badge-font-size:' | append: block.settings.badge_font_size | append: 'px;'
+		echo '--badge-weight:' | append: block.settings.badge_weight | append: ';'
+		echo '--badge-color-background:' | append: block.settings.badge_background_color | default: 'transparent' | append: ';'
+		echo '--badge-background-padding-y:' | append: block.settings.badge_background_padding_y | append: 'px;'
+		echo '--badge-background-padding-x:' | append: block.settings.badge_background_padding_x | append: 'px;'
+	endcapture
+%}
+
+{% comment %}
+	<div>price: {{ price | money_with_currency }}</div>
+	<div>price: {{ price | money }}</div>
+{% endcomment %}
+
+{% liquid
+	assign container_classes = 'pp-product-price'
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+	assign container_classes = container_classes | append: ' pp:flex pp:w-full pp:flex-wrap pp:items-center pp:gap-(--gap)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' ' | append: block.id
+%}
+
+{% liquid
+	assign compare_at_price_classes = 'pp-compare-at-price'
+	assign compare_at_price_classes = compare_at_price_classes | append: ' pp:relative pp:text-(length:--compare-at-price-font-size) pp:font-(--compare-at-price-weight) pp:text-(--compare-at-price-text-color) pp:order-(--compare-at-price-order) pp:leading-none'
+	assign compare_at_price_classes = compare_at_price_classes | append: ' pp:bg-(--compare-at-price-color-background) pp:px-(--compare-at-price-background-padding-x)! pp:py-(--compare-at-price-background-padding-y)!'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.compare_at_price_background_border_radius
+	endcapture
+
+	assign compare_at_price_classes = compare_at_price_classes | append: ' ' | append: border_radius
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.compare_at_price_letter_spacing
+	endcapture
+
+	assign compare_at_price_classes = compare_at_price_classes | append: ' ' | append: letter_spacing
+
+	if block.settings.compare_at_price_strikethrough
+		assign compare_at_price_classes = compare_at_price_classes | append: ' pp:before:absolute pp:before:top-1/2 pp:before:left-1/2 pp:before:h-(--compare-at-price-strikethrough-height) pp:before:w-full pp:before:-translate-x-1/2 pp:before:-translate-y-1/2 pp:before:rotate-(--compare-at-price-strikethrough-rotate) pp:before:transform pp:before:bg-(--compare-at-price-text-color) pp:before:content-[""]'
+	endif
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.compare_at_price_case
+	endcapture
+	assign compare_at_price_classes = compare_at_price_classes | append: ' ' | append: text_transform
+%}
+
+{% liquid
+	assign price_classes = 'pp-price'
+	assign price_classes = price_classes | append: ' pp:text-(length:--price-font-size) pp:font-(--price-weight) pp:text-(--price-text-color) pp:bg-(--price-color-background) pp:px-(--price-background-padding-x)! pp:py-(--price-background-padding-y)! pp:order-(--price-order) pp:leading-none'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.price_background_border_radius
+	endcapture
+
+	assign price_classes = price_classes | append: ' ' | append: border_radius
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.price_letter_spacing
+	endcapture
+
+	assign price_classes = price_classes | append: ' ' | append: letter_spacing
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.price_case
+	endcapture
+	assign price_classes = price_classes | append: ' ' | append: text_transform
+%}
+
+{% liquid
+	assign savings_classes = 'pp-savings'
+	assign savings_classes = savings_classes | append: ' pp:shrink-0 pp:text-(length:--badge-font-size) pp:font-(--badge-weight) pp:text-(--badge-text-color) pp:bg-(--badge-color-background) pp:px-(--badge-background-padding-x)! pp:py-(--badge-background-padding-y)! pp:order-(--badge-order) pp:text-center pp:leading-none'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.badge_background_border_radius
+	endcapture
+
+	assign savings_classes = savings_classes | append: ' ' | append: border_radius
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.badge_letter_spacing
+	endcapture
+
+	assign savings_classes = savings_classes | append: ' ' | append: letter_spacing
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.badge_case
+	endcapture
+	assign savings_classes = savings_classes | append: ' ' | append: text_transform
+%}
+
+<pagepilot-product-price
+	data-block-id='{{ block.id }}'
+	data-product-id='{{ product.id }}'
+	{{ block.shopify_attributes }}
+>
+	<div
+		ref='priceContainer'
+		class='{{ container_classes }}'
+		style='{{ container_properties }}'
+	>
+		<div class='pp:flex pp:flex-wrap pp:items-center pp:gap-(--gap)'>
+			{% if show_compare %}
+				<span class='{{ compare_at_price_classes }}'>
+					{%- if block.settings.compare_at_price_currency_symbol_show -%}
+						{{ symbol -}}
+					{%- endif -%}
+
+					{{- compare_at_price | money_without_currency -}}
+
+					{% if block.settings.compare_at_price_currency_code_show %}
+						{{ currency -}}
+					{%- endif -%}
+				</span>
+			{% endif %}
+
+			{% if price %}
+				<span class='{{ price_classes }}'>
+					{%- if block.settings.price_currency_symbol_show -%}
+						{{ symbol -}}
+					{%- endif -%}
+
+					{{- price | money_without_currency -}}
+
+					{% if block.settings.price_currency_code_show %}
+						{{ currency -}}
+					{%- endif -%}
+				</span>
+			{% endif %}
+		</div>
+		{% if show_badge %}
+			<div class='{{ savings_classes }}'>
+				{%- if block.settings.badge_text_after_discount_show == false -%}
+					{{- block.settings.badge_text }}
+				{%- endif -%}
+
+				{% if block.settings.badge_type == 'percentage' %}
+					{{ savings }}
+				{% else %}
+					{%- if block.settings.badge_currency_symbol_show -%}
+						{{- symbol -}}
+					{%- endif -%}
+					{{- savings | money_without_trailing_zeros | replace: '$', '' -}}
+					{% if block.settings.badge_currency_code_show %}
+						{{ currency -}}
+					{%- endif -%}
+				{%- endif -%}
+
+				{% if block.settings.badge_text_after_discount_show == true %}
+					{{ block.settings.badge_text -}}
+				{%- endif -%}
+			</div>
+		{% endif %}
+	</div>
+</pagepilot-product-price>
+
+{% schema %}
+{
+	"name": "Product Price (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "range",
+			"id": "gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"label": "Gap",
+			"default": 6
+		},
+		{
+			"type": "header",
+			"content": "Price"
+		},
+		{
+			"type": "color",
+			"id": "price_text_color",
+			"label": "Text Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "price_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 16
+		},
+		{
+			"type": "select",
+			"id": "price_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "500"
+		},
+		{
+			"type": "select",
+			"id": "price_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "price_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "price_background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "range",
+			"id": "price_background_padding_y",
+			"label": "Background Padding Y",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "price_background_padding_x",
+			"label": "Background Padding X",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "price_background_border_radius",
+			"label": "Background Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "checkbox",
+			"id": "price_currency_symbol_show",
+			"label": "Show Currency Symbol",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "price_currency_code_show",
+			"label": "Show Currency Code",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "price_order",
+			"label": "Order",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "ord",
+			"default": 2
+		},
+		{
+			"type": "header",
+			"content": "Compare At Price"
+		},
+		{
+			"type": "checkbox",
+			"id": "compare_at_price_show",
+			"label": "Show Compare At Price",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "compare_at_price_text_color",
+			"label": "Text Color",
+			"default": "#7C7C7C",
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 16,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "compare_at_price_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400",
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "compare_at_price_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal",
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "compare_at_price_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none",
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "compare_at_price_background_color",
+			"label": "Background Color",
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_background_padding_x",
+			"label": "Background Padding X",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_background_padding_y",
+			"label": "Background Padding Y",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_background_border_radius",
+			"label": "Background Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "compare_at_price_currency_symbol_show",
+			"label": "Show Currency Symbol",
+			"default": true,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "compare_at_price_currency_code_show",
+			"label": "Show Currency Code",
+			"default": true,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "compare_at_price_strikethrough",
+			"label": "Strikethrough",
+			"default": true,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_strikethrough_height",
+			"label": "Strikethrough Height",
+			"min": 1,
+			"max": 5,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.compare_at_price_strikethrough == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_strikethrough_rotate",
+			"label": "Strikethrough Rotate",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "deg",
+			"default": 0,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.compare_at_price_strikethrough == true }}"
+		},
+		{
+			"type": "range",
+			"id": "compare_at_price_order",
+			"label": "Order",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "ord",
+			"default": 1,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Badge",
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "badge_show",
+			"label": "Show Badge",
+			"default": true,
+			"visible_if": "{{ block.settings.compare_at_price_show == true }}"
+		},
+		{
+			"type": "text",
+			"id": "badge_text",
+			"label": "Text",
+			"default": "Save",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "badge_text_after_discount_show",
+			"label": "Show Text After Discount",
+			"default": false,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "badge_type",
+			"label": "Type",
+			"options": [
+				{
+					"value": "percentage",
+					"label": "Percentage"
+				},
+				{
+					"value": "value",
+					"label": "Value"
+				}
+			],
+			"default": "percentage",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "badge_round_value",
+			"label": "Round Value",
+			"default": false,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true and block.settings.badge_type == 'value' }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "badge_currency_symbol_show",
+			"label": "Show Currency Symbol",
+			"default": true,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true and block.settings.badge_type == 'value' }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "badge_currency_code_show",
+			"label": "Show Currency Code",
+			"default": false,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true and block.settings.badge_type == 'value' }}"
+		},
+		{
+			"type": "color",
+			"id": "badge_text_color",
+			"label": "Text Color",
+			"default": "#ffffff",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 12,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "badge_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "500",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "badge_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "badge_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "uppercase",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "badge_background_color",
+			"label": "Background Color",
+			"default": "#01b038",
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_background_padding_x",
+			"label": "Background Padding X",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 10,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_background_padding_y",
+			"label": "Background Padding Y",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 5,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_background_border_radius",
+			"label": "Background Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_order",
+			"label": "Order",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "ord",
+			"default": 3,
+			"visible_if": "{{ block.settings.compare_at_price_show == true and block.settings.badge_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the advertorial content. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Product Price (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

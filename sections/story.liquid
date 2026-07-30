@@ -1,5 +1,0 @@
-<section class="section story"><div class="page-width story-grid">
-  <div class="story-visual" {% if section.settings.image %}style="background:url('{{ section.settings.image | image_url: width: 1200 }}') center/cover"{% endif %}></div>
-  <div><div class="eyebrow">{{ section.settings.eyebrow }}</div><h2 class="section-title">{{ section.settings.heading }}</h2><p>{{ section.settings.text }}</p><a class="button button--light" href="{{ section.settings.link }}">{{ section.settings.label }}</a></div>
-</div></section>
-{% schema %}{"name":"Markengeschichte","settings":[{"type":"image_picker","id":"image","label":"Bild"},{"type":"text","id":"eyebrow","label":"Kleine Überschrift","default":"Weniger, aber besser"},{"type":"text","id":"heading","label":"Überschrift","default":"Entworfen, um Jahre zu bleiben."},{"type":"textarea","id":"text","label":"Text","default":"Wir wählen Materialien, Hersteller und Designs nach einem einfachen Maßstab: Würden wir dieses Stück selbst jeden Tag nutzen?"},{"type":"text","id":"label","label":"Button","default":"Unsere Philosophie"},{"type":"url","id":"link","label":"Link"}],"presets":[{"name":"Markengeschichte"}]}{% endschema %}

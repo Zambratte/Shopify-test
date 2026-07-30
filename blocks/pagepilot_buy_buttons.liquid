@@ -1,0 +1,172 @@
+{% comment %}
+	@pp blocks/pagepilot-buy-buttons 1.0.7
+{% endcomment %}
+
+{% liquid
+	if closest.product != null
+		assign product = closest.product
+	endif
+%}
+
+{% liquid
+	capture container_properties
+		echo '--margin-top: ' | append: block.settings.margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: block.settings.margin_bottom | append: 'px;'
+		echo '--buttons-gap: ' | append: block.settings.buttons_gap | append: 'px;'
+	endcapture
+
+	assign container_classes = 'pp-buy-buttons'
+
+	assign container_classes = container_classes | append: ' pp:grid pp:gap-(--buttons-gap) pp:mt-(--margin-top) pp:mb-(--margin-bottom)'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	if block.settings.buttons_stack
+		assign container_classes = container_classes | append: ' pp:grid-cols-1'
+	else
+		assign container_classes = container_classes | append: ' pp:grid-cols-[10rem_1fr] pp:items-end'
+	endif
+%}
+
+<div
+	class='buy-buttons-block buy-buttons-block--{{ block.id }}'
+	{{ block.shopify_attributes }}
+>
+	{%- if product != blank -%}
+		{%- assign product_form_id = 'BuyButtons-ProductForm-' | append: section.id -%}
+
+		<pagepilot-product-form-component
+			data-section-id='{{ section.id }}'
+			data-product-id='{{ product.id }}'
+			data-product-url='{{ product.url }}'
+			on:submit='/handleSubmit'
+			data-quantity-default='{% if product.selected_or_first_available_variant.quantity_rule.min %}{{ product.selected_or_first_available_variant.quantity_rule.min }}{% else %}1{% endif %}'
+		>
+			<div
+				class='visually-hidden'
+				aria-live='assertive'
+				role='status'
+				aria-atomic='true'
+				ref='liveRegion'
+			></div>
+
+			{%- form 'product', product, id: product_form_id, data-type: 'add-to-cart-form' -%}
+				<div class='{{ container_classes }}' style='{{ container_properties }}'>
+					<input
+						type='hidden'
+						name='id'
+						ref='variantId'
+						value='{{ product.selected_or_first_available_variant.id }}'
+					>
+
+					{% content_for 'block', type: '_pagepilot_quantity', id: 'static-pagepilot_quantity' %}
+
+					{% content_for 'block',
+						type: '_pagepilot_add_to_cart',
+						id: 'static-pagepilot_add_to_cart',
+						product: product
+					%}
+
+					{% content_for 'block',
+						type: '_pagepilot_accelerated_checkout',
+						id: 'static-pagepilot_accelerated_checkout',
+						product: product,
+						form_obj: form
+					%}
+				</div>
+			{%- endform -%}
+
+			<div
+				class='pp:hidden'
+				ref='addToCartTextError'
+			>
+				<div
+					class='pp:flex pp:items-center pp:gap-2 pp:text-red-500 pp:mt-2'
+				>
+					<i data-lucide='badge-alert' class='pp:shrink-0 pp:size-4 pp:text-red-500'></i>
+				</div>
+			</div>
+		</pagepilot-product-form-component>
+	{%- endif -%}
+</div>
+
+{% schema %}
+{
+	"name": "Buy Buttons (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "buttons_stack",
+			"label": "Stack buttons",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "buttons_gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the custom HTML. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Buy Buttons (PP)",
+			"category": "PagePilot",
+			"blocks": {
+				"static-pagepilot_quantity": {
+					"type": "_pagepilot_quantity",
+					"static": true
+				},
+				"static-pagepilot_add_to_cart": {
+					"type": "_pagepilot_add_to_cart",
+					"static": true
+				},
+				"static-pagepilot_accelerated_checkout": {
+					"type": "_pagepilot_accelerated_checkout",
+					"static": true
+				}
+			}
+		}
+	]
+}
+{% endschema %}

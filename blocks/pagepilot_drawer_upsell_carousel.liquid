@@ -1,0 +1,253 @@
+{% comment %}
+	@pp blocks/pagepilot-drawer-upsell-carousel 1.2.3
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		assign margin_top = block.settings.margin_top | times: 2
+		assign margin_bottom = block.settings.margin_bottom | times: 2
+		assign margin_top_mobile = block.settings.margin_top_mobile | times: 2
+		assign margin_bottom_mobile = block.settings.margin_bottom_mobile | times: 2
+		echo '--margin-top: ' | append: margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: margin_bottom | append: 'px;'
+		echo '--margin-top-mobile: ' | append: margin_top_mobile | append: 'px;'
+		echo '--margin-bottom-mobile: ' | append: margin_bottom_mobile | append: 'px;'
+
+		echo '--background-color: ' | append: block.settings.background_color | append: ';'
+
+		echo '--headline-text-color: ' | append: block.settings.headline_text_color | append: ';'
+		echo '--headline-font-size: ' | append: block.settings.headline_font_size | append: 'px;'
+		echo '--headline-font-size-mobile: ' | append: block.settings.headline_font_size_mobile | append: 'px;'
+		echo '--headline-font-weight: ' | append: block.settings.headline_weight | append: ';'
+
+		if block.settings.headline_line_height == 'custom'
+			echo '--headline-line-height-custom: ' | append: block.settings.headline_line_height_custom | append: 'px;'
+			echo '--headline-line-height-custom-mobile: ' | append: block.settings.headline_line_height_custom_mobile | append: 'px;'
+		endif
+
+		echo '--navigation-icon-size: ' | append: block.settings.navigation_icon_size | append: 'px;'
+		echo '--navigation-color: ' | append: block.settings.navigation_color | append: ';'
+
+		echo '--card-spacing: ' | append: block.settings.card_spacing | append: 'px;'
+		echo '--card-padding: ' | append: block.settings.card_padding | append: 'px;'
+
+		if block.settings.card_border != 'none' and block.settings.card_border_color != blank
+			echo '--card-border-width: ' | append: block.settings.card_border_width | append: 'px;'
+			echo '--card-border-color: ' | append: block.settings.card_border_color | append: ';'
+		endif
+
+		if block.settings.card_background_color != blank
+			echo '--card-background-color: ' | append: block.settings.card_background_color | append: ';'
+		endif
+
+		echo '--image-width: ' | append: block.settings.image_width | append: 'px;'
+		echo '--image-spacing: ' | append: block.settings.image_spacing | append: 'px;'
+		case block.settings.image_ratio
+			when 'adapt'
+				echo '--image-ratio: ' | append: 'auto' | append: ';'
+			when 'square'
+				echo '--image-ratio: ' | append: '1 / 1' | append: ';'
+			when 'portrait'
+				echo '--image-ratio: ' | append: '4 / 5' | append: ';'
+			when 'landscape'
+				echo '--image-ratio: ' | append: '16 / 9' | append: ';'
+		endcase
+
+		echo '--product-title-text-color: ' | append: block.settings.product_title_text_color | append: ';'
+		echo '--product-title-font-size: ' | append: block.settings.product_title_font_size | append: 'px;'
+		echo '--product-title-font-size-mobile: ' | append: block.settings.product_title_font_size_mobile | append: 'px;'
+		echo '--product-title-font-weight: ' | append: block.settings.product_title_weight | append: ';'
+		if block.settings.product_title_line_height == 'custom'
+			echo '--product-title-line-height-custom: ' | append: block.settings.product_title_line_height_custom | append: 'px;'
+			echo '--product-title-line-height-custom-mobile: ' | append: block.settings.product_title_line_height_custom_mobile | append: 'px;'
+		endif
+
+		echo '--product-description-text-color: ' | append: block.settings.product_description_text_color | append: ';'
+		echo '--product-description-font-size: ' | append: block.settings.product_description_font_size | append: 'px;'
+		echo '--product-description-font-size-mobile: ' | append: block.settings.product_description_font_size_mobile | append: 'px;'
+		echo '--product-description-font-weight: ' | append: block.settings.product_description_weight | append: ';'
+		if block.settings.product_description_line_height == 'custom'
+			echo '--product-description-line-height-custom: ' | append: block.settings.product_description_line_height_custom | append: 'px;'
+			echo '--product-description-line-height-custom-mobile: ' | append: block.settings.product_description_line_height_custom_mobile | append: 'px;'
+		endif
+
+		echo '--product-price-compare-at-price-gap: ' | append: block.settings.product_price_compare_at_price_gap | append: 'px;'
+		echo '--product-price-compare-at-price-gap-mobile: ' | append: block.settings.product_price_compare_at_price_gap_mobile | append: 'px;'
+		echo '--product-price-text-color: ' | append: block.settings.product_price_text_color | append: ';'
+		echo '--product-price-font-size: ' | append: block.settings.product_price_font_size | append: 'px;'
+		echo '--product-price-font-size-mobile: ' | append: block.settings.product_price_font_size_mobile | append: 'px;'
+		echo '--product-price-font-weight: ' | append: block.settings.product_price_text_weight | append: ';'
+		echo '--product-price-compare-at-price-text-color: ' | append: block.settings.product_price_compare_at_price_text_color | append: ';'
+		echo '--product-price-compare-at-price-text-weight: ' | append: block.settings.product_price_compare_at_price_text_weight | append: ';'
+
+		echo '--product-option-text-color: ' | append: block.settings.product_option_text_color | append: ';'
+		echo '--product-option-font-size: ' | append: block.settings.product_option_font_size | append: 'px;'
+		echo '--product-option-font-size-mobile: ' | append: block.settings.product_option_font_size_mobile | append: 'px;'
+		echo '--product-option-font-weight: ' | append: block.settings.product_option_weight | append: ';'
+		echo '--product-option-spacing: ' | append: block.settings.product_option_spacing | append: 'px;'
+
+		echo '--product-variant-padding-y: ' | append: block.settings.product_variant_padding_y | append: 'px;'
+		echo '--product-variant-padding-x: ' | append: block.settings.product_variant_padding_x | append: 'px;'
+		assign product_variant_padding_x_double = block.settings.product_variant_padding_x | times: 2
+		echo '--product-variant-padding-x-double: ' | append: product_variant_padding_x_double | append: 'px;'
+		echo '--product-variant-icon-size: ' | append: block.settings.product_variant_icon_size | append: 'px;'
+		echo '--product-variant-icon-color: ' | append: block.settings.product_variant_icon_color | append: ';'
+		echo '--product-variant-text-color: ' | append: block.settings.product_variant_text_color | append: ';'
+		echo '--product-variant-font-size: ' | append: block.settings.product_variant_font_size | append: 'px;'
+		echo '--product-variant-font-size-mobile: ' | append: block.settings.product_variant_font_size_mobile | append: 'px;'
+		echo '--product-variant-font-weight: ' | append: block.settings.product_variant_font_weight | append: ';'
+		echo '--product-variant-background-color: ' | append: block.settings.product_variant_background_color | append: ';'
+		if block.settings.product_variant_border != 'none' and block.settings.product_variant_border_color != blank
+			echo '--product-variant-border-width: ' | append: block.settings.product_variant_border_width | append: 'px;'
+			echo '--product-variant-border-color: ' | append: block.settings.product_variant_border_color | append: ';'
+		endif
+
+		echo '--product-atc-button-padding-x: ' | append: block.settings.product_atc_button_padding_x | append: 'px;'
+		echo '--product-atc-button-padding-y: ' | append: block.settings.product_atc_button_padding_y | append: 'px;'
+		echo '--product-atc-button-text-color: ' | append: block.settings.product_atc_button_text_color | append: ';'
+		echo '--product-atc-button-font-size: ' | append: block.settings.product_atc_button_font_size | append: 'px;'
+		echo '--product-atc-button-font-size-mobile: ' | append: block.settings.product_atc_button_font_size_mobile | append: 'px;'
+		echo '--product-atc-button-font-weight: ' | append: block.settings.product_atc_button_weight | append: ';'
+		echo '--product-atc-button-background-color: ' | append: block.settings.product_atc_button_background_color | append: ';'
+		if block.settings.product_atc_button_border != 'none' and block.settings.product_atc_button_border_color != blank
+			echo '--product-atc-button-border-width: ' | append: block.settings.product_atc_button_border_width | append: 'px;'
+			echo '--product-atc-button-border-color: ' | append: block.settings.product_atc_button_border_color | append: ';'
+		endif
+	endcapture
+%}
+
+{% liquid
+	assign any_upsell_in_cart = false
+
+	assign cart_product_ids = '|'
+	for cart_item in cart.items
+		assign cart_product_ids = cart_product_ids | append: cart_item.product_id | append: '|'
+	endfor
+%}
+
+{% comment %} Container {% endcomment %}
+{% liquid
+	assign container_classes = 'pp-drawer-upsell-carousel pp:grid pp:w-full pp:grid-cols-1'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top-mobile) pp:mb-(--margin-bottom-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mb-(--margin-bottom)'
+	assign container_classes = container_classes | append: ' pp:overflow-hidden pp:bg-(--background-color)'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+	assign container_classes = container_classes | append: ' ' | append: block.id
+%}
+
+{% comment %} Headline {% endcomment %}
+{% liquid
+	assign headline_classes = 'pp:text-(length:--headline-font-size-mobile) pp:font-(--headline-font-weight) pp:text-pretty pp:wrap-anywhere pp:text-(--headline-text-color) pp:@3xl:text-(length:--headline-font-size)'
+
+	capture line_height
+		render 'pagepilot-line-height', value: block.settings.headline_line_height, height_property: '--headline-line-height-custom', height_property_mobile: '--headline-line-height-custom-mobile'
+	endcapture
+	assign headline_classes = headline_classes | append: ' ' | append: line_height
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.headline_case
+	endcapture
+	assign headline_classes = headline_classes | append: ' ' | append: text_transform
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.headline_letter_spacing
+	endcapture
+	assign headline_classes = headline_classes | append: ' ' | append: letter_spacing
+%}
+
+{% comment %} Navigation {% endcomment %}
+{% liquid
+	assign navigation_classes = 'pp:shrink-0 pp:items-center pp:justify-center pp:gap-2 pp:text-(--navigation-color) pp:[&_svg]:size-(--navigation-icon-size)'
+
+	if block.settings.navigation_show
+		assign navigation_classes = navigation_classes | append: ' pp:flex'
+	else
+		assign navigation_classes = navigation_classes | append: ' pp:hidden pp:@3xl:flex'
+	endif
+
+	if block.settings.navigation_mobile_show
+		assign navigation_classes = navigation_classes | append: ' pp:@3xl:flex'
+	else
+		assign navigation_classes = navigation_classes | append: ' pp:@3xl:hidden'
+	endif
+%}
+
+{% comment %} Slide {% endcomment %}
+{% liquid
+	assign slide_classes = 'pp:flex pp:h-full pp:gap-(--image-spacing) pp:bg-(--card-background-color) pp:p-(--card-padding)'
+
+	case block.settings.card_position_vertical
+		when 'flex-start'
+			assign slide_classes = slide_classes | append: ' pp:items-start'
+		when 'center'
+			assign slide_classes = slide_classes | append: ' pp:items-center'
+		when 'flex-end'
+			assign slide_classes = slide_classes | append: ' pp:items-end'
+	endcase
+
+	capture border
+		render 'pagepilot-border', value: block.settings.card_border, width_property: '--card-border-width', color_property: '--card-border-color'
+	endcapture
+	assign slide_classes = slide_classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.card_border_radius
+	endcapture
+	assign slide_classes = slide_classes | append: ' ' | append: border_radius
+%}
+
+{% comment %} Product Image {% endcomment %}
+{% liquid
+	assign slide_image_classes = 'pp:aspect-(--image-ratio) pp:w-full pp:max-w-(--image-width) pp:shrink-0 pp:object-cover'
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.image_border_radius
+	endcapture
+	assign slide_image_classes = slide_image_classes | append: ' ' | append: border_radius
+%}
+
+{% comment %} Product Title {% endcomment %}
+{% liquid
+	assign product_title_classes = 'pp:text-(length:--product-title-font-size-mobile) pp:font-(--product-title-font-weight) pp:text-pretty pp:wrap-anywhere pp:text-(--product-title-text-color) pp:@3xl:text-(length:--product-title-font-size)'
+	capture line_height
+		render 'pagepilot-line-height', value: block.settings.product_title_line_height, height_property: '--product-title-line-height-custom', height_property_mobile: '--product-title-line-height-custom-mobile'
+	endcapture
+	assign product_title_classes = product_title_classes | append: ' ' | append: line_height
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.product_title_case
+	endcapture
+	assign product_title_classes = product_title_classes | append: ' ' | append: text_transform
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.product_title_letter_spacing
+	endcapture
+	assign product_title_classes = product_title_classes | append: ' ' | append: letter_spacing
+%}
+
+{% comment %} Product Description {% endcomment %}
+{% liquid
+	assign product_description_classes = 'pp:text-(length:--product-description-font-size-mobile) pp:font-(--product-description-font-weight) pp:text-(--product-description-text-color) pp:@3xl:text-(length:--product-description-font-size)'
+
+	if block.settings.product_description_show
+		assign product_description_classes = product_description_classes | append: ' pp:block'
+	else
+		assign product_descri×NúæÚ$z{-®éÜj×'&öGV7E÷&–6Uö6ö×&UöE÷&–6U÷FW‡Eö6öÆ÷""À ’&Æ&VÂ#¢$6ö×&RB&–6RFW‡B6öÆ÷""À ’&FVfVÇB#¢"4DC#s$""À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷&–6Uö6ö×&UöE÷&–6U÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7E÷&–6Uö6ö×&UöE÷&–6U÷FW‡E÷vV–v‡B"À ’&Æ&VÂ#¢$6ö×&RB&–6RFW‡BvV–v‡B"À ’&÷F–öç2#¢° —° ’'fÇVR#¢#"À ’&Æ&VÂ#¢%F†–â  —ÒÀ —° ’'fÇVR#¢#3"À ’&Æ&VÂ#¢$Æ–v‡B  —ÒÀ —° ’'fÇVR#¢#C"À ’&Æ&VÂ#¢%&VwVÆ"  —ÒÀ —° ’'fÇVR#¢#S"À ’&Æ&VÂ#¢$ÖVF—VÒ  —ÒÀ —° ’'fÇVR#¢#c"À ’&Æ&VÂ#¢%6VÖ–&öÆB  —ÒÀ —° ’'fÇVR#¢#s"À ’&Æ&VÂ#¢$&öÆB  —ÒÀ —° ’'fÇVR#¢#“"À ’&Æ&VÂ#¢$&Æ6²  —Ğ •ÒÀ ’&FVfVÇB#¢#C  —ÒÀ  —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢%&öGV7Bf&–çG2  —ÒÀ —° ’'G—R#¢&6†V6¶&÷‚"À ’&–B#¢'&öGV7E÷f&–çE÷6†÷r"À ’&Æ&VÂ#¢%6†÷r"À ’&FVfVÇB#¢G'VP —ÒÀ —° ’'G—R#¢&6†V6¶&÷‚"À ’&–B#¢'&öGV7E÷f&–çEöÖö&–ÆU÷6†÷r"À ’&Æ&VÂ#¢$Öö&–ÆR6†÷r"À ’&FVfVÇB#¢G'VP —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çEö–6öå÷6—¦R"À ’&Æ&VÂ#¢$–6öâ6—¦R"À ’&Ö–â#¢À ’&Ö‚#¢SÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢bÀ  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7E÷f&–çEö–6öåö6öÆ÷""À ’&Æ&VÂ#¢$–6öâ6öÆ÷""À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7E÷f&–çE÷FW‡Eö6öÆ÷""À ’&Æ&VÂ#¢%FW‡B6öÆ÷""À ’&FVfVÇB#¢"3v3v3v2"À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çEöföçE÷6—¦R"À ’&Ö–â#¢À ’&Ö‚#¢sÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢%6—¦R"À ’&FVfVÇB#¢BÀ  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çEöföçE÷6—¦UöÖö&–ÆR"À ’&Ö–â#¢À ’&Ö‚#¢sÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢$Öö&–ÆR6—¦R"À ’&FVfVÇB#¢BÀ ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7E÷f&–çE÷vV–v‡B"À ’&Æ&VÂ#¢%vV–v‡B"À ’&÷F–öç2#¢° —° ’'fÇVR#¢#"À ’&Æ&VÂ#¢%F†–â  —ÒÀ —° ’'fÇVR#¢#3"À ’&Æ&VÂ#¢$Æ–v‡B  —ÒÀ —° ’'fÇVR#¢#C"À ’&Æ&VÂ#¢%&VwVÆ"  —ÒÀ —° ’'fÇVR#¢#S"À ’&Æ&VÂ#¢$ÖVF—VÒ  —ÒÀ —° ’'fÇVR#¢#c"À ’&Æ&VÂ#¢%6VÖ–&öÆB  —ÒÀ —° ’'fÇVR#¢#s"À ’&Æ&VÂ#¢$&öÆB  —ÒÀ —° ’'fÇVR#¢#“"À ’&Æ&VÂ#¢$&Æ6²  —Ğ •ÒÀ ’&FVfVÇB#¢#C"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ  —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7E÷f&–çEöÆWGFW%÷76–ær"À ’&Æ&VÂ#¢$ÆWGFW"76–ær"À ’&÷F–öç2#¢° —° ’'fÇVR#¢'F–v‡B"À ’&Æ&VÂ#¢%F–v‡B  —ÒÀ —° ’'fÇVR#¢&æ÷&ÖÂ"À ’&Æ&VÂ#¢$æ÷&ÖÂ  —ÒÀ —° ’'fÇVR#¢&Æö÷6R"À ’&Æ&VÂ#¢$Æö÷6R  —Ğ •ÒÀ ’&FVfVÇB#¢&æ÷&ÖÂ"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7E÷f&–çEö66R"À ’&Æ&VÂ#¢$66R"À ’&÷F–öç2#¢° —° ’'fÇVR#¢&æöæR"À ’&Æ&VÂ#¢$FVfVÇB  —ÒÀ —° ’'fÇVR#¢&Æ÷vW&66R"À ’&Æ&VÂ#¢$Æ÷vW&66R  —ÒÀ —° ’'fÇVR#¢'WW&66R"À ’&Æ&VÂ#¢%WW&66R  —ÒÀ —° ’'fÇVR#¢&6—FÆ—¦R"À ’&Æ&VÂ#¢$6—FÆ—¦R  —Ğ •ÒÀ ’&FVfVÇB#¢&æöæR"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7E÷f&–çEö&6¶w&÷VæEö6öÆ÷""À ’&Æ&VÂ#¢$&6¶w&÷VæB6öÆ÷""À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7E÷f&–çEö&÷&FW""À ’&Æ&VÂ#¢$&÷&FW"7G–ÆR"À ’&÷F–öç2#¢° —° ’'fÇVR#¢&æöæR"À ’&Æ&VÂ#¢$æöæR  —ÒÀ —° ’'fÇVR#¢'6öÆ–B"À ’&Æ&VÂ#¢%6öÆ–B  —ÒÀ —° ’'fÇVR#¢&F6†VB"À ’&Æ&VÂ#¢$F6†VB  —ÒÀ —° ’'fÇVR#¢&F÷GFVB"À ’&Æ&VÂ#¢$F÷GFVB  —Ğ •ÒÀ ’&FVfVÇB#¢'6öÆ–B"À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7E÷f&–çEö&÷&FW%ö6öÆ÷""À ’&Æ&VÂ#¢$&÷&FW"6öÆ÷""À ’&FVfVÇB#¢"4DdDdDb"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEö&÷&FW"ÒÂ&æöæUÂ"æB&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çEö&÷&FW%÷v–GF‚"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢$&÷&FW"F†–6¶æW72"À ’&FVfVÇB#¢À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEö&÷&FW"ÒÂ&æöæUÂ"æB&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çEö&÷&FW%÷&F—W2"À ’&Æ&VÂ#¢%&÷VæFVB6÷&æW'2"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢"R"À ’&FVfVÇB#¢3  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çE÷FF–æu÷’"À ’&Æ&VÂ#¢%FF–ær’"À ’&Ö–â#¢À ’&Ö‚#¢3À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢bÀ ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7E÷f&–çE÷FF–æu÷‚"À ’&Æ&VÂ#¢%FF–ær‚"À ’&Ö–â#¢À ’&Ö‚#¢3À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢%&öGV7B÷F–öç2"À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7Eö÷F–öå÷FW‡Eö6öÆ÷""À ’&Æ&VÂ#¢%FW‡B6öÆ÷""À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7Eö÷F–öåöföçE÷6—¦R"À ’&Ö–â#¢À ’&Ö‚#¢#À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢%6—¦R"À ’&FVfVÇB#¢"À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7Eö÷F–öåöföçE÷6—¦UöÖö&–ÆR"À ’&Ö–â#¢À ’&Ö‚#¢#À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢$Öö&–ÆR6—¦R"À ’&FVfVÇB#¢"À  ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7Eö÷F–öå÷vV–v‡B"À ’&Æ&VÂ#¢%vV–v‡B"À ’&÷F–öç2#¢° —° ’'fÇVR#¢#"À ’&Æ&VÂ#¢%F†–â  —ÒÀ —° ’'fÇVR#¢#3"À ’&Æ&VÂ#¢$Æ–v‡B  —ÒÀ —° ’'fÇVR#¢#C"À ’&Æ&VÂ#¢%&VwVÆ"  —ÒÀ —° ’'fÇVR#¢#S"À ’&Æ&VÂ#¢$ÖVF—VÒ  —ÒÀ —° ’'fÇVR#¢#c"À ’&Æ&VÂ#¢%6VÖ–&öÆB  —ÒÀ —° ’'fÇVR#¢#s"À ’&Æ&VÂ#¢$&öÆB  —ÒÀ —° ’'fÇVR#¢#“"À ’&Æ&VÂ#¢$&Æ6²  —Ğ •ÒÀ ’&FVfVÇB#¢#c"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7Eö÷F–öåöÆWGFW%÷76–ær"À ’&Æ&VÂ#¢$ÆWGFW"76–ær"À ’&÷F–öç2#¢° —° ’'fÇVR#¢'F–v‡B"À ’&Æ&VÂ#¢%F–v‡B  —ÒÀ —° ’'fÇVR#¢&æ÷&ÖÂ"À ’&Æ&VÂ#¢$æ÷&ÖÂ  —ÒÀ —° ’'fÇVR#¢&Æö÷6R"À ’&Æ&VÂ#¢$Æö÷6R  —Ğ •ÒÀ ’&FVfVÇB#¢&Æö÷6R"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7Eö÷F–öåö66R"À ’&Æ&VÂ#¢$66R"À ’&÷F–öç2#¢° —° ’'fÇVR#¢&æöæR"À ’&Æ&VÂ#¢$FVfVÇB  —ÒÀ —° ’'fÇVR#¢&Æ÷vW&66R"À ’&Æ&VÂ#¢$Æ÷vW&66R  —ÒÀ —° ’'fÇVR#¢'WW&66R"À ’&Æ&VÂ#¢%WW&66R  —ÒÀ —° ’'fÇVR#¢&6—FÆ—¦R"À ’&Æ&VÂ#¢$6—FÆ—¦R  —Ğ •ÒÀ ’&FVfVÇB#¢'WW&66R"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7Eö÷F–öå÷76–ær"À ’&Æ&VÂ#¢%76–ær"À ’&Ö–â#¢À ’&Ö‚#¢#À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢bÀ ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çE÷6†÷rÓÒG'VR÷"&Æö6²ç6WGF–æw2ç&öGV7E÷f&–çEöÖö&–ÆU÷6†÷rÓÒG'VR×Ò  —ÒÀ —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢$D2'WGFöâ  —ÒÀ —° ’'G—R#¢'FW‡B"À ’&–B#¢'&öGV7EöF5ö'WGFöå÷FW‡B"À ’&Æ&VÂ#¢%FW‡B"À ’&FVfVÇB#¢$FBFò6'B  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7EöF5ö'WGFöå÷FW‡Eö6öÆ÷""À ’&Æ&VÂ#¢%FW‡B6öÆ÷"  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7EöF5ö'WGFöåöföçE÷6—¦R"À ’&Ö–â#¢À ’&Ö‚#¢#À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢%6—¦R"À ’&FVfVÇB#¢0 —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7EöF5ö'WGFöåöföçE÷6—¦UöÖö&–ÆR"À ’&Ö–â#¢À ’&Ö‚#¢#À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&Æ&VÂ#¢$Öö&–ÆR6—¦R"À ’&FVfVÇB#¢0 —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7EöF5ö'WGFöå÷vV–v‡B"À ’&Æ&VÂ#¢%vV–v‡B"À ’&÷F–öç2#¢° —° ’'fÇVR#¢#"À ’&Æ&VÂ#¢%F†–â  —ÒÀ —° ’'fÇVR#¢#3"À ’&Æ&VÂ#¢$Æ–v‡B  —ÒÀ —° ’'fÇVR#¢#C"À ’&Æ&VÂ#¢%&VwVÆ"  —ÒÀ —° ’'fÇVR#¢#S"À ’&Æ&VÂ#¢$ÖVF—VÒ  —ÒÀ —° ’'fÇVR#¢#c"À ’&Æ&VÂ#¢%6VÖ–&öÆB  —ÒÀ —° ’'fÇVR#¢#s"À ’&Æ&VÂ#¢$&öÆB  —ÒÀ —° ’'fÇVR#¢#“"À ’&Æ&VÂ#¢$&Æ6²  —Ğ •ÒÀ ’&FVfVÇB#¢#S  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7EöF5ö'WGFöåöÆWGFW%÷76–ær"À ’&Æ&VÂ#¢$ÆWGFW"76–ær"À ’&÷F–öç2#¢° —° ’'fÇVR#¢'F–v‡B"À ’&Æ&VÂ#¢%F–v‡B  —ÒÀ —° ’'fÇVR#¢&æ÷&ÖÂ"À ’&Æ&VÂ#¢$æ÷&ÖÂ  —ÒÀ —° ’'fÇVR#¢&Æö÷6R"À ’&Æ&VÂ#¢$Æö÷6R  —Ğ •ÒÀ ’&FVfVÇB#¢&æ÷&ÖÂ  —ÒÀ —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7EöF5ö'WGFöåö66R"À ’&Æ&VÂ#¢$66R"À ’&÷F–öç2#¢° —° ’'fÇVR#¢&æöæR"À ’&Æ&VÂ#¢$FVfVÇB  —ÒÀ —° ’'fÇVR#¢&Æ÷vW&66R"À ’&Æ&VÂ#¢$Æ÷vW&66R  —ÒÀ —° ’'fÇVR#¢'WW&66R"À ’&Æ&VÂ#¢%WW&66R  —ÒÀ —° ’'fÇVR#¢&6—FÆ—¦R"À ’&Æ&VÂ#¢$6—FÆ—¦R  —Ğ •ÒÀ ’&FVfVÇB#¢&æöæR  —ÒÀ  —° ’'G—R#¢'6VÆV7B"À ’&–B#¢'&öGV7EöF5ö'WGFöåö&÷&FW""À ’&Æ&VÂ#¢$&÷&FW"7G–ÆR"À ’&÷F–öç2#¢° —° ’'fÇVR#¢&æöæR"À ’&Æ&VÂ#¢$æöæR  —ÒÀ —° ’'fÇVR#¢'6öÆ–B"À ’&Æ&VÂ#¢%6öÆ–B  —ÒÀ —° ’'fÇVR#¢&F6†VB"À ’&Æ&VÂ#¢$F6†VB  —ÒÀ —° ’'fÇVR#¢&F÷GFVB"À ’&Æ&VÂ#¢$F÷GFVB  —Ğ •ÒÀ ’&FVfVÇB#¢&æöæR  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7EöF5ö'WGFöåö&÷&FW%÷v–GF‚"À ’&Æ&VÂ#¢$&÷&FW"F†–6¶æW72"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7EöF5ö'WGFöåö&÷&FW"ÒÂ&æöæUÂ"×Ò  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7EöF5ö'WGFöåö&÷&FW%ö6öÆ÷""À ’&Æ&VÂ#¢$&÷&FW"6öÆ÷""À ’&FVfVÇB#¢"3"À ’'f—6–&ÆUö–b#¢'·²&Æö6²ç6WGF–æw2ç&öGV7EöF5ö'WGFöåö&÷&FW"ÒÂ&æöæUÂ"×Ò  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7EöF5ö'WGFöåö&÷&FW%÷&F—W2"À ’&Æ&VÂ#¢%&÷VæFVB6÷&æW'2"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢"R"À ’&FVfVÇB#¢S  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢'&öGV7EöF5ö'WGFöåö&6¶w&÷VæEö6öÆ÷""À ’&Æ&VÂ#¢$&6¶w&÷VæB6öÆ÷"  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7EöF5ö'WGFöå÷FF–æu÷‚"À ’&Æ&VÂ#¢%FF–ær‚"À ’&Ö–â#¢À ’&Ö‚#¢CÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢@ —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'&öGV7EöF5ö'WGFöå÷FF–æu÷’"À ’&Æ&VÂ#¢%FF–ær’"À ’&Ö–â#¢À ’&Ö‚#¢CÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢@ —ÒÀ —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢$V&æ6R  —ÒÀ —° ’'G—R#¢&6öÆ÷""À ’&–B#¢&&6¶w&÷VæEö6öÆ÷""À ’&Æ&VÂ#¢$&6¶w&÷VæB6öÆ÷"  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢&&÷&FW%÷&F—W2"À ’&Æ&VÂ#¢%&÷VæFVB6÷&æW'2"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢"R"À ’&FVfVÇB#¢S  —ÒÀ —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢$Ö&v–â  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢&Ö&v–å÷F÷"À ’&Æ&VÂ#¢%F÷"À ’&Ö–â#¢À ’&Ö‚#¢SÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢&Ö&v–åö&÷GFöÒ"À ’&Æ&VÂ#¢$&÷GFöÒ"À ’&Ö–â#¢À ’&Ö‚#¢SÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢&Ö&v–å÷F÷öÖö&–ÆR"À ’&Æ&VÂ#¢$Öö&–ÆRF÷"À ’&Ö–â#¢À ’&Ö‚#¢SÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢&Ö&v–åö&÷GFöÕöÖö&–ÆR"À ’&Æ&VÂ#¢$Öö&–ÆR&÷GFöÒ"À ’&Ö–â#¢À ’&Ö‚#¢SÀ ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢%FF–ær  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æu÷F÷"À ’&Æ&VÂ#¢%F÷"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æuö&÷GFöÒ"À ’&Æ&VÂ#¢$&÷GFöÒ"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æuöÆVgB"À ’&Æ&VÂ#¢$ÆVgB"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æu÷&–v‡B"À ’&Æ&VÂ#¢%&–v‡B"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æu÷F÷öÖö&–ÆR"À ’&Æ&VÂ#¢$Öö&–ÆRF÷"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æuö&÷GFöÕöÖö&–ÆR"À ’&Æ&VÂ#¢$Öö&–ÆR&÷GFöÒ"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æuöÆVgEöÖö&–ÆR"À ’&Æ&VÂ#¢$Öö&–ÆRÆVgB"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢'&ævR"À ’&–B#¢'FF–æu÷&–v‡EöÖö&–ÆR"À ’&Æ&VÂ#¢$Öö&–ÆR&–v‡B"À ’&Ö–â#¢À ’&Ö‚#¢À ’'7FW#¢À ’'Væ—B#¢'‚"À ’&FVfVÇB#¢  —ÒÀ —° ’'G—R#¢&†VFW""À ’&6öçFVçB#¢$7W7FöÒ  —ÒÀ —° ’'G—R#¢'FW‡B"À ’&–B#¢&7W7FöÕö6Æ72"À ’&Æ&VÂ#¢$6Æ72"À  ’&–æfò#¢%–÷R6âW6RF†—26Æ72FòFB7W7FöÒ7G–ÆW2FòF†R'WGFöââ×VÇF—ÆR6Æ76W26â&RFFVB'’6W&F–ærF†VÒv—F‚76Râ  —Ğ •ÒÀ ’'&W6WG2#¢° —° ’&æÖR#¢$G&vW"W6VÆÂ6&÷W6VÂ"À ’&6FVv÷'’#¢%vU–Æ÷B  —Ğ •Ğ§Ğ§²RVæG66†VÖWĞ

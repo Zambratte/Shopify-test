@@ -1,0 +1,17 @@
+{% comment %}
+	@pp snippets/pagepilot-text-alignment 1.0.7
+{% endcomment %}
+
+{%- assign value = value | default: 'left' -%}
+{%- assign prefix = prefix | default: 'pp:' -%}
+{%- assign breakpoint = breakpoint | default: '' -%}
+
+
+{%- case value -%}
+	{%- when 'left' -%}
+		{{- prefix }}{{- breakpoint -}}text-left {{ prefix -}}rtl:{{- breakpoint -}}text-right
+	{%- when 'center' -%}
+		{{- prefix -}}{{- breakpoint -}}text-center
+	{%- when 'right' -%}
+		{{- prefix -}}{{- breakpoint -}}text-right {{ prefix -}}rtl:{{- breakpoint -}}text-left
+{%- endcase -%}

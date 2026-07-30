@@ -1,0 +1,198 @@
+{% comment %}
+	@pp sections/pagepilot-advertorial-sidebar 1.0.2
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: section.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: section.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: section.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: section.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: section.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: section.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: section.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: section.settings.padding_right_mobile | append: 'px;'
+		echo '--margin-top: ' | append: section.settings.margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: section.settings.margin_bottom | append: 'px;'
+		assign max_width = section.settings.max_width | times: 12
+		echo '--max-width: ' | append: max_width | append: 'px;'
+	endcapture
+
+	assign container_classes = 'pp-advertorial-sidebar pp:sticky pp:top-0 pp:mx-auto pp:grid pp:w-full pp:max-w-(--max-width) pp:grid-cols-1 pp:gap-6'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top) pp:mb-(--margin-bottom)'
+
+	if section.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' ' | append: section.id
+%}
+
+<pagepilot-advertorial-sidebar
+	{{ section.shopify_attributes }}
+	class='{{ container_classes }}'
+	style='{{ properties }}'
+	dir='{{ settings.pagepilot.dir }}'
+>
+	{% for block in section.blocks %}
+		{% render block %}
+	{% endfor %}
+</pagepilot-advertorial-sidebar>
+
+{% schema %}
+{
+	"name": "Advertorial Sidebar (PP)",
+	"class": "pagepilot-section",
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	},
+	"blocks": [
+		{
+			"type": "pagepilot_group"
+		}
+	],
+	"settings": [
+		{
+			"type": "product",
+			"id": "product",
+			"label": "Product"
+		},
+		{
+			"type": "range",
+			"id": "max_width",
+			"label": "Max Width",
+			"min": 20,
+			"max": 30,
+			"step": 1,
+			"unit": "rem",
+			"default": 20
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the section. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Advertorial Sidebar (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

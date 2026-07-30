@@ -1,0 +1,797 @@
+{% comment %}
+	@pp blocks/pagepilot-drawer-upsell 1.0.2
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		assign background_color = block.settings.background_color | default: 'transparent'
+		echo '--background-color: ' | append: background_color | append: ';'
+		echo '--cards-gap: ' | append: block.settings.cards_gap | append: 'px;'
+
+		echo '--headline-text-color: ' | append: block.settings.headline_text_color | append: ';'
+		echo '--headline-font-size: ' | append: block.settings.headline_font_size | append: 'px;'
+		echo '--headline-font-size-mobile: ' | append: block.settings.headline_font_size_mobile | append: 'px;'
+		echo '--headline-font-weight: ' | append: block.settings.headline_weight | append: ';'
+
+		echo '--card-spacing: ' | append: block.settings.card_spacing | append: 'px;'
+		echo '--card-padding: ' | append: block.settings.card_padding | append: 'px;'
+		if block.settings.card_border != 'none' and block.settings.card_border_color != blank
+			echo '--card-border-width: ' | append: block.settings.card_border_width | append: 'px;'
+			echo '--card-border-color: ' | append: block.settings.card_border_color | append: ';'
+		endif
+		if block.settings.card_background_color != blank
+			echo '--card-background-color: ' | append: block.settings.card_background_color | append: ';'
+		endif
+
+		echo '--image-width: ' | append: block.settings.image_width | append: 'px;'
+		echo '--image-spacing: ' | append: block.settings.image_spacing | append: 'px;'
+		case block.settings.image_ratio
+			when 'adapt'
+				echo '--image-ratio: auto;'
+			when 'square'
+				echo '--image-ratio: 1 / 1;'
+			when 'portrait'
+				echo '--image-ratio: 4 / 5;'
+			when 'landscape'
+				echo '--image-ratio: 16 / 9;'
+		endcase
+
+		echo '--product-title-text-color: ' | append: block.settings.product_title_text_color | append: ';'
+		echo '--product-title-font-size: ' | append: block.settings.product_title_font_size | append: 'px;'
+		echo '--product-title-font-size-mobile: ' | append: block.settings.product_title_font_size_mobile | append: 'px;'
+		echo '--product-title-font-weight: ' | append: block.settings.product_title_weight | append: ';'
+
+		echo '--product-description-text-color: ' | append: block.settings.product_description_text_color | append: ';'
+		echo '--product-description-font-size: ' | append: block.settings.product_description_font_size | append: 'px;'
+		echo '--product-description-font-size-mobile: ' | append: block.settings.product_description_font_size_mobile | append: 'px;'
+		echo '--product-description-font-weight: ' | append: block.settings.product_description_weight | append: ';'
+
+		echo '--product-price-text-color: ' | append: block.settings.product_price_text_color | append: ';'
+		echo '--product-price-font-size: ' | append: block.settings.product_price_font_size | append: 'px;'
+		echo '--product-price-font-size-mobile: ' | append: block.settings.product_price_font_size_mobile | append: 'px;'
+		echo '--product-price-font-weight: ' | append: block.settings.product_price_text_weight | append: ';'
+		echo '--product-price-compare-at-price-text-color: ' | append: block.settings.product_price_compare_at_price_text_color | append: ';'
+		echo '--product-price-compare-at-price-text-weight: ' | append: block.settings.product_price_compare_at_price_text_weight | append: ';'
+
+		assign toggle_size = block.settings.toggle_size | default: 24
+		assign toggle_width = toggle_size | times: 1.8 | round
+		assign toggle_thumb = toggle_size | minus: 4
+		assign toggle_translate = toggle_width | minus: toggle_thumb | minus: 4
+		echo '--toggle-active-color: ' | append: block.settings.toggle_active_color | append: ';'
+		echo '--toggle-inactive-color: ' | append: block.settings.toggle_inactive_color | append: ';'
+		echo '--toggle-thumb-color: ' | append: block.settings.toggle_thumb_color | append: ';'
+		echo '--toggle-height: ' | append: toggle_size | append: 'px;'
+		echo '--toggle-width: ' | append: toggle_width | append: 'px;'
+		echo '--toggle-thumb-size: ' | append: toggle_thumb | append: 'px;'
+		echo '--toggle-thumb-translate: ' | append: toggle_translate | append: 'px;'
+	endcapture
+%}
+
+{% comment %} Track which variants are currently in the cart for the toggle state {% endcomment %}
+{% liquid
+	assign cart_variant_ids = '|'
+	for cart_item in cart.items
+		assign cart_variant_ids = cart_variant_ids | append: cart_item.variant_id | append: '|'
+	endfor
+%}
+
+{% comment %} Container {% endcomment %}
+{% liquid
+	assign container_classes = 'pp-drawer-upsell pp:grid pp:w-full pp:grid-cols-1 pp:gap-(--cards-gap)'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' pp:overflow-hidden pp:bg-(--background-color)'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+	assign container_classes = container_classes | append: ' ' | append: block.id
+%}
+
+{% comment %} Headline {% endcomment %}
+{% liquid
+	assign headline_classes = 'pp:text-(length:--headline-font-size-mobile) pp:font-(--headline-font-weight) pp:text-pretty pp:wrap-anywhere pp:text-(--headline-text-color) pp:leading-normal pp:@3xl:text-(length:--headline-font-size)'
+%}
+
+{% comment %} Card {% endcomment %}
+{% liquid
+	assign card_classes = 'pp:flex pp:gap-(--image-spacing) pp:bg-(--card-background-color) pp:p-(--card-padding)'
+
+	case block.settings.card_position_vertical
+		when 'flex-start'
+			assign card_classes = card_classes | append: ' pp:items-start'
+		when 'center'
+			assign card_classes = card_classes | append: ' pp:items-center'
+		when 'flex-end'
+			assign card_classes = card_classes | append: ' pp:items-end'
+	endcase
+
+	capture border
+		render 'pagepilot-border', value: block.settings.card_border, width_property: '--card-border-width', color_property: '--card-border-color'
+	endcapture
+	assign card_classes = card_classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.card_border_radius
+	endcapture
+	assign card_classes = card_classes | append: ' ' | append: border_radius
+%}
+
+{% comment %} Product Image {% endcomment %}
+{% liquid
+	assign image_classes = 'pp:aspect-(--image-ratio) pp:w-full pp:max-w-(--image-width) pp:shrink-0 pp:object-cover'
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.image_border_radius
+	endcapture
+	assign image_classes = image_classes | append: ' ' | append: border_radius
+%}
+
+{% comment %} Product Title {% endcomment %}
+{% liquid
+	assign title_classes = 'pp:text-(length:--product-title-font-size-mobile) pp:font-(--product-title-font-weight) pp:text-pretty pp:wrap-anywhere pp:text-(--product-title-text-color) pp:leading-snug pp:@3xl:text-(length:--product-title-font-size)'
+%}
+
+{% comment %} Product Description {% endcomment %}
+{% liquid
+	assign description_classes = 'pp:text-(length:--product-description-font-size-mobile) pp:font-(--product-description-font-weight) pp:text-(--product-description-text-color) pp:leading-snug pp:@3xl:text-(length:--product-description-font-size)'
+
+	if block.settings.product_description_mobile_show
+		assign description_classes = description_classes | append: ' pp:block'
+	else
+		assign description_classes = description_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.product_description_show
+		assign description_classes = description_classes | append: ' pp:@3xl:block'
+	else
+		assign description_classes = description_classes | append: ' pp:@3xl:hidden'
+	endif
+%}
+
+{% comment %} Product Price {% endcomment %}
+{% liquid
+	assign price_classes = 'pp:text-(length:--product-price-font-size-mobile) pp:font-(--product-price-font-weight) pp:whitespace-nowrap pp:text-(--product-price-text-color) pp:@3xl:text-(length:--product-price-font-size)'
+	assign compare_price_classes = 'pp:text-(length:--product-price-font-size-mobile) pp:font-(--product-price-compare-at-price-text-weight) pp:whitespace-nowrap pp:text-(--product-price-compare-at-price-text-color) pp:line-through pp:@3xl:text-(length:--product-price-font-size)'
+%}
+
+{% comment %} Toggle {% endcomment %}
+{% liquid
+	assign toggle_track_classes = 'pp:block pp:h-(--toggle-height) pp:w-(--toggle-width) pp:rounded-full pp:bg-(--toggle-inactive-color) pp:transition-colors pp:peer-checked:bg-(--toggle-active-color) pp:peer-disabled:opacity-50'
+	assign toggle_thumb_classes = 'pp:absolute pp:top-[2px] pp:left-[2px] pp:size-(--toggle-thumb-size) pp:rounded-full pp:bg-(--toggle-thumb-color) pp:shadow-sm pp:transition-transform pp:peer-checked:translate-x-(--toggle-thumb-translate)'
+%}
+
+{% assign id_list = block.settings.product_ids | split: ',' %}
+{% assign shown_count = 0 %}
+
+<pagepilot-drawer-upsell
+	class='{{ container_classes }}'
+	data-pp-upsell-root='{{ block.id }}'
+	data-auto-enable='{{ block.settings.auto_enable }}'
+	aria-label='Upsell products'
+	style='{{ properties }}'
+	{{ block.shopify_attributes }}
+>
+	{% if block.settings.headline_show %}
+		<div class='{{ headline_classes }}'>{{ block.settings.headline_text }}</div>
+	{% endif %}
+
+	{% comment %}
+		`collections.all.products` only exposes the first 50 products of the store
+		by default, so `find` can't reach products outside that window. Paginating
+		by 250 widens it so the lookup works for the whole catalog.
+	{% endcomment %}
+	{% paginate collections.all.products by 250 %}
+		{% for raw_id in id_list %}
+			{% if shown_count >= 3 %}
+				{% break %}
+			{% endif %}
+
+			{% assign trimmed_id = raw_id | strip %}
+			{% if trimmed_id == blank %}
+				{% continue %}
+			{% endif %}
+
+			{% assign numeric_id = trimmed_id | plus: 0 %}
+			{% if numeric_id == 0 %}
+				{% continue %}
+			{% endif %}
+
+			{% assign upsell_product = collections.all.products | find: 'id', numeric_id %}
+			{% if upsell_product == blank %}
+				{% continue %}
+			{% endif %}
+
+			{% assign upsell_variant = upsell_product.selected_or_first_available_variant %}
+			{% if upsell_variant == blank %}
+				{% continue %}
+			{% endif %}
+
+			{% assign shown_count = shown_count | plus: 1 %}
+
+			{% assign variant_marker = '|' | append: upsell_variant.id | append: '|' %}
+			{% assign in_cart = false %}
+			{% if cart_variant_ids contains variant_marker %}
+				{% assign in_cart = true %}
+			{% endif %}
+
+			<div class='{{ card_classes }}'>
+				<img
+					src='{{ upsell_product.featured_image | image_url: width: 200 }}'
+					width='200'
+					height='200'
+					alt='{{ upsell_product.title | escape }}'
+					class='{{ image_classes }}'
+					loading='lazy'
+				>
+
+				<div class='pp:flex pp:min-w-0 pp:flex-1 pp:flex-col pp:gap-(--card-spacing)'>
+					<div class='pp:flex pp:items-start pp:justify-between pp:gap-2'>
+						<h3 class='{{ title_classes }}'>{{ upsell_product.title }}</h3>
+						<div class='pp:flex pp:shrink-0 pp:items-center pp:gap-1.5'>
+							<span class='{{ price_classes }}'>{{ upsell_variant.price | money }}</span>
+							{% if block.settings.product_price_compare_at_price_show
+								and upsell_variant.compare_at_price > upsell_variant.price
+							%}
+								<span class='{{ compare_price_classes }}'>
+									{{- upsell_variant.compare_at_price | money -}}
+								</span>
+							{% endif %}
+						</div>
+					</div>
+
+					<p class='{{ description_classes }}'>
+						{{ upsell_product.description | strip_html | truncate: 80 }}
+					</p>
+				</div>
+
+				<label
+					class='pp:relative pp:inline-flex pp:shrink-0 pp:cursor-pointer pp:items-center pp:self-center'
+					aria-label='{{ upsell_product.title | escape }}'
+				>
+					<input
+						type='checkbox'
+						class='pp:peer pp:sr-only'
+						ref='toggle[]'
+						data-variant-id='{{ upsell_variant.id }}'
+						data-product-id='{{ upsell_product.id }}'
+						{% if in_cart %}
+							checked
+						{% endif %}
+						{% unless upsell_variant.available %}
+							disabled
+						{% endunless %}
+					>
+					<span class='{{ toggle_track_classes }}'></span>
+					<span class='{{ toggle_thumb_classes }}'></span>
+				</label>
+			</div>
+		{% endfor %}
+	{% endpaginate %}
+</pagepilot-drawer-upsell>
+
+{% schema %}
+{
+	"name": "Drawer Upsell Toggle",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "auto_enable",
+			"label": "Auto-enable",
+			"info": "Automatically adds the upsell products to the cart when the drawer loads. Customers can remove them, and removed items stay removed for the rest of their visit.",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "product_ids",
+			"label": "Product IDs",
+			"info": "Up to 3 numeric Shopify product IDs, separated by commas. Title, price and image are pulled from each product."
+		},
+		{
+			"type": "checkbox",
+			"id": "headline_show",
+			"label": "Show Headline",
+			"default": false
+		},
+		{
+			"type": "richtext",
+			"id": "headline_text",
+			"label": "Text",
+			"default": "<p>Add to your order</p>",
+			"visible_if": "{{ block.settings.headline_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "headline_text_color",
+			"label": "Color",
+			"default": "#212529",
+			"visible_if": "{{ block.settings.headline_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "headline_font_size",
+			"label": "Size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 14,
+			"visible_if": "{{ block.settings.headline_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "headline_font_size_mobile",
+			"label": "Mobile Size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 14,
+			"visible_if": "{{ block.settings.headline_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "headline_weight",
+			"label": "Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "500",
+			"visible_if": "{{ block.settings.headline_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "card_background_color",
+			"label": "Card Background Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "select",
+			"id": "card_position_vertical",
+			"label": "Card Vertical Alignment",
+			"options": [
+				{ "value": "flex-start", "label": "Top" },
+				{ "value": "center", "label": "Center" },
+				{ "value": "flex-end", "label": "Bottom" }
+			],
+			"default": "center"
+		},
+		{
+			"type": "range",
+			"id": "card_spacing",
+			"label": "Card Content Spacing",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "cards_gap",
+			"label": "Space Between Cards",
+			"min": 0,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "select",
+			"id": "card_border",
+			"label": "Card Border Style",
+			"options": [
+				{ "value": "none", "label": "None" },
+				{ "value": "solid", "label": "Solid" },
+				{ "value": "dashed", "label": "Dashed" },
+				{ "value": "dotted", "label": "Dotted" }
+			],
+			"default": "solid"
+		},
+		{
+			"type": "range",
+			"id": "card_border_width",
+			"label": "Card Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.card_border != 'none' }}"
+		},
+		{
+			"type": "color",
+			"id": "card_border_color",
+			"label": "Card Border Color",
+			"default": "#E5E7EB",
+			"visible_if": "{{ block.settings.card_border != 'none' }}"
+		},
+		{
+			"type": "range",
+			"id": "card_border_radius",
+			"label": "Card Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 30
+		},
+		{
+			"type": "range",
+			"id": "card_padding",
+			"label": "Card Padding",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "image_width",
+			"label": "Image Width",
+			"min": 20,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 48
+		},
+		{
+			"type": "select",
+			"id": "image_ratio",
+			"label": "Image Aspect Ratio",
+			"options": [
+				{ "value": "adapt", "label": "Adapt" },
+				{ "value": "square", "label": "Square" },
+				{ "value": "portrait", "label": "Portrait" },
+				{ "value": "landscape", "label": "Landscape" }
+			],
+			"default": "square"
+		},
+		{
+			"type": "range",
+			"id": "image_border_radius",
+			"label": "Image Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 20
+		},
+		{
+			"type": "range",
+			"id": "image_spacing",
+			"label": "Image Spacing",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "color",
+			"id": "product_title_text_color",
+			"label": "Title Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "product_title_font_size",
+			"label": "Title Size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 15
+		},
+		{
+			"type": "range",
+			"id": "product_title_font_size_mobile",
+			"label": "Title Mobile Size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 15
+		},
+		{
+			"type": "select",
+			"id": "product_title_weight",
+			"label": "Title Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "600"
+		},
+		{
+			"type": "checkbox",
+			"id": "product_description_show",
+			"label": "Show Description",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "product_description_mobile_show",
+			"label": "Show Description (Mobile)",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "product_description_text_color",
+			"label": "Description Color",
+			"default": "#6B7280",
+			"visible_if": "{{ block.settings.product_description_show == true or block.settings.product_description_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "product_description_font_size",
+			"label": "Description Size",
+			"min": 10,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 12,
+			"visible_if": "{{ block.settings.product_description_show == true or block.settings.product_description_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "product_description_font_size_mobile",
+			"label": "Description Mobile Size",
+			"min": 10,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 12,
+			"visible_if": "{{ block.settings.product_description_show == true or block.settings.product_description_mobile_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "product_description_weight",
+			"label": "Description Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "400",
+			"visible_if": "{{ block.settings.product_description_show == true or block.settings.product_description_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "product_price_font_size",
+			"label": "Price Size",
+			"min": 10,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 15
+		},
+		{
+			"type": "range",
+			"id": "product_price_font_size_mobile",
+			"label": "Price Mobile Size",
+			"min": 10,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 15
+		},
+		{
+			"type": "color",
+			"id": "product_price_text_color",
+			"label": "Price Color",
+			"default": "#2563EB"
+		},
+		{
+			"type": "select",
+			"id": "product_price_text_weight",
+			"label": "Price Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "700"
+		},
+		{
+			"type": "checkbox",
+			"id": "product_price_compare_at_price_show",
+			"label": "Show Compare at Price",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "product_price_compare_at_price_text_color",
+			"label": "Compare at Price Color",
+			"default": "#dd272b",
+			"visible_if": "{{ block.settings.product_price_compare_at_price_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "product_price_compare_at_price_text_weight",
+			"label": "Compare at Price Weight",
+			"options": [
+				{ "value": "100", "label": "Thin" },
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" },
+				{ "value": "900", "label": "Black" }
+			],
+			"default": "400",
+			"visible_if": "{{ block.settings.product_price_compare_at_price_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "toggle_active_color",
+			"label": "Toggle Active Color",
+			"default": "#2563EB"
+		},
+		{
+			"type": "color",
+			"id": "toggle_inactive_color",
+			"label": "Toggle Inactive Color",
+			"default": "#D1D5DB"
+		},
+		{
+			"type": "color",
+			"id": "toggle_thumb_color",
+			"label": "Toggle Knob Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "range",
+			"id": "toggle_size",
+			"label": "Toggle Size",
+			"min": 16,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 24
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Block Background Color"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Block Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Padding Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Padding Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Padding Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Padding Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Padding Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Padding Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Padding Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Padding Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "Space-separated CSS classes."
+		}
+	],
+	"presets": [
+		{
+			"name": "Drawer Upsell Toggle",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

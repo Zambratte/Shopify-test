@@ -1,0 +1,457 @@
+{% comment %}
+	@pp blocks/pagepilot-image 1.0.15
+{% endcomment %}
+
+{% liquid
+	capture styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--image-object-position: ' | append: block.settings.image_object_position | append: ';'
+
+		case block.settings.image_ratio
+			when 'adapt'
+				echo '--ratio: ' | append: 'auto' | append: ';'
+			when 'square'
+				echo '--ratio: ' | append: '1 / 1' | append: ';'
+			when 'portrait'
+				echo '--ratio: ' | append: '4 / 5' | append: ';'
+			when 'landscape'
+				echo '--ratio: ' | append: '16 / 9' | append: ';'
+		endcase
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | default: 0 | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+
+		assign opacity = block.settings.opacity | times: 1.0 | divided_by: 100
+		echo '--opacity: ' | append: opacity | append: ';'
+
+		assign grayscale = block.settings.grayscale | times: 1.0 | divided_by: 100
+		echo '--grayscale: ' | append: grayscale | append: ';'
+
+		echo '--image-max-width: ' | append: block.settings.max_width | append: '%;'
+		echo '--image-max-width-mobile: ' | append: block.settings.max_width_mobile | append: '%;'
+
+		echo 'opacity: 0;'
+	endcapture
+
+	assign container_classes = 'pp-image pp:relative pp:scroll-m-20 pp:min-w-0'
+
+	assign container_classes = container_classes | append: ' ' | append: block.id
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pb-(--padding-bottom) pp:pl-(--padding-left) pp:pr-(--padding-right)'
+	assign container_classes = container_classes | append: ' pp:h-(--image-height-mobile) pp:@3xl:h-(--image-height)'
+	assign container_classes = container_classes | append: ' pp:w-auto pp:max-w-(--image-max-width-mobile)! pp:@3xl:max-w-(--image-max-width)!'
+
+	if block.settings.height == 'fill'
+		assign container_classes = container_classes | append: ' pp:@3xl:h-full'
+	endif
+
+	if block.settings.height_mobile == 'fill'
+		assign container_classes = container_classes | append: ' pp:h-full'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:aspect-(--ratio) pp:object-(--image-object-position)'
+
+	capture object_fit
+		render 'pagepilot-object-fit', value: block.settings.image_object_fit
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: object_fit
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:opacity-(--opacity) pp:grayscale-(--grayscale)'
+
+	if block.settings.invert
+		assign container_classes = container_classes | append: ' pp:invert'
+	endif
+
+	if block.settings.use_gallery_image
+		if closest.product != null
+			assign product = closest.product
+		endif
+		assign image_content = product.featured_image
+	elsif block.settings.image != blank
+		assign image_content = block.settings.image
+	else
+		assign image_content = null
+	endif
+%}
+
+{% if image_content != blank %}
+	<img
+		src='{{ image_content | image_url: width: 1000 }}'
+		width='{{ image_content.width }}'
+		height='{{ image_content.height }}'
+		class='{{ container_classes }}'
+		style='{{ styles }}'
+		{{ block.shopify_attributes }}
+	>
+{% else %}
+	<img
+		src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+		alt='Placeholder image'
+		width='1024'
+		height='1024'
+		class='{{ container_classes }}'
+		style='{{ styles }}'
+		{{ block.shopify_attributes }}
+	>
+{% endif %}
+
+{% schema %}
+{
+	"name": "Image (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "image_picker",
+			"id": "image",
+			"label": "Image",
+			"visible_if": "{{ block.settings.use_gallery_image == false }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "use_gallery_image",
+			"label": "Use Gallery Image",
+			"default": false
+		},
+		{
+			"type": "header",
+			"content": "Size"
+		},
+		{
+			"type": "select",
+			"id": "image_ratio",
+			"options": [
+				{
+					"value": "adapt",
+					"label": "Auto"
+				},
+				{
+					"value": "portrait",
+					"label": "Portrait"
+				},
+				{
+					"value": "square",
+					"label": "Square"
+				},
+				{
+					"value": "landscape",
+					"label": "Landscape"
+				}
+			],
+			"default": "adapt",
+			"label": "Aspect ratio"
+		},
+		{
+			"type": "range",
+			"id": "max_width",
+			"label": "Width",
+			"min": 1,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "range",
+			"id": "max_width_mobile",
+			"label": "Mobile Width",
+			"min": 1,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "select",
+			"id": "height",
+			"label": "Height",
+			"options": [
+				{
+					"value": "fit-content",
+					"label": "Fit"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "fit-content"
+		},
+		{
+			"type": "select",
+			"id": "height_mobile",
+			"label": "Mobile Height",
+			"options": [
+				{
+					"value": "fit-content",
+					"label": "Fit"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "fit-content"
+		},
+		{
+			"type": "select",
+			"id": "image_object_fit",
+			"options": [
+				{
+					"value": "contain",
+					"label": "Contain"
+				},
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "scale-down",
+					"label": "Scale down"
+				}
+			],
+			"default": "cover",
+			"label": "Object fit"
+		},
+		{
+			"type": "select",
+			"id": "image_object_position",
+			"label": "Object position",
+			"options": [
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				},
+				{
+					"value": "bottom",
+					"label": "Bottom"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				}
+			],
+			"default": "center"
+		},
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 50
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "range",
+			"id": "opacity",
+			"label": "Opacity",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "range",
+			"id": "grayscale",
+			"label": "Grayscale",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "checkbox",
+			"id": "invert",
+			"label": "Invert",
+			"info": "Inverts the colors of the image.",
+			"default": false
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the image. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Image (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

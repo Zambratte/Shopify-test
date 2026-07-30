@@ -1,0 +1,183 @@
+{% comment %}
+	@pp blocks/pagepilot-custom-html 1.0.5
+{% endcomment %}
+
+{% liquid
+	capture container_properties
+		echo '--margin-top: ' | append: block.settings.margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: block.settings.margin_bottom | append: 'px;'
+		echo '--margin-left: ' | append: block.settings.margin_left | append: 'px;'
+		echo '--margin-right: ' | append: block.settings.margin_right | append: 'px;'
+
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+	endcapture
+
+	assign container_classes = 'pp-custom-html pp:w-full'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pr-(--padding-right) pp:pb-(--padding-bottom) pp:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top) pp:mr-(--margin-right) pp:mb-(--margin-bottom) pp:ml-(--margin-left)'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' ' | append: block.id
+%}
+
+<div
+	class='{{ container_classes }}'
+	style='{{ container_properties }}'
+	{{ block.shopify_attributes }}
+>
+	{{ block.settings.html }}
+</div>
+
+{% schema %}
+{
+	"name": "Custom HTML/Liquid (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "liquid",
+			"id": "html",
+			"label": "HTML",
+			"default": "<b>Enter your custom HTML/Liquid code here</b>"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the custom HTML. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Custom HTML/Liquid (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,19 @@
+{% comment %}
+	@pp snippets/pagepilot-shadow 1.0.5
+{% endcomment %}
+
+{%- assign value = value | default: 'none' -%}
+{%- assign prefix = prefix | default: 'pp:' -%}
+
+{%- case value -%}
+	{%- when 'none' -%}
+		{{ prefix }}shadow-none
+	{%- when 'sm' -%}
+		{{ prefix }}shadow-sm
+	{%- when 'md' -%}
+		{{ prefix }}shadow-md
+	{%- when 'lg' -%}
+		{{ prefix }}shadow-lg
+	{%- when 'xl' -%}
+		{{ prefix }}shadow-xl
+{%- endcase -%}

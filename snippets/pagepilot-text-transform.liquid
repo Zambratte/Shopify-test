@@ -1,0 +1,17 @@
+{% comment %}
+	@pp snippets/pagepilot-text-transform 1.0.5
+{% endcomment %}
+
+{%- assign value = value | default: 'none' -%}
+{%- assign prefix = prefix | default: 'pp:' -%}
+
+{%- case value -%}
+	{%- when 'none' -%}
+		{{ prefix }}normal-case
+	{%- when 'uppercase' -%}
+		{{ prefix }}uppercase
+	{%- when 'lowercase' -%}
+		{{ prefix }}lowercase
+	{%- when 'capitalize' -%}
+		{{ prefix }}capitalize
+{%- endcase -%}

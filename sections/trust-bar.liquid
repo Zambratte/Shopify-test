@@ -1,4 +1,0 @@
-<section class="trust"><div class="page-width trust-grid">
-  {% for block in section.blocks %}<div class="trust-item" {{ block.shopify_attributes }}><strong>{{ block.settings.title }}</strong><span>{{ block.settings.text }}</span></div>{% endfor %}
-</div></section>
-{% schema %}{"name":"Vertrauensleiste","blocks":[{"type":"item","name":"Vorteil","settings":[{"type":"text","id":"title","label":"Titel"},{"type":"text","id":"text","label":"Text"}]}],"presets":[{"name":"Vertrauensleiste","blocks":[{"type":"item","settings":{"title":"Premium-Lieferung","text":"Sicher & planbar bis an die Tür"}},{"type":"item","settings":{"title":"Persönliche Beratung","text":"Echte Hilfe vor und nach dem Kauf"}},{"type":"item","settings":{"title":"30 Tage Rückgabe","text":"Entspannt zuhause entscheiden"}},{"type":"item","settings":{"title":"Sichere Zahlung","text":"Verschlüsselt & flexibel"}}]}]}{% endschema %}

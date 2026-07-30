@@ -1,0 +1,299 @@
+{% comment %}
+	@pp blocks/static-pagepilot-product-details 1.0.5
+{% endcomment %}
+
+{% liquid
+	capture styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: block.settings.gap_mobile | append: 'px;'
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign container = 'pp-product-details pp:relative pp:scroll-m-20'
+
+	if block.settings.custom_class != blank
+		assign container = container | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container = container | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container = container | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+
+	if block.id != blank
+		assign container = container | append: ' ' | append: block.id
+	endif
+
+	assign wrapper = 'pp:grid pp:auto-rows-max pp:grid-cols-1 pp:gap-(--gap-mobile) pp:@3xl:gap-(--gap)'
+
+	if block.settings.box_shadow_color != blank
+		assign wrapper = wrapper | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign wrapper = wrapper | append: ' ' | append: border
+
+	capture border_radius_mobile
+		render 'pagepilot-border-radius', value: block.settings.border_radius_mobile, prefix: 'pp:'
+	endcapture
+	assign wrapper = wrapper | append: ' ' | append: border_radius_mobile
+
+	capture border_radius_desktop
+		render 'pagepilot-border-radius', value: block.settings.border_radius, prefix: 'pp:@3xl:'
+	endcapture
+	assign wrapper = wrapper | append: ' ' | append: border_radius_desktop
+
+	assign sticky = ''
+	if block.settings.sticky
+		assign sticky = 'pp:sticky pp:top-0'
+	endif
+%}
+
+<div class='{{ container }}' style='{{ styles }}' {{ block.shopify_attributes }}>
+	<div class='{{ sticky }}'>
+		<div class='{{ wrapper }}'>
+			{% content_for 'blocks' %}
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Product Details (PP)",
+	"class": "pagepilot-block",
+
+	"blocks": [
+		{
+			"type": "@theme"
+		},
+		{
+			"type": "@app"
+		}
+	],
+	"settings": [
+		{
+			"type": "header",
+			"content": "General"
+		},
+		{
+			"type": "checkbox",
+			"id": "sticky",
+			"label": "Sticky",
+			"default": true,
+			"info": "If enabled, the product details will be sticky to the top of the page when the user scrolls down."
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background color"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "border_radius_mobile",
+			"label": "Mobile Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the advertorial content. Multiple classes can be added by separating them with a space."
+		}
+	]
+}
+{% endschema %}

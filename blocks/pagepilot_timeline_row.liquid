@@ -1,0 +1,515 @@
+{% comment %}
+	@pp blocks/pagepilot-timeline-row 1.0.1
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--timestamp-width: ' | append: block.settings.timestamp_width | append: '%;'
+		echo '--timestamp-text-color: ' | append: block.settings.timestamp_text_color | append: ';'
+		echo '--timestamp-text-size: ' | append: block.settings.timestamp_text_size | append: 'px;'
+		echo '--timestamp-text-size-mobile: ' | append: block.settings.timestamp_text_size_mobile | append: 'px;'
+		echo '--timestamp-weight: ' | append: block.settings.timestamp_weight | append: ';'
+
+		assign icon_color = block.settings.icon_color | default: 'transparent'
+		echo '--icon-color: ' | append: icon_color | append: ';'
+		assign icon_fill_color = block.settings.icon_fill_color | default: 'transparent'
+		echo '--icon-fill-color: ' | append: icon_fill_color | append: ';'
+		echo '--icon-size: ' | append: block.settings.icon_size | append: 'px;'
+		echo '--icon-size-mobile: ' | append: block.settings.icon_size_mobile | append: 'px;'
+		if block.settings.icon_background_size
+			echo '--icon-background-size: ' | append: block.settings.icon_background_size | append: 'px;'
+		endif
+		if block.settings.icon_background_size_mobile
+			echo '--icon-background-size-mobile: ' | append: block.settings.icon_background_size_mobile | append: 'px;'
+		endif
+		if block.settings.icon_background_color
+			echo '--icon-background-color: ' | append: block.settings.icon_background_color | append: ';'
+		endif
+		if block.settings.icon_border != 'none' and block.settings.icon_border_color != blank
+			echo '--icon-border-width: ' | append: block.settings.icon_border_width | append: 'px;'
+			echo '--icon-border-color: ' | append: block.settings.icon_border_color | append: ';'
+		endif
+
+		echo '--divider-width: ' | append: block.settings.divider_width | append: 'px;'
+		echo '--divider-color: ' | append: block.settings.divider_color | append: ';'
+
+		echo '--gap-horizontal: ' | append: block.settings.gap_horizontal | append: 'px;'
+		echo '--gap-vertical: ' | append: block.settings.gap_vertical | append: 'px;'
+	endcapture
+
+	if block.settings.custom_class != blank
+		assign container_classes = block.settings.custom_class | append: ' '
+	else
+		assign container_classes = ''
+	endif
+
+	assign container_classes = container_classes | append: 'pp-timeline-row pp:relative pp:w-full pp:scroll-m-20 pp:grid pp:grid-cols-[auto_auto_1fr] pp:items-start pp:@3xl:grid-cols-[var(--timestamp-width)_auto_1fr] pp:pt-(--padding-top) pp:pr-(--padding-right) pp:pb-(--padding-bottom) pp:pl-(--padding-left)'
+
+	assign timestamp_classes = 'pp:font-(--timestamp-weight) pp:text-(--timestamp-text-color) pp:text-(length:--timestamp-text-size-mobile) pp:@3xl:text-(length:--timestamp-text-size)'
+
+	case block.settings.timestamp_case
+		when 'none'
+			assign timestamp_classes = timestamp_classes | append: ' pp:normal-case'
+		when 'uppercase'
+			assign timestamp_classes = timestamp_classes | append: ' pp:uppercase'
+		when 'lowercase'
+			assign timestamp_classes = timestamp_classes | append: ' pp:lowercase'
+		when 'capitalize'
+			assign timestamp_classes = timestamp_classes | append: ' pp:capitalize'
+	endcase
+
+	case block.settings.timestamp_letter_spacing
+		when 'tight'
+			assign timestamp_classes = timestamp_classes | append: ' pp:tracking-tighter'
+		when 'normal'
+			assign timestamp_classes = timestamp_classes | append: ' pp:tracking-normal'
+		when 'loose'
+			assign timestamp_classes = timestamp_classes | append: ' pp:tracking-wider'
+	endcase
+
+	assign icon_wrapper_classes = 'pp-timeline-row-icon-wrapper pp:relative pp:flex pp:items-center pp:justify-center pp:rounded-full pp:bg-(--icon-background-color)/20 pp:size-(length:--icon-background-size-mobile) pp:@3xl:size-(length:--icon-background-size) pp:transition-all pp:duration-1000 pp:ease-in-out pp:[&.pp-animate--starting]:bg-(--icon-background-color)'
+
+	capture icon_border
+		render 'pagepilot-border', value: block.settings.icon_border, width_property: '--icon-border-width', color_property: '--icon-border-color'
+	endcapture
+
+	if block.settings.icon_border != 'none' and block.settings.icon_border_color != blank
+		assign icon_border = icon_border | replace: 'pp:border-(--icon-border-color)', 'pp:border-(--icon-border-color)/20 pp:[&.pp-animate--starting]:border-(--icon-border-color)'
+	endif
+
+	assign icon_wrapper_classes = icon_wrapper_classes | append: ' ' | append: icon_border
+
+	assign icon_classes = 'pp:size-(--icon-size-mobile) pp:text-(--icon-color) pp:@3xl:size-(--icon-size)'
+
+	case block.settings.icon_variant
+		when 'light'
+			assign icon_classes = icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign icon_classes = icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign icon_classes = icon_classes | append: ' pp:stroke-3'
+		when 'fill'
+			assign icon_classes = icon_classes | append: ' pp:fill-(--icon-fill-color)'
+	endcase
+
+	assign emoji_classes = 'pp:text-(length:--icon-size-mobile) pp:@3xl:text-(length:--icon-size) pp:flex pp:aspect-square pp:items-center pp:justify-center'
+
+	assign svg_classes = 'pp:contents pp:[&>svg]:w-full pp:[&>svg]:max-w-(length:--icon-size-mobile) pp:@3xl:[&>svg]:max-w-(length:--icon-size)'
+%}
+
+<pagepilot-timeline-row class='{{ container_classes }}' style='{{ properties }}' {{ block.shopify_attributes }}>
+	<time class='{{ timestamp_classes }} pp:hidden pp:pr-(--gap-horizontal) pp:text-right pp:@3xl:block'>
+		{{ block.settings.timestamp_text }}
+	</time>
+
+	<div class='pp:flex pp:h-full pp:shrink-0 pp:flex-col pp:items-center pp:pr-(--gap-horizontal)'>
+		<div class='pp:relative pp:z-10'>
+			<div class='{{ icon_wrapper_classes }}'>
+				{% if block.settings.type == 'icon' %}
+					<i data-lucide='{{ block.settings.icon }}' class='{{ icon_classes }}'></i>
+				{% elsif block.settings.type == 'emoji' %}
+					<span class='{{ emoji_classes }}'>{{ block.settings.emoji }}</span>
+				{% elsif block.settings.type == 'svg' %}
+					<div class='{{ svg_classes }}'>
+						{{ block.settings.svg }}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+		<div
+			class="pp-timeline-row-divider pp:relative pp:mt-2 pp:h-full pp:min-h-16 pp:w-(--divider-width) pp:bg-(--divider-color)/20 pp:after:absolute pp:after:inset-0 pp:after:h-0 pp:[&:after]:absolute pp:[&:after]:inset-0 pp:[&:after]:h-0 pp:[&:after]:bg-(--divider-color) pp:[&:after]:content-[''] pp:[&:after]:transition-all pp:[&:after]:duration-1000 pp:[&:after]:ease-in-out pp:[&.pp-animate--starting]:after:h-full"
+		></div>
+	</div>
+
+	<div class='pp:flex pp:flex-col pp:gap-(--gap-vertical)'>
+		<time class='{{ timestamp_classes }} pp:block pp:@3xl:hidden'>
+			{{ block.settings.timestamp_text }}
+		</time>
+		{% for nested_block in block.blocks %}
+			{% render nested_block %}
+		{% endfor %}
+	</div>
+</pagepilot-timeline-row>
+
+{% schema %}
+{
+	"name": "Timeline Row (PP)",
+	"class": "pagepilot-block",
+	"blocks": [
+		{
+			"type": "pagepilot_group"
+		},
+		{
+			"type": "pagepilot_text"
+		},
+		{
+			"type": "pagepilot_icon_with_text_list"
+		}
+	],
+	"settings": [
+		{
+			"type": "header",
+			"content": "Timestamp"
+		},
+		{
+			"type": "text",
+			"id": "timestamp_text",
+			"label": "Text",
+			"placeholder": "Type your text here..."
+		},
+		{
+			"type": "range",
+			"id": "timestamp_width",
+			"label": "Width",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "%",
+			"default": 20
+		},
+		{
+			"type": "color",
+			"id": "timestamp_text_color",
+			"label": "Text Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "timestamp_text_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Text Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "timestamp_text_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Text Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "timestamp_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "timestamp_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "timestamp_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+
+		{
+			"type": "header",
+			"content": "Icon"
+		},
+		{
+			"type": "select",
+			"id": "type",
+			"label": "Type",
+			"options": [
+				{
+					"value": "icon",
+					"label": "Icon"
+				},
+				{
+					"value": "emoji",
+					"label": "Emoji"
+				},
+				{
+					"value": "svg",
+					"label": "SVG"
+				}
+			],
+			"default": "icon"
+		},
+		{
+			"type": "text",
+			"id": "icon",
+			"label": "Icon",
+			"default": "user",
+			"visible_if": "{{ block.settings.type == \"icon\" }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji",
+			"label": "Emoji",
+			"default": "✨",
+			"visible_if": "{{ block.settings.type == \"emoji\" }}"
+		},
+		{
+			"type": "textarea",
+			"id": "svg",
+			"label": "SVG",
+			"info": "Enter the SVG icon you want to display.",
+			"visible_if": "{{ block.settings.type == \"svg\" }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 30
+		},
+		{
+			"type": "range",
+			"id": "icon_size_mobile",
+			"label": "Mobile Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 30
+		},
+		{
+			"type": "select",
+			"id": "icon_variant",
+			"label": "Variant",
+			"options": [
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "regular",
+					"label": "Regular"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "regular"
+		},
+		{
+			"type": "color",
+			"id": "icon_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "color",
+			"id": "icon_fill_color",
+			"label": "Fill Color",
+			"default": "#212529",
+			"visible_if": "{{ block.settings.icon_variant == \"fill\" }}"
+		},
+
+		{
+			"type": "range",
+			"id": "icon_background_size",
+			"label": "Background Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 35
+		},
+		{
+			"type": "range",
+			"id": "icon_background_size_mobile",
+			"label": "Mobile Background Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 35
+		},
+		{
+			"type": "color",
+			"id": "icon_background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "select",
+			"id": "icon_border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "icon_border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.icon_border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.icon_border != \"none\" }}"
+		},
+		{
+			"type": "header",
+			"content": "Divider"
+		},
+
+		{
+			"type": "range",
+			"id": "divider_width",
+			"label": "Width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1
+		},
+		{
+			"type": "color",
+			"id": "divider_color",
+			"label": "Color",
+			"default": "#fff"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "range",
+			"id": "gap_horizontal",
+			"label": "Horizontal Gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "gap_vertical",
+			"label": "Vertical Gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Timeline Row (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

@@ -1,6 +1,0 @@
-<section class="page-width cart-page"><h1 class="section-title">Ihr Warenkorb</h1>
-{% if cart.item_count > 0 %}<form action="{{ routes.cart_url }}" method="post">
-  {% for item in cart.items %}<div class="cart-row">{% if item.image %}{{ item.image | image_url: width: 200 | image_tag }}{% endif %}<div><a href="{{ item.url }}"><strong>{{ item.product.title }}</strong></a><div>{{ item.variant.title }}</div><input type="number" name="updates[]" value="{{ item.quantity }}" min="0" aria-label="Menge"></div><strong>{{ item.final_line_price | money }}</strong></div>{% endfor %}
-  <div class="cart-summary"><p>Zwischensumme: <strong>{{ cart.total_price | money }}</strong></p><button class="button" type="submit" name="checkout">Sicher zur Kasse</button></div>
-</form>{% else %}<p>Ihr Warenkorb ist noch leer.</p><a class="button" href="{{ routes.all_products_collection_url }}">Produkte entdecken</a>{% endif %}</section>
-{% schema %}{"name":"Warenkorb","settings":[]}{% endschema %}

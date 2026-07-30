@@ -1,0 +1,1011 @@
+{% comment %}
+	@pp blocks/static-pagepilot-product-gallery 1.0.18
+{% endcomment %}
+
+{% liquid
+	assign main_carousel_slides_per_view_mobile = '1'
+	if block.settings.main_image_full_width_mobile == false
+		assign main_carousel_slides_per_view_mobile = '1.2'
+	endif
+
+	assign main_carousel_slides_per_view = '1'
+	if block.settings.main_image_full_width == false
+		assign main_carousel_slides_per_view = '1.2'
+	endif
+%}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--navigation-offset: ' | append: block.settings.navigation_offset | append: 'px;'
+		echo '--navigation-size: calc(var(--navigation-icon-size) * 1.4);'
+		echo '--navigation-color: ' | append: block.settings.navigation_color | default: 'transparent' | append: ';'
+		echo '--navigation-background-color: ' | append: block.settings.navigation_background_color | default: 'transparent' | append: ';'
+
+		if block.settings.navigation_border != 'none'
+			echo '--navigation-border-width: ' | append: block.settings.navigation_border_width | append: 'px;'
+			echo '--navigation-border-color: ' | append: block.settings.navigation_border_color | default: 'transparent' | append: ';'
+		endif
+
+		echo '--navigation-icon-size: ' | append: block.settings.navigation_icon_size | append: 'px;'
+		echo '--navigation-spacing: calc(var(--navigation-size) + 10px);'
+
+		echo '--swiper-pagination-color: ' | append: block.settings.pagination_background_color | default: 'transparent' | append: ';'
+		echo '--swiper-pagination-bullet-inactive-color: rgba(from var(--swiper-pagination-color) r g b / 0.9);'
+
+		echo '--badge-size: ' | append: block.settings.badge_size | append: 'px;'
+		echo '--badge-offset: ' | append: block.settings.badge_offset | append: 'px;'
+
+		echo '--thumbnails-gap: ' | append: block.settings.thumbnails_gap | append: 'px;'
+		echo '--thumbnails-gap-mobile: ' | append: block.settings.thumbnails_gap_mobile | append: 'px;'
+
+		echo '--thumbnails-non-active-opacity: ' | append: block.settings.thumbnails_non_active_opacity | append: '%;'
+		echo '--thumbnails-active-border-color: ' | append: block.settings.thumbnails_active_border_color | default: 'transparent' | append: ';'
+		echo '--thumbnails-active-border-width: ' | append: block.settings.thumbnails_active_border_width | append: 'px;'
+		echo '--thumbnails-padding-x: ' | append: block.settings.thumbnails_padding_x | append: 'px;'
+		echo '--thumbnails-padding-x-mobile: ' | append: block.settings.thumbnails_padding_x_mobile | append: 'px;'
+		echo '--thumbnails-padding-y: ' | append: block.settings.thumbnails_padding_y | append: 'px;'
+		echo '--thumbnails-padding-y-mobile: ' | append: block.settings.thumbnails_padding_y_mobile | append: 'px;'
+		echo '--blocks-gap: ' | append: block.settings.blocks_gap | append: 'px;'
+		echo '--blocks-gap-mobile: ' | append: block.settings.blocks_gap_mobile | append: 'px;'
+	endcapture
+%}
+
+{% comment %} container classes {% endcomment %}
+{% liquid
+	assign classes = 'pp-product-gallery pp:relative pp:h-full pp:scroll-m-20'
+	assign classes = classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) pp:@3xl:pr-(--padding-right)'
+	assign classes = classes | append: ' pp:pt-(--padding-top-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:pr-(--padding-right-mobile)'
+	if block.settings.sticky == false
+		assign classes = classes | append: ' pp:self-start'
+	endif
+	if block.settings.custom_class != blank
+		assign classes = classes | append: ' ' | append: block.settings.custom_class
+	endif
+%}
+
+{% comment %} wrapper classes {% endcomment %}
+{% liquid
+	assign wrapper_classes = 'pp-swiper-wrapper'
+	if block.settings.thumbnails_direction == 'vertical'
+		assign wrapper_classes = wrapper_classes | append: ' pp:@3xl:flex pp:@3xl:flex-row pp:@3xl:gap-3'
+	endif
+%}
+
+{% comment %} inner classes {% endcomment %}
+{% liquid
+	assign inner_classes = 'pp:relative pp:min-w-0 pp:flex-1'
+
+	assign mobile_mb = 'pp:mb-3'
+	if block.settings.pagination_mobile_show == true and block.settings.pagination_position == 'outside'
+		assign mobile_mb = 'pp:mb-6'
+	endif
+
+	assign desktop_mb = 'pp:@3xl:mb-0'
+	if block.settings.thumbnails_direction == 'horizontal'
+		assign desktop_mb = 'pp:@3xl:mb-3'
+		if block.settings.pagination_show == true and block.settings.pagination_position == 'outside'
+			assign desktop_mb = 'pp:@3xl:mb-6'
+		endif
+	endif
+
+	assign inner_classes = inner_classes | append: ' ' | append: mobile_mb | append: ' ' | append: desktop_mb
+%}
+
+{% liquid
+	assign carousel_image_classes = 'pp-product-gallery-carousel-image pp:aspect-square pp:size-full pp:object-center'
+
+	capture border_radius_mobile
+		render 'pagepilot-border-radius', value: block.settings.main_image_border_radius_mobile, prefix: 'pp:'
+	endcapture
+	assign carousel_image_classes = carousel_image_classes | append: ' ' | append: border_radius_mobile
+
+	capture border_radius_desktop
+		render 'pagepilot-border-radius', value: block.settings.main_image_border_radius, prefix: 'pp:@3xl:'
+	endcapture
+
+	assign carousel_image_classes = carousel_image_classes | append: ' ' | append: border_radius_desktop
+
+	capture object_fit
+		render 'pagepilot-object-fit', value: block.settings.main_image_object_fit
+	endcapture
+	assign carousel_image_classes = carousel_image_classes | append: ' ' | append: object_fit
+%}
+
+{% liquid
+	assign navigation_classes = 'pp:absolute pp:top-1/2 pp:z-1 pp:-translate-y-1/2 pp:items-center pp:justify-center pp:cursor-pointer'
+
+	if block.settings.navigation_mobile_show == true
+		assign navigation_classes = navigation_classes | append: ' pp:flex!'
+	else
+		assign navigation_classes = navigation_classes | append: ' pp:hidden!'
+	endif
+
+	if block.settings.navigation_show == true
+		assign navigation_classes = navigation_classes | append: ' pp:@3xl:flex!'
+	else
+		assign navigation_classes = navigation_classes | append: ' pp:@3xl:hidden!'
+	endif
+
+	assign navigation_classes = navigation_classes | append: ' pp:size-(--navigation-size)'
+
+	if block.settings.navigation_border == 'none'
+		assign navigation_classes = navigation_classes | append: ' pp:outline-none'
+	elsif block.settings.navigation_border == 'solid'
+		assign navigation_classes = navigation_classes | append: ' pp:outline-solid'
+	elsif block.settings.navigation_border == 'dashed'
+		assign navigation_classes = navigation_classes | append: ' pp:outline-dashed'
+	elsif block.settings.navigation_border == 'dotted'
+		assign navigation_classes = navigation_classes | append: ' pp:outline-dotted'
+	endif
+
+	if block.settings.navigation_border == 'solid' or block.settings.navigation_border == 'dashed' or block.settings.navigation_border == 'dotted'
+		assign navigation_classes = navigation_classes | append: ' pp:outline-(length:--navigation-border-width) pp:outline-(--navigation-border-color)'
+	endif
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.navigation_border_radius, prefix: 'pp:'
+	endcapture
+
+	assign navigation_classes = navigation_classes | append: ' ' | append: border_radius
+
+	assign navigation_classes = navigation_classes | append: ' pp:[&_svg]:size-(--navigation-icon-size)'
+	assign navigation_classes = navigation_classes | append: ' pp:bg-(--navigation-background-color) pp:text-(--navigation-color)'
+%}
+
+{% liquid
+	assign thumbnails_classes = 'pp-product-gallery-thumbnails pp:[&_.swiper-slide-thumb-active>img]:border-(length:--thumbnails-active-border-width) pp:[&_.swiper-slide-thumb-active>img]:border-(--thumbnails-active-border-color) pp:[&_.swiper-slide:not(.swiper-slide-thumb-active)]:opacity-(--thumbnails-non-active-opacity)'
+	assign thumbnails_classes = thumbnails_classes | append: ' pp:order-none'
+
+	if block.settings.thumbnails_direction != 'horizontal' and block.settings.thumbnails_position == 'left'
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:@3xl:order-first'
+	endif
+
+	if block.settings.thumbnails_direction != 'horizontal' and block.settings.thumbnails_position != 'left'
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:@3xl:order-last'
+	endif
+
+	assign thumbnails_classes = thumbnails_classes | append: ' pp:px-(--thumbnails-padding-x-mobile)! pp:py-(--thumbnails-padding-y-mobile)! pp:@3xl:px-(--thumbnails-padding-x)! pp:@3xl:py-(--thumbnails-padding-y)!'
+
+	if block.settings.thumbnails_mobile_show == true
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:block!'
+	else
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:hidden!'
+	endif
+
+	if block.settings.thumbnails_show == true
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:@3xl:block!'
+	else
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:@3xl:hidden!'
+	endif
+
+	if block.settings.thumbnails_direction == 'vertical'
+		assign thumbnails_classes = thumbnails_classes | append: ' pp:w-30'
+	endif
+%}
+
+{% liquid
+	assign thumbnails_image_classes = 'pp-product-gallery-thumbnails-image pp:aspect-square pp:size-full pp:cursor-pointer pp:object-cover'
+
+	capture border_radius_mobile
+		render 'pagepilot-border-radius', value: block.settings.thumbnails_border_radius_mobile, prefix: 'pp:'
+	endcapture
+
+	assign thumbnails_image_classes = thumbnails_image_classes | append: ' ' | append: border_radius_mobile
+
+	capture border_radius_desktop
+		render 'pagepilot-border-radius', value: block.settings.thumbnails_border_radius, prefix: 'pp:@3xl:'
+	endcapture
+
+	assign thumbnails_image_classes = thumbnails_image_classes | append: ' ' | append: border_radius_desktop
+%}
+
+{% liquid
+	assign badge_classes = 'pp-product-gallery-badge pp:absolute pp:top-(--badge-offset) pp:right-(--badge-offset) pp:z-2 pp:w-full pp:max-w-(--badge-size) pp:overflow-hidden'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.badge_border_radius
+	endcapture
+
+	assign badge_classes = badge_classes | append: ' ' | append: border_radius
+%}
+
+{%- liquid
+	if closest.product != null
+		assign product = closest.product
+	endif
+
+	assign selected_variant_media = product.selected_or_first_available_variant.featured_media
+	assign sorted_media = '' | split: ','
+	if selected_variant_media
+		assign sorted_media = sorted_media | concat: product.media | where: 'id', selected_variant_media.id
+
+		for media in product.media
+			if media.id != selected_variant_media.id
+				assign found_media = product.media | where: 'id', media.id
+				assign sorted_media = sorted_media | concat: found_media
+			endif
+		endfor
+	else
+		assign sorted_media = product.media
+	endif
+
+	assign use_default_images = false
+	if sorted_media.size == 0
+		assign use_default_images = true
+	endif
+-%}
+
+<style>
+	img.pp-product-gallery-badge {
+		max-width: var(--badge-size, 100px) !important;
+	}
+</style>
+
+<div>
+	<pagepilot-product-gallery
+		id='swiper-{{ block.id }}'
+	>
+		<div class='{{ classes }}' style='{{ properties }}' {{ block.shopify_attributes }}>
+			{% liquid
+				assign sticky_wrapper_classes = ''
+				if block.settings.sticky == true
+					assign sticky_wrapper_classes = 'pp:sticky pp:top-0'
+				endif
+			%}
+			<div class='{{ sticky_wrapper_classes }}'>
+				<div class='{{ wrapper_classes }}' style='opacity: 0;'>
+					<div class='{{ inner_classes }}'>
+						{% if block.settings.badge_show == true and block.settings.badge_image != blank %}
+							<img
+								src='{{ block.settings.badge_image | image_url: width: 100, height: 100 }}'
+								alt=''
+								width='100'
+								height='100'
+								class='{{ badge_classes }}'
+								loading='lazy'
+							>
+						{% endif %}
+
+						<div
+							ref='main'
+							class='swiper'
+							data-main-image-full-width-mobile='{{ main_carousel_slides_per_view_mobile }}'
+							data-main-image-full-width='{{ main_carousel_slides_per_view }}'
+							data-gap-mobile='{{ block.settings.main_image_gap_mobile }}'
+							data-gap='{{ block.settings.main_image_gap }}'
+						>
+							<div class='swiper-wrapper'>
+								{% if use_default_images %}
+									{% for i in (1..5) %}
+										<div class='swiper-slide' data-media-id='default-{{ i }}'>
+											<img
+												src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+												alt=''
+												width='1000'
+												height='1000'
+												class='{{ carousel_image_classes }}'
+												{% if forloop.first %}
+													fetchpriority='high'
+												{% else %}
+													loading='lazy'
+												{% endif %}
+											>
+										</div>
+									{% endfor %}
+								{% else %}
+									{% for media in sorted_media %}
+										{% liquid
+											assign carousel_loading = 'lazy'
+											assign carousel_fetchpriority = 'auto'
+											if forloop.first
+												assign carousel_loading = 'eager'
+												assign carousel_fetchpriority = 'high'
+											endif
+										%}
+										<div class='swiper-slide' data-media-id='{{ media.id }}'>
+											{{
+												media.preview_image
+												| image_url: width: 1000
+												| image_tag:
+													class: carousel_image_classes,
+													loading: carousel_loading,
+													fetchpriority: carousel_fetchpriority
+											}}
+										</div>
+									{% endfor %}
+								{% endif %}
+							</div>
+						</div>
+
+						<button
+							type='button'
+							class='swiper-gallery-button-prev {{ navigation_classes }} pp:left-(--navigation-offset)'
+						>
+							<i data-lucide='chevron-left'></i>
+						</button>
+						<button
+							type='button'
+							class='swiper-gallery-button-next {{ navigation_classes }} pp:right-(--navigation-offset)'
+						>
+							<i data-lucide='chevron-right'></i>
+						</button>
+
+						{% liquid
+							assign pagination_classes = 'swiper-gallery-pagination pp:justify-center pp:gap-2 pp:absolute pp:right-0 pp:left-0 pp:z-1'
+
+							if block.settings.pagination_position == 'inside'
+								assign pagination_classes = pagination_classes | append: ' pp:bottom-2'
+							elsif block.settings.pagination_position == 'outside'
+								assign pagination_classes = pagination_classes | append: ' pp:-bottom-4'
+							endif
+
+							if block.settings.pagination_mobile_show == true
+								assign pagination_classes = pagination_classes | append: ' pp:flex'
+							else
+								assign pagination_classes = pagination_classes | append: ' pp:hidden'
+							endif
+
+							if block.settings.pagination_show == true
+								assign pagination_classes = pagination_classes | append: ' pp:@3xl:flex'
+							else
+								assign pagination_classes = pagination_classes | append: ' pp:@3xl:hidden'
+							endif
+						%}
+						<div class='{{ pagination_classes }}'></div>
+					</div>
+
+					<div
+						ref='thumbs'
+						class='swiper {{ thumbnails_classes }}'
+						data-direction='{{ block.settings.thumbnails_direction }}'
+						data-slides-per-view-mobile='{{ block.settings.thumbnails_slides_per_view_mobile }}'
+						data-slides-per-view='{{ block.settings.thumbnails_slides_per_view }}'
+						data-gap-mobile='{{ block.settings.thumbnails_gap_mobile }}'
+						data-gap='{{ block.settings.thumbnails_gap }}'
+					>
+						<div class='swiper-wrapper'>
+							{% if use_default_images %}
+								{% for i in (1..5) %}
+									<div class='swiper-slide' data-media-id='default-{{ i }}'>
+										<img
+											src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+											alt=''
+											width='1000'
+											height='1000'
+											class='{{ thumbnails_image_classes }}'
+											loading='lazy'
+										>
+									</div>
+								{% endfor %}
+							{% else %}
+								{% for media in sorted_media %}
+									<div class='swiper-slide' data-media-id='{{ media.id }}'>
+										{{
+											media.preview_image
+											| image_url: width: 100
+											| image_tag: class: thumbnails_image_classes
+										}}
+									</div>
+								{% endfor %}
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				{% if block.blocks.size > 0 %}
+					<div class='pp:relative pp:flex pp:flex-col'>
+						{% for block in block.blocks %}
+							<div class='pp:mt-(--blocks-gap-mobile) pp:@3xl:mt-(--blocks-gap)'>&nbsp;</div>
+							{% render block %}
+						{% endfor %}
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</pagepilot-product-gallery>
+</div>
+
+{% schema %}
+{
+	"name": "Product Gallery (PP)",
+	"class": "pagepilot-block",
+
+	"settings": [
+		{
+			"type": "product",
+			"id": "product",
+			"label": "Product",
+			"info": "Add images to the gallery. The first image will be used as the main image."
+		},
+		{
+			"type": "header",
+			"content": "General"
+		},
+		{
+			"type": "checkbox",
+			"id": "sticky",
+			"label": "Sticky",
+			"default": true,
+			"info": "If enabled, the gallery will be sticky to the top of the page when the user scrolls down."
+		},
+		{
+			"type": "header",
+			"content": "Main image"
+		},
+		{
+			"type": "checkbox",
+			"id": "main_image_full_width",
+			"label": "Full width",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "main_image_full_width_mobile",
+			"label": "Mobile Full width",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "main_image_object_fit",
+			"options": [
+				{ "value": "contain", "label": "Contain" },
+				{ "value": "cover", "label": "Cover" },
+				{ "value": "fill", "label": "Fill" },
+				{ "value": "none", "label": "None" },
+				{ "value": "scale-down", "label": "Scale down" }
+			],
+			"default": "cover",
+			"label": "Object fit"
+		},
+		{
+			"type": "range",
+			"id": "main_image_gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 16,
+			"visible_if": "{{ block.settings.main_image_full_width == false }}"
+		},
+		{
+			"type": "range",
+			"id": "main_image_gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 16,
+			"visible_if": "{{ block.settings.main_image_full_width_mobile == false }}"
+		},
+		{
+			"type": "range",
+			"id": "main_image_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 80
+		},
+		{
+			"type": "range",
+			"id": "main_image_border_radius_mobile",
+			"label": "Mobile Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Thumbnails"
+		},
+		{
+			"type": "checkbox",
+			"id": "thumbnails_show",
+			"label": "Show Thumbnails",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "thumbnails_mobile_show",
+			"label": "Mobile Show Thumbnails",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_slides_per_view",
+			"label": "Thumbnails per view",
+			"min": 3,
+			"max": 10,
+			"step": 1,
+			"unit": "thu",
+			"default": 6,
+			"visible_if": "{{ block.settings.thumbnails_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_slides_per_view_mobile",
+			"label": "Mobile thumbnails per view",
+			"min": 3,
+			"max": 10,
+			"step": 1,
+			"unit": "thu",
+			"default": 6,
+			"visible_if": "{{ block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_gap",
+			"label": "Thumbnails Gap",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 10,
+			"visible_if": "{{ block.settings.thumbnails_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_gap_mobile",
+			"label": "Mobile Thumbnails Gap",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 5,
+			"visible_if": "{{ block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 40,
+			"visible_if": "{{ block.settings.thumbnails_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_border_radius_mobile",
+			"label": "Mobile Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 40,
+			"visible_if": "{{ block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "thumbnails_direction",
+			"label": "Direction",
+			"options": [
+				{
+					"value": "vertical",
+					"label": "Vertical"
+				},
+				{
+					"value": "horizontal",
+					"label": "Horizontal"
+				}
+			],
+			"default": "horizontal",
+			"visible_if": "{{ block.settings.thumbnails_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "thumbnails_position",
+			"label": "Position",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"default": "left",
+			"visible_if": "{{ block.settings.thumbnails_show == true and block.settings.thumbnails_direction == \"vertical\" }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_non_active_opacity",
+			"label": "Opacity",
+			"info": "Opacity will only apply to the non-active thumbnails.",
+			"min": 10,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 50,
+			"visible_if": "{{ block.settings.thumbnails_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_active_border_width",
+			"label": "Active Border Width",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.thumbnails_show == true or block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "thumbnails_active_border_color",
+			"label": "Active Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.thumbnails_show == true or block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_padding_x",
+			"label": "Padding Horizontal",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.thumbnails_show == true or block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_padding_x_mobile",
+			"label": "Mobile Padding Horizontal",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 6,
+			"visible_if": "{{ block.settings.thumbnails_show == true or block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_padding_y",
+			"label": "Padding Vertical",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.thumbnails_show == true or block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "thumbnails_padding_y_mobile",
+			"label": "Mobile Padding Vertical",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.thumbnails_show == true or block.settings.thumbnails_mobile_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Pagination Dots"
+		},
+		{
+			"type": "checkbox",
+			"id": "pagination_show",
+			"label": "Show Pagination",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "pagination_mobile_show",
+			"label": "Mobile Show Pagination",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "pagination_position",
+			"label": "Pagination position",
+			"options": [
+				{
+					"value": "outside",
+					"label": "Outside"
+				},
+				{
+					"value": "inside",
+					"label": "Inside"
+				}
+			],
+			"default": "outside",
+			"visible_if": "{{ block.settings.pagination_show == true or block.settings.pagination_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "pagination_background_color",
+			"label": "Background Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.pagination_show == true or block.settings.pagination_mobile_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Navigation Arrows"
+		},
+		{
+			"type": "checkbox",
+			"id": "navigation_show",
+			"label": "Show Navigation",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "navigation_mobile_show",
+			"label": "Mobile Show Navigation",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "navigation_background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "color",
+			"id": "navigation_color",
+			"label": "Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "range",
+			"id": "navigation_icon_size",
+			"label": "Icon size",
+			"min": 10,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 28
+		},
+		{
+			"type": "range",
+			"id": "navigation_offset",
+			"label": "Offset",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 13
+		},
+		{
+			"type": "select",
+			"id": "navigation_border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "range",
+			"id": "navigation_border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.navigation_border != \"none\" }}"
+		},
+		{
+			"type": "color",
+			"id": "navigation_border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.navigation_border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "navigation_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "header",
+			"content": "Badge"
+		},
+		{
+			"type": "checkbox",
+			"id": "badge_show",
+			"label": "Show Badge",
+			"default": false
+		},
+		{
+			"type": "image_picker",
+			"id": "badge_image",
+			"label": "Badge",
+			"info": "The badge will be displayed in the top right corner of the main image.",
+			"visible_if": "{{ block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_size",
+			"label": "Badge Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 75,
+			"visible_if": "{{ block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_offset",
+			"label": "Badge Offset",
+			"min": 0,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 15,
+			"visible_if": "{{ block.settings.badge_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "badge_border_radius",
+			"label": "Badge Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.badge_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Blocks"
+		},
+		{
+			"type": "range",
+			"id": "blocks_gap",
+			"label": "Blocks Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "blocks_gap_mobile",
+			"label": "Mobile Blocks Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the advertorial content. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"blocks": [{ "type": "@theme" }, { "type": "@app" }]
+}
+{% endschema %}

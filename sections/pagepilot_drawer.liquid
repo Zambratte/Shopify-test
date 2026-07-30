@@ -1,0 +1,241 @@
+{% comment %}
+	@pp sections/pagepilot-drawer 1.0.17
+{% endcomment %}
+
+{% if section.settings.show_drawer %}
+	{% liquid
+		capture properties
+			assign max_width = section.settings.max_width | times: 12
+			echo '--max-width: ' | append: max_width | append: 'px;'
+			echo '--max-width-mobile: ' | append: section.settings.max_width_mobile | append: '%;'
+			echo '--drawer-top-offset: 0px;'
+			echo '--backdrop-color: ' | append: section.settings.backdrop_color | append: ';'
+			echo '--backdrop-blur: ' | append: section.settings.backdrop_blur | append: 'px;'
+			echo '--close-button-text-color: ' | append: section.settings.close_button_text_color | append: ';'
+			echo '--slide-duration: 300ms;'
+		endcapture
+
+		assign container_classes = 'pp-cart-drawer-slide pp:z-52 pp:fixed pp:top-0 pp:right-0 pp:bottom-0 pp:grid pp:grid-cols-1 pp:min-h-full pp:h-full pp:max-h-screen pp:w-full pp:max-w-(--max-width-mobile) pp:@3xl:max-w-(--max-width) pp:pointer-events-auto pp:rounded-none pp:shadow-lg pp:ml-auto pp:bg-white'
+		assign container_classes = container_classes | append: ' ' | append: 'pp:backdrop:bg-(--backdrop-color) pp:backdrop:backdrop-blur-(--backdrop-blur)'
+		if section.settings.custom_class != blank
+			assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+		endif
+		assign container_classes = container_classes | append: ' ' | append: section.id
+
+		assign wrapper_classes = 'pp:grid pp:h-full pp:w-full pp:overflow-y-auto'
+		if cart.empty? == false
+			assign wrapper_classes = wrapper_classes | append: ' pp:grid-rows-[auto_1fr_auto]'
+		else
+			assign wrapper_classes = wrapper_classes | append: ' pp:grid-rows-1'
+		endif
+
+		assign close_button_classes = 'pp:absolute pp:top-3 pp:end-3 pp:z-53 pp:text-(--close-button-text-color) pp:size-4 pp:flex pp:items-center pp:justify-center pp:cursor-pointer pp:outline-none'
+		if section.settings.close_button_show == false
+			assign close_button_classes = close_button_classes | append: ' pp:hidden'
+		endif
+	%}
+
+	{% style %}
+		header-actions {
+			align-items: center;
+		}
+	{% endstyle %}
+
+	<pagepilot-cart-drawer-component
+		{{ section.shopify_attributes }}
+		{% if section.settings.auto_open %}
+			auto-open
+		{% endif %}
+		style='{{ properties }}'
+		dir='{{ settings.pagepilot.dir }}'
+	>
+		<pagepilot-cart-drawer-trigger hidden>
+			<button
+				class='pp:relative pp:size-10 pp:rounded-lg pp:inline-flex pp:items-center pp:justify-center pp:cursor-pointer'
+				on:click='pagepilot-cart-drawer-component/open'
+				aria-haspopup='dialog'
+				aria-label='Cart'
+				aria-describedby='pp-cart-bubble-text'
+				ref='pp-cart-drawer-trigger'
+			>
+				<i data-lucide='handbag' class='pp:size-5'></i>
+				<span
+					ref='pp-cart-drawer-bubble-count'
+					class='pp:absolute pp:top-0 pp:right-0 pp:text-xs pp:bg-black pp:text-white pp:rounded-full pp:size-4 pp:flex pp:items-center pp:justify-center'
+				>
+					{{ cart.item_count | default: 0 }}
+				</span>
+			</button>
+		</pagepilot-cart-drawer-trigger>
+		<dialog
+			ref='dialog'
+			scroll-lock
+			class='{{ container_classes }}'
+		>
+			<pagepilot-cart-items-component
+				class='pp:flex pp:flex-col pp:w-full pp:h-full pp:min-h-dvh'
+				data-section-id='{{ section.id }}'
+			>
+				<div class='{{ wrapper_classes }}'>
+					<button
+						id='pp-drawer-close-button'
+						on:click='pagepilot-cart-drawer-component/close'
+						class='{{ close_button_classes }}'
+						aria-label='Close drawer'
+					>
+						<i data-lucide='x' class='pp:size-4'></i>
+					</button>
+
+					{% if cart.empty? == false %}
+						{% content_for 'block',
+							type: '_pagepilot_drawer_group',
+							id: 'static-pagepilot_drawer_group_header'
+						%}
+						{% content_for 'block',
+							type: '_pagepilot_drawer_group',
+							id: 'static-pagepilot_drawer_group_main'
+						%}
+						<div class='pp:sticky pp:bottom-0 pp:z-48'>
+							{% content_for 'block',
+								type: '_pagepilot_drawer_group',
+								id: 'static-pagepilot_drawer_group_footer'
+							%}
+						</div>
+					{% else %}
+						{% content_for 'block',
+							type: '_pagepilot_drawer_group',
+							id: 'static-pagepilot_drawer_group_empty'
+						%}
+					{% endif %}
+				</div>
+			</pagepilot-cart-items-component>
+		</dialog>
+	</pagepilot-cart-drawer-component>
+{% endif %}
+
+{% schema %}
+{
+	"name": "Drawer (PP)",
+	"class": "pagepilot-section",
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "show_drawer",
+			"label": "Show Drawer",
+			"info": "If disabled, the drawer will not be shown in the storefront.",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "auto_open",
+			"label": "Auto open",
+			"info": "If enabled, the drawer will open automatically when an item is added to the cart.",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "max_width",
+			"label": "Max Width",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "rem",
+			"default": 30
+		},
+		{
+			"type": "range",
+			"id": "max_width_mobile",
+			"label": "Mobile Max Width",
+			"min": 90,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 97
+		},
+		{
+			"type": "color",
+			"id": "backdrop_color",
+			"label": "Backdrop Color",
+			"default": "#00000080"
+		},
+		{
+			"type": "range",
+			"id": "backdrop_blur",
+			"label": "Backdrop Blur",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 5
+		},
+		{
+			"type": "header",
+			"content": "Close Button"
+		},
+		{
+			"type": "checkbox",
+			"id": "close_button_show",
+			"label": "Show Close Button",
+			"default": false
+		},
+		{
+			"type": "color",
+			"id": "close_button_text_color",
+			"label": "Close Button Color",
+			"default": "#000000"
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the section. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Drawer (PP)",
+			"category": "PagePilot",
+			"blocks": {
+				"static-pagepilot_drawer_group_header": {
+					"type": "_pagepilot_drawer_group",
+					"name": "Header",
+					"static": true,
+					"blocks": {},
+					"settings": {
+						"padding_top": 0,
+						"padding_bottom": 0,
+						"padding_left": 0,
+						"padding_right": 0,
+						"padding_top_mobile": 0,
+						"padding_bottom_mobile": 0,
+						"padding_left_mobile": 0,
+						"padding_right_mobile": 0
+					}
+				},
+				"static-pagepilot_drawer_group_main": {
+					"type": "_pagepilot_drawer_group",
+					"name": "Main",
+					"static": true,
+					"blocks": {}
+				},
+				"static-pagepilot_drawer_group_footer": {
+					"type": "_pagepilot_drawer_group",
+					"name": "Footer",
+					"static": true,
+					"blocks": {}
+				},
+				"static-pagepilot_drawer_group_empty": {
+					"type": "_pagepilot_drawer_group",
+					"name": "Empty",
+					"static": true,
+					"blocks": {}
+				}
+			}
+		}
+	]
+}
+{% endschema %}

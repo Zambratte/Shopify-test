@@ -1,0 +1,583 @@
+{
+  "settings_schema": {
+    "colors": {
+      "name": "V√§rit",
+      "settings": {
+        "background": {
+          "label": "Tausta"
+        },
+        "background_gradient": {
+          "label": "Taustan liukuv√§ri",
+          "info": "Taustan liukuv√§ri korvaa taustan silloin kun se on mahdollista."
+        },
+        "text": {
+          "label": "Teksti"
+        },
+        "button_background": {
+          "label": "Peitt√§v√§n painikkeen tausta"
+        },
+        "button_label": {
+          "label": "Peitt√§v√§ tekstipainike"
+        },
+        "secondary_button_label": {
+          "label": "Kehyspainike"
+        },
+        "shadow": {
+          "label": "Varjo"
+        }
+      }
+    },
+    "typography": {
+      "name": "Typografia",
+      "settings": {
+        "type_header_font": {
+          "label": "Fontti"
+        },
+        "header__1": {
+          "content": "Otsikot"
+        },
+        "header__2": {
+          "content": "Leip√§teksti"
+        },
+        "type_body_font": {
+          "label": "Fontti"
+        },
+        "heading_scale": {
+          "label": "Skaalaa"
+        },
+        "body_scale": {
+          "label": "Skaalaa"
+        }
+      }
+    },
+    "social-media": {
+      "name": "Sosiaalinen media",
+      "settings": {
+        "social_twitter_link": {
+          "label": "X (Twitter)",
+          "info": "https://x.com/shopify"
+        },
+        "social_facebook_link": {
+          "label": "Facebook",
+          "info": "https://facebook.com/shopify"
+        },
+        "social_pinterest_link": {
+          "label": "Pinterest",
+          "info": "https://facebook.com/shopify"
+        },
+        "social_instagram_link": {
+          "label": "Instagram",
+          "info": "https://instagram.com/shopify"
+        },
+        "social_tiktok_link": {
+          "label": "TikTok",
+          "info": "https://twitter.com/shopify"
+        },
+        "social_tumblr_link": {
+          "label": "Tumblr",
+          "info": "http://shopify.tumblr.com"
+        },
+        "social_snapchat_link": {
+          "label": "Snapchat",
+          "info": "https://www.snapchat.com/add/shopify"
+        },
+        "social_youtube_link": {
+          "label": "YouTube",
+          "info": "https://facebook.com/shopify"
+        },
+        "social_vimeo_link": {
+          "label": "Vimeo",
+          "info": "https://vimeo.com/shopify"
+        },
+        "header": {
+          "content": "Sosiaalisen median tilit"
+        }
+      }
+    },
+    "currency_format": {
+      "name": "Valuutan muoto",
+      "settings": {
+        "currency_code_enabled": {
+          "label": "Valuuttakoodit"
+        },
+        "paragraph": "Ostoskorin ja kassan hinnat n√§ytt√§v√§t aina valuuttakoodit"
+      }
+    },
+    "layout": {
+      "name": "Asettelu",
+      "settings": {
+        "page_width": {
+          "label": "Sivun leveys"
+        },
+        "spacing_sections": {
+          "label": "Tila malliosioiden v√§liss√§"
+        },
+        "header__grid": {
+          "content": "Ruudukko"
+        },
+        "paragraph__grid": {
+          "content": "Vaikuttaa alueisiin, joissa on monta saraketta tai rivi√§"
+        },
+        "spacing_grid_horizontal": {
+          "label": "Vaakasuuntainen tila"
+        },
+        "spacing_grid_vertical": {
+          "label": "Pystysuuntainen tila"
+        }
+      }
+    },
+    "search_input": {
+      "name": "Hakuk√§ytt√§ytyminen",
+      "settings": {
+        "predictive_search_enabled": {
+          "label": "Hakuehdotukset"
+        },
+        "predictive_search_show_vendor": {
+          "label": "Tuotteen myyj√§",
+          "info": "N√§ytet√§√§n, kun hakuehdotukset ovat k√§yt√∂ss√§"
+        },
+        "predictive_search_show_price": {
+          "label": "Tuotteen hinta",
+          "info": "N√§ytet√§√§n, kun hakuehdotukset ovat k√§yt√∂ss√§"
+        }
+      }
+    },
+    "global": {
+      "settings": {
+        "header__border": {
+          "content": "Reuna"
+        },
+        "header__shadow": {
+          "content": "Varjo"
+        },
+        "blur": {
+          "label": "Sumeus"
+        },
+        "corner_radius": {
+          "label": "Kulman s√§de"
+        },
+        "horizontal_offset": {
+          "label": "Vaakasuuntainen siirtym√§"
+        },
+        "vertical_offset": {
+          "label": "Pystysuuntainen siirtym√§"
+        },
+        "thickness": {
+          "label": "Paksuus"
+        },
+        "opacity": {
+          "label": "Sameus"
+        },
+        "image_padding": {
+          "label": "Kuvan t√§ytt√§minen"
+        },
+        "text_alignment": {
+          "options__1": {
+            "label": "Vasen"
+          },
+          "options__2": {
+            "label": "Keskitetty"
+          },
+          "options__3": {
+            "label": "Oikea"
+          },
+          "label": "Tekstin tasaus"
+        }
+      }
+    },
+    "cards": {
+      "name": "Tuotekortit",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "Vakiomuotoinen"
+          },
+          "options__2": {
+            "label": "Kortti"
+          },
+          "label": "Tyyli"
+        }
+      }
+    },
+    "badges": {
+      "name": "Tunnukset",
+      "settings": {
+        "position": {
+          "options__1": {
+            "label": "Alhaalla vasemmalla"
+          },
+          "options__2": {
+            "label": "Alhaalla oikealla"
+          },
+          "options__3": {
+            "label": "Ylh√§√§ll√§ vasemmalla"
+          },
+          "options__4": {
+            "label": "Ylh√§√§ll√§ oikealla"
+          },
+          "label": "Sijainti korteilla"
+        },
+        "sale_badge_color_scheme": {
+          "label": "Alennusmyynti-tunnuksen v√§rimalli"
+        },
+        "sold_out_badge_color_scheme": {
+          "label": "Loppuunmyyty-tunnuksen v√§rimalli"
+        }
+      }
+    },
+    "buttons": {
+      "name": "Painikkeet"
+    },
+    "variant_pills": {
+      "name": "Versioiden kuvakkeet",
+      "paragraph": "Versiokuvakkeet ovat yksi tapa n√§ytt√§√§ [tuoteversiot](https://help.shopify.com/manual/online-store/themes/theme-structure/page-types/product-pages#variant-picker-block)"
+    },
+    "inputs": {
+      "name": "Sy√∂tteet"
+    },
+    "content_containers": {
+      "name": "Sis√§lt√∂s√§ili√∂t"
+    },
+    "popups": {
+      "name": "Alasvetovalikot ja ponnahdusikkunat",
+      "paragraph": "Vaikuttaa navigoinnin alasvetovalikoiden, modaalisiin ponnahdusikkunoiden ja ostoskorin kaltaisiin alueisiin"
+    },
+    "media": {
+      "name": "Tietov√§lineet"
+    },
+    "drawers": {
+      "name": "Vetolaatikot"
+    },
+    "cart": {
+      "name": "Ostoskori",
+      "settings": {
+        "cart_type": {
+          "label": "Tyyppi",
+          "drawer": {
+            "label": "Laatikko"
+          },
+          "page": {
+            "label": "Sivu"
+          },
+          "notification": {
+            "label": "Ponnahdusikkunailmoitukset"
+          }
+        },
+        "show_vendor": {
+          "label": "Myyj√§"
+        },
+        "show_cart_note": {
+          "label": "Tilauskommentti"
+        },
+        "cart_drawer": {
+          "header": "Veto-ostoskori",
+          "collection": {
+            "label": "Kokoelma",
+            "info": "N√§ytet√§√§n, kun veto-ostoskori on tyhj√§"
+          }
+        }
+      }
+    },
+    "collection_cards": {
+      "name": "Kokoelman kortit",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "Vakio"
+          },
+          "options__2": {
+            "label": "Kortti"
+          },
+          "label": "Tyyli"
+        }
+      }
+    },
+    "blog_cards": {
+      "name": "Blogi-kortit",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "Vakio"
+          },
+          "options__2": {
+            "label": "Kortti"
+          },
+          "label": "Tyyli"
+        }
+      }
+    },
+    "logo": {
+      "name": "Logo",
+      "settings": {
+        "logo_image": {
+          "label": "Logo"
+        },
+        "logo_width": {
+          "label": "Leveys"
+        },
+        "favicon": {
+          "label": "Favicon",
+          "info": "N√§ytet√§√§n koossa 32 x 32px"
+        }
+      }
+    },
+    "brand_information": {
+      "name": "Br√§nditiedot",
+      "settings": {
+        "brand_headline": {
+          "label": "Otsikko"
+        },
+        "brand_description": {
+          "label": "Oikeuksien kuvaus"
+        },
+        "brand_image": {
+          "label": "Kuva"
+        },
+        "brand_image_width": {
+          "label": "Kuvan leveys"
+        },
+        "paragraph": {
+          "content": "N√§ytet√§√§n alatunnisteen br√§nditietolohkossa"
+        }
+      }
+    },
+    "animations": {
+      "name": "Animaatiot",
+      "settings": {
+        "animations_reveal_on_scroll": {
+          "label": "N√§yt√§ osiot vieritt√§m√§ll√§"
+        },
+        "animations_hover_elements": {
+          "options__1": {
+            "label": "Ei mit√§√§n"
+          },
+          "options__2": {
+            "label": "Pystysuora nosto"
+          },
+          "label": "Osoitusefekti",
+          "info": "Vaikuttaa kortteihin ja painikkeisiin",
+          "options__3": {
+            "label": "3D-nosto"
+          }
+        }
+      }
+    }
+  },
+  "sections": {
+    "all": {
+      "padding": {
+        "section_padding_heading": "Puskuri",
+        "padding_top": "Yl√§reuna",
+        "padding_bottom": "Alareuna"
+      },
+      "spacing": "V√§li",
+      "colors": {
+        "label": "V√§rimalli",
+        "has_cards_info": "Voit muuttaa kortin v√§riskeemaa p√§ivitt√§m√§ll√§ teema-asetuksia."
+      },
+      "heading_size": {
+        "label": "Otsikon koko",
+        "options__1": {
+          "label": "Pieni"
+        },
+        "options__2": {
+          "label": "Keskisuuri"
+        },
+        "options__3": {
+          "label": "Suuri"
+        },
+        "options__4": {
+          "label": "Eritt√§in suuri"
+        },
+        "options__5": {
+          "label": "XXL"
+        }
+      },
+      "image_shape": {
+        "options__1": {
+          "label": "Oletus"
+        },
+        "options__2": {
+          "label": "Kaari"
+        },
+        "options__3": {
+          "label": "M√∂ykky"
+        },
+        "options__4": {
+          "label": "V-merkki vasemmalle"
+        },
+        "options__5": {
+          "label": "V-merkki oikealle"
+        },
+        "options__6": {
+          "label": "Timantti"
+        },
+        "options__7": {
+          "label": "Suunnikas"
+        },
+        "options__8": {
+          "label": "Py√∂ryl√§"
+        },
+        "label": "Kuvan muoto"
+      },
+      "animation": {
+        "content": "Animaatiot",
+        "image_behavior": {
+          "options__1": {
+            "label": "Ei mit√§√§n"
+          },
+          "options__2": {
+            "label": "Ymp√§rist√∂n liike"
+          },
+          "label": "Animaatio",
+          "options__3": {
+            "label": "Kiinte√§ taustasijainti"
+          },
+          "options__4": {
+            "label": "L√§henn√§ vieritt√§ess√§si"
+          }
+        }
+      }
+    },
+    "announcement-bar": {
+      "name": "Ilmoituspalkki",
+      "blocks": {
+        "announcement": {
+          "name": "Ilmoitus",
+          "settings": {
+            "text": {
+              "label": "Teksti",
+              "default": "Tervetuloa kauppaamme"
+            },
+            "text_alignment": {
+              "label": "Tekstin tasaus",
+              "options__1": {
+                "label": "Vasen"
+              },
+              "options__2": {
+                "label": "Keskitetty"
+              },
+              "options__3": {
+                "label": "Oikea"
+              }
+            },
+            "link": {
+              "label": "Linkki"
+            }
+          }
+        }
+      },
+      "settings": {
+        "auto_rotate": {
+          "label": "K√§√§nn√§ ilmoitukset automaattisesti"
+        },
+        "change_slides_speed": {
+          "label": "Vaihda joka"
+        },
+        "show_social": {
+          "label": "Somekuvakkeet",
+          "info": "[Hallinnoi sometilej√§](/editor?context=theme&category=social%20media)"
+        },
+        "enable_country_selector": {
+          "label": "Maa-/aluevalitsin",
+          "info": "[Hallinnoi maita/alueita](/admin/settings/markets)"
+        },
+        "enable_language_selector": {
+          "label": "Kielivalitsin",
+          "info": "[Hallinnoi kieli√§](/admin/settings/languages)"
+        },
+        "heading_utilities": {
+          "content": "Apuohjelmat"
+        },
+        "paragraph": {
+          "content": "N√§ytet√§√§n vain suurilla n√§yt√∂ill√§"
+        }
+      },
+      "presets": {
+        "name": "Ilmoituspalkki"
+      }
+    },
+    "collage": {
+      "name": "Kollaasi",
+      "settings": {
+        "heading": {
+          "label": "Otsikko",
+          "default": "Multimediakollaasi"
+        },
+        "desktop_layout": {
+          "label": "Asettelu",
+          "options__1": {
+            "label": "Suuri lohko ensimm√§isen√§"
+          },
+          "options__2": {
+            "label": "Suuri lohko viimeisen√§"
+          }
+        },
+        "mobile_layout": {
+          "label": "Mobiiliasettelu",
+          "options__1": {
+            "label": "Kollaasi"
+          },
+          "options__2": {
+            "label": "Sarake"
+          }
+        },
+        "card_styles": {
+          "label": "Kortin tyyli",
+          "info": "Hallinnoi yksitt√§isi√§ korttityylej√§ [teema-asetuksissa](/editor?context=theme&category=product%20cards)",
+          "options__1": {
+            "label": "K√§yt√§ yksitt√§isi√§ korttityylej√§"
+          },
+          "options__2": {
+            "label": "Muuta kaikki tuotekorteiksi"
+          }
+        },
+        "header_layout": {
+          "content": "Asettelu"
+        }
+      },
+      "blocks": {
+        "image": {
+          "name": "Kuva",
+          "settings": {
+            "image": {
+              "label": "Kuva"
+            }
+          }
+        },
+        "product": {
+          "name": "Tuote",
+          "settings": {
+            "product": {
+              "label": "Tuote"
+            },
+            "secondary_background": {
+              "label": "N√§yt√§ toissijainen tausta"
+            },
+            "second_image": {
+              "label": "N√§yt√§ toinen kuva osoittaessa"
+            }
+          }
+        },
+        "collection": {
+          "name": "Kokoelma",
+          "settings": {
+            "collection": {
+              "label": "Kokoelma"
+            }
+          }
+        },
+        "video": {
+          "name": "Video",
+          "settings": {
+            "cover_image": {
+              "label": "Kansikuva"
+            },
+            "video_url": {
+              "label": "URL-osoite",
+              "info": "Video toistetaan ponnahdusikkunassa, jos osio sis√§lt√§√§ muita lohkoja.",
+              "placeholder": "K√§yt√§ YouTube- tai Vimeo-linkki√§"
+            },
+            "description": {
+              "label": "Videon vaihtoehtoinen teksti",
+              "info": "Kuvaile videota n√§yt√∂nlukijoita k√§ytt√§vi√§ asiakkaita varten. [Lis√§tietoja](https://help.shopify.com/€N5ˆ⁄$z{-ÆÈ‹j◊ù∆ñÊ∂∂í ¢“¿¢'6V6ˆÊF'ï˜7Gñ∆R#¢∞¢&∆&V¬#¢,8L:G&ófñófGóñ∆í ¢“¿¢&&˜Öˆ∆ñv‚#¢∞¢&∆&V¬#¢%6ó<:F∆Ã;f‚6ñ¶ñÁFí"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%ñ∆å:L:F∆Ã:Bf6V÷÷∆∆ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂V∆Ã:Bñ∆å:L:F∆Ã:B ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢%ñ∆å:L:F∆Ã:Bˆñ∂V∆∆ ¢“¿¢&˜FñˆÁ5ıÛB#¢∞¢&∆&V¬#¢$∂W6∂V∆Ã:Bf6V÷÷∆∆ ¢“¿¢&˜FñˆÁ5ıÛR#¢∞¢&∆&V¬#¢$∂W6∂V∆Ã:B ¢“¿¢&˜FñˆÁ5ıÛb#¢∞¢&∆&V¬#¢$∂W6∂V∆Ã:Bˆñ∂V∆∆ ¢“¿¢&˜FñˆÁ5ıÛr#¢∞¢&∆&V¬#¢$∆Ü∆∆f6V÷÷∆∆ ¢“¿¢&˜FñˆÁ5ıÛÇ#¢∞¢&∆&V¬#¢$∂W6∂V∆Ã:B∆Ü∆∆ ¢“¿¢&˜FñˆÁ5ıÛí#¢∞¢&∆&V¬#¢$∆Ü∆∆ˆñ∂V∆∆ ¢–¢“¿¢'6Ü˜u˜FWáEˆ&˜Ç#¢∞¢&∆&V¬#¢%<:Fñ∆ú;b ¢“¿¢'FWáEˆ∆ñvÊ÷VÁB#¢∞¢&∆&V¬#¢%6ó<:F∆Ã;f‚∂ˆÜFó7GW2"¿¢&˜FñˆÂÛ#¢∞¢&∆&V¬#¢%f6V÷÷∆∆ ¢“¿¢&˜FñˆÂÛ"#¢∞¢&∆&V¬#¢$∂W6∂óFWGGí ¢“¿¢&˜FñˆÂÛ2#¢∞¢&∆&V¬#¢$ˆñ∂V∆∆ ¢–¢“¿¢&ñ÷vUˆ˜fW&∆ïˆ˜6óGí#¢∞¢&∆&V¬#¢%VóGFˆ∑Wf‚Ã:Gñ∑WV«FgWW2 ¢“¿¢'FWáEˆ∆ñvÊ÷VÁEˆ÷ˆ&ñ∆R#¢∞¢&∆&V¬#¢$÷ˆ&ññ∆ó6ó<:F∆Ã;f‚F6W2"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%f6V÷÷∆∆ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂óFWGGí ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$ˆñ∂V∆∆ ¢–¢“¿¢&ÜVFW%ˆ'WGFˆ‚#¢∞¢&6ˆÁFVÁB#¢%ñÊñ∂R ¢“¿¢&ÜVFW%ˆ∆ñ˜WB#¢∞¢&6ˆÁFVÁB#¢$6WGFV«R ¢“¿¢&ÜVFW%˜FWáB#¢∞¢&6ˆÁFVÁB#¢%FV∑7Fí ¢“¿¢&ÜVFW%ˆ6ˆ∆˜'2#¢∞¢&6ˆÁFVÁB#¢%l:G&óB ¢–¢–¢–¢“¿¢'&W6WG2#¢∞¢&Ê÷R#¢$FñW6óGó2 ¢–¢“¿¢&6ˆ∆∆6ñ&∆Uˆ6ˆÁFVÁB#¢∞¢&Ê÷R#¢%ñVÊVÊWGL:Gl:B6ó<:F«L;b"¿¢'6WGFñÊw2#¢∞¢&6Fñˆ‚#¢∞¢&∆&V¬#¢$∑WfFV∑7Fí ¢“¿¢&ÜVFñÊr#¢∞¢&∆&V¬#¢$˜G6ñ∂∂Ú"¿¢&FVfV«B#¢%ñVÊVÊWGL:Gl:B6ó<:F«L;b ¢“¿¢&ÜVFñÊuˆ∆ñvÊ÷VÁB#¢∞¢&∆&V¬#¢$˜G6ñ∂ˆ‚F6W2"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%f6V‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂óFWGGí ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$ˆñ∂V ¢–¢“¿¢&∆ñ˜WB#¢∞¢&∆&V¬#¢%<:Fñ∆ú;b"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢$Ví<:Fñ∆ú;gL:B ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢%&ófó<:Fñ∆ú;b ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$˜6ñ˜<:Fñ∆ú;b ¢–¢“¿¢&˜VÂˆfó'7Eˆ6ˆ∆∆6ñ&∆U˜&˜r#¢∞¢&∆&V¬#¢$fVÁ6ñ÷‹:FñÊV‚&ófí ¢“¿¢&ÜVFW"#¢∞¢&6ˆÁFVÁB#¢$∑Wf ¢“¿¢&ñ÷vR#¢∞¢&∆&V¬#¢$∑Wf ¢“¿¢&ñ÷vU˜&FñÚ#¢∞¢&∆&V¬#¢$∑Wf7VÜFR"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%6˜fóF∑Wf‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢%ñVÊí ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢%7WW&í ¢–¢“¿¢&FW6∑F˜ˆ∆ñ˜WB#¢∞¢&∆&V¬#¢%6ñ¶ˆóGW2"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢$VÁ6ñ÷‹:FñÊV‚∑Wf ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢%FˆñÊV‚∑Wf ¢–¢“¿¢&6ˆÁFñÊW%ˆ6ˆ∆˜%˜66ÜV÷R#¢∞¢&∆&V¬#¢%<:Fñ∆ú;f‚l:G&ñ÷∆∆í ¢“¿¢&∆ñ˜WEˆÜVFW"#¢∞¢&6ˆÁFVÁB#¢$6WGFV«R ¢“¿¢'6V7FñˆÂˆ6ˆ∆˜%˜66ÜV÷R#¢∞¢&∆&V¬#¢$˜6ñˆ‚l:G&ñ÷∆∆í ¢–¢“¿¢&&∆ˆ6∑2#¢∞¢&6ˆ∆∆6ñ&∆U˜&˜r#¢∞¢&Ê÷R#¢%ñVÊVÊWGL:Gl:B&ófí"¿¢'6WGFñÊw2#¢∞¢&ÜVFñÊr#¢∞¢&∆&V¬#¢$˜G6ñ∂∂Ú"¿¢&FVfV«B#¢%ñVÊVÊWGL:Gl:B&ófí ¢“¿¢'&˜uˆ6ˆÁFVÁB#¢∞¢&∆&V¬#¢%&ófñ‚6ó<:F«L;b ¢“¿¢'vR#¢∞¢&∆&V¬#¢%&ófñ‚6ó<:F«L;b6ógV«F ¢“¿¢&ñ6ˆ‚#¢∞¢&∆&V¬#¢$∑Wf∂R"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢$VíñáL:L:F‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$ˆ÷VÊ ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$&ÊÊí ¢“¿¢&˜FñˆÁ5ıÛB#¢∞¢&∆&V¬#¢%V∆∆Ú ¢“¿¢&˜FñˆÁ5ıÛR#¢∞¢&∆&V¬#¢$∆Fñ∂∂Ú ¢“¿¢&˜FñˆÁ5ıÛb#¢∞¢&∆&V¬#¢%˜&∂∂Ê ¢“¿¢&˜FñˆÁ5ıÛr#¢∞¢&∆&V¬#¢$∂W6∑W7FV«V∑W∆ ¢“¿¢&˜FñˆÁ5ıÛÇ#¢∞¢&∆&V¬#¢%f∆ñÁF÷W&∂∂í ¢“¿¢&˜FñˆÁ5ıÛí#¢∞¢&∆&V¬#¢$∆Vñ∂W;góL:B ¢“¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢$÷óF˜GV˜FR ¢“¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢$÷ñF˜Fˆ‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∑Vófñ‚ ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢%6ñ∆‹:B ¢“¿¢&˜FñˆÁ5ıÛB#¢∞¢&∆&V¬#¢%GV∆í ¢“¿¢&˜FñˆÁ5ıÛR#¢∞¢&∆&V¬#¢$v«WFVVÊóFˆ‚ ¢“¿¢&˜FñˆÁ5ıÛb#¢∞¢&∆&V¬#¢%7ñL:F‚ ¢“¿¢&˜FñˆÁ5ıÛr#¢∞¢&∆&V¬#¢%6ñ∆óGó7&WF ¢“¿¢&˜FñˆÁ5ıÛÇ#¢∞¢&∆&V¬#¢$∆VáFí ¢“¿¢&˜FñˆÁ5ıÛí#¢∞¢&∆&V¬#¢$ÊÜ∂ ¢“¿¢&˜FñˆÁ5ıÛ##¢∞¢&∆&V¬#¢%6∆÷ ¢“¿¢&˜FñˆÁ5ıÛ##¢∞¢&∆&V¬#¢$áWV∆óVÊ ¢“¿¢&˜FñˆÁ5ıÛ#"#¢∞¢&∆&V¬#¢$«V∂∂Ú ¢“¿¢&˜FñˆÁ5ıÛ#2#¢∞¢&∆&V¬#¢$∂'GF÷W&∂∂í ¢“¿¢&˜FñˆÁ5ıÛ#B#¢∞¢&∆&V¬#¢%:FÜ∂ñÏ:GL;f‚ ¢“¿¢&˜FñˆÁ5ıÛ#R#¢∞¢&∆&V¬#¢$Ü˜W7WB ¢“¿¢&˜FñˆÁ5ıÛ#b#¢∞¢&∆&V¬#¢%F77V‚¨:F∆∂í ¢“¿¢&˜FñˆÁ5ıÛ#r#¢∞¢&∆&V¬#¢%óW&í ¢“¿¢&˜FñˆÁ5ıÛ#Ç#¢∞¢&∆&V¬#¢%GVˆ∑7R ¢“¿¢&˜FñˆÁ5ıÛ#í#¢∞¢&∆&V¬#¢$∆VÁFˆ∂ˆÊR ¢“¿¢&˜FñˆÁ5ıÛ3#¢∞¢&∆&V¬#¢$∂7fí ¢“¿¢&˜FñˆÁ5ıÛ3#¢∞¢&∆&V¬#¢$ÜñÁF∆R ¢“¿¢&˜FñˆÁ5ıÛ3"#¢∞¢&∆&V¬#¢$∑ó7ñ◊ó6÷W&∂∂í ¢“¿¢&˜FñˆÁ5ıÛ32#¢∞¢&∆&V¬#¢$∂ñW',:GGó2 ¢“¿¢&˜FñˆÁ5ıÛ3B#¢∞¢&∆&V¬#¢%∆ ¢“¿¢&˜FñˆÁ5ıÛ3R#¢∞¢&∆&V¬#¢%fñófñ‚ ¢“¿¢&˜FñˆÁ5ıÛ3b#¢∞¢&∆&V¬#¢%F&¶ˆñ«V7Fñ ¢“¿¢&˜FñˆÁ5ıÛ3r#¢∞¢&∆&V¬#¢%óF ¢“¿¢&˜FñˆÁ5ıÛ3Ç#¢∞¢&∆&V¬#¢$∂VÊº:B ¢“¿¢&˜FñˆÁ5ıÛ3í#¢∞¢&∆&V¬#¢%6ñ«VWGFí ¢“¿¢&˜FñˆÁ5ıÛC#¢∞¢&∆&V¬#¢$«V÷ñÜóWF∆R ¢“¿¢&˜FñˆÁ5ıÛC#¢∞¢&∆&V¬#¢%L:FáFí ¢“¿¢&˜FñˆÁ5ıÛC"#¢∞¢&∆&V¬#¢%6V∑VÁFñ∂V∆∆Ú ¢“¿¢&˜FñˆÁ5ıÛC2#¢∞¢&∆&V¬#¢$∑V∆¶WGW6¶ˆÊWWfÚ ¢“¿¢&˜FñˆÁ5ıÛCB#¢∞¢&∆&V¬#¢%W7R ¢–¢–¢–¢–¢“¿¢'&W6WG2#¢∞¢&Ê÷R#¢%ñVÊVÊWGL:Gl:B6ó<:F«L;b ¢–¢“¿¢&÷ñ‚÷66˜VÁB#¢∞¢&Ê÷R#¢%Fñ∆í ¢“¿¢&÷ñ‚÷7FófFR÷66˜VÁB#¢∞¢&Ê÷R#¢%Fñ∆ñ‚∑FófˆñÁFí ¢“¿¢&÷ñ‚÷FG&W76W2#¢∞¢&Ê÷R#¢$˜6ˆóGFVWB ¢“¿¢&÷ñ‚÷∆ˆvñ‚#¢∞¢&Ê÷R#¢$∂ó&¶WGV÷ñÊV‚"¿¢'6Ü˜ˆ∆ˆvñÂˆ'WGFˆ‚#¢∞¢&VÊ&∆R#¢$˜Fº:GóGL;l;f‚∂ó&¶WGV÷ñÊV‚6Ü˜ñ∆∆ ¢–¢“¿¢&÷ñ‚÷˜&FW"#¢∞¢&Ê÷R#¢%Fñ∆W2 ¢“¿¢&÷ñ‚◊&Vvó7FW"#¢∞¢&Ê÷R#¢%&V∂ó7FW,;fñÁFí ¢“¿¢&÷ñ‚◊&W6WB◊77v˜&B#¢∞¢&Ê÷R#¢%6∆6Ê‚Êˆ∆∆W2 ¢“¿¢'&V∆FVB◊&ˆGV7G2#¢∞¢&Ê÷R#¢$∆ñóGGól:GBGV˜GFVWB"¿¢'6WGFñÊw2#¢∞¢&ÜVFñÊr#¢∞¢&∆&V¬#¢$˜G6ñ∂∂Ú ¢“¿¢'&ˆGV7G5˜Fı˜6Ü˜r#¢∞¢&∆&V¬#¢%GV˜FV‹:L:G,:B ¢“¿¢&6ˆ«V÷Á5ˆFW6∑F˜#¢∞¢&∆&V¬#¢%6&∂∂VWB ¢“¿¢'&w&ÖıÛ#¢∞¢&6ˆÁFVÁB#¢$∆ñóGGófú:BGV˜GFVóFfˆíÜ∆∆ñÊÊˆñFµ6V&6ÇbFó66˜fW'í(	6˜fV∆«V∑6W76“ÜáGG3¢ÚˆÜV«Á6Ü˜ñgíÊ6ˆ“ˆ÷ÁV¬ˆˆÊ∆ñÊR◊7F˜&R˜6V&6Ç÷ÊB÷Fó66˜fW'í˜&ˆGV7B◊&V6ˆ÷÷VÊFFñˆÁ2í"¿¢&FVfV«B#¢%6FBóL:L:B◊ú;g2Ï:Fó7L:B ¢“¿¢&ÜVFW%ıÛ"#¢∞¢&6ˆÁFVÁB#¢%GV˜FV∂˜'GFí ¢“¿¢&ñ÷vU˜&FñÚ#¢∞¢&∆&V¬#¢$∑Wf7VÜFR"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%6˜fóF∑Wf‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$◊V˜Fˆ∑Wf ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$ÊV∆ú;b ¢–¢“¿¢'6Ü˜u˜6V6ˆÊF'ïˆñ÷vR#¢∞¢&∆&V¬#¢$Ï:GóL:BFˆñÊV‚∑Wf˜6ˆóGFW76 ¢“¿¢'6Ü˜u˜fVÊF˜"#¢∞¢&∆&V¬#¢$◊óñ¨:B ¢“¿¢'6Ü˜u˜&FñÊr#¢∞¢&∆&V¬#¢%GV˜FV'fñÚ"¿¢&ñÊfÚ#¢%GV˜FV'fñ˜BVFV∆«óGL:Gl:GB6˜fV∆«W7F‚¥«VR∆ó<:L:C•“ÜáGG3¢ÚˆÜV«Á6Ü˜ñgíÊ6ˆ“ˆ÷ÁV¬ˆˆÊ∆ñÊR◊7F˜&R˜FÜV÷W2ˆ7W7Fˆ÷ó¶ñÊr◊FÜV÷W2ˆFB◊&ˆGV7B◊&V6ˆ÷÷VÊFFñˆÁ2í ¢“¿¢&6ˆ«V÷Á5ˆ÷ˆ&ñ∆R#¢∞¢&∆&V¬#¢$÷ˆ&ññ∆ó6&∂∂VWB"¿¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢# ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢#" ¢–¢–¢–¢“¿¢&◊V«Fó&˜r#¢∞¢&Ê÷R#¢$÷ˆÊó&ófñÊV‚"¿¢'6WGFñÊw2#¢∞¢&ñ÷vR#¢∞¢&∆&V¬#¢$∑Wf ¢“¿¢&ñ÷vUˆÜVñváB#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%6˜fóF∑Wf‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢%ñVÊí ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$∂W6∂ó7WW&í ¢“¿¢&˜FñˆÁ5ıÛB#¢∞¢&∆&V¬#¢%7WW&í ¢“¿¢&∆&V¬#¢$∂˜&∂WW2 ¢“¿¢&FW6∑F˜ˆñ÷vU˜vñGFÇ#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%ñVÊí ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂ó7WW&í ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢%7WW&í ¢“¿¢&∆&V¬#¢$∆WfWó2 ¢“¿¢'FWáE˜7Gñ∆R#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢$∆Vó:GFV∑7Fí ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∆˜G6ñ∂∂Ú ¢“¿¢&∆&V¬#¢%FV∑7FóGóñ∆í ¢“¿¢&'WGFˆÂ˜7Gñ∆R#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%ñáFVÏ:FñÊV‚ñÊñ∂R ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂Váó7ñÊñ∂R ¢“¿¢&∆&V¬#¢%ñÊñ∂∂VV‚Góñ∆í ¢“¿¢&FW6∑F˜ˆ6ˆÁFVÁEˆ∆ñvÊ÷VÁB#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%f6V‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂óFWGGí ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$ˆñ∂V ¢“¿¢&∆&V¬#¢%F6W2 ¢“¿¢&FW6∑F˜ˆ6ˆÁFVÁE˜˜6óFñˆ‚#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%ñÃ;g2 ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂V∆∆R ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$∆2 ¢“¿¢&∆&V¬#¢%6ñ¶ñÁFí ¢“¿¢&ñ÷vUˆ∆ñ˜WB#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%gV˜&˜GFV«Rf6V÷÷«F ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢%gV˜&˜GFV«Rˆñ∂V«F ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢%F6GGRf6V÷÷∆∆R ¢“¿¢&˜FñˆÁ5ıÛB#¢∞¢&∆&V¬#¢%F6GGRˆñ∂V∆∆R ¢“¿¢&∆&V¬#¢%6ñ¶ˆóGW2 ¢“¿¢&6ˆÁFñÊW%ˆ6ˆ∆˜%˜66ÜV÷R#¢∞¢&∆&V¬#¢%<:Fñ∆ú;f‚l:G&ñ÷∆∆í ¢“¿¢&÷ˆ&ñ∆Uˆ6ˆÁFVÁEˆ∆ñvÊ÷VÁB#¢∞¢&˜FñˆÁ5ıÛ#¢∞¢&∆&V¬#¢%f6V‚ ¢“¿¢&˜FñˆÁ5ıÛ"#¢∞¢&∆&V¬#¢$∂W6∂óFWGGí ¢“¿¢&˜FñˆÁ5ıÛ2#¢∞¢&∆&V¬#¢$ˆñ∂V ¢“¿¢&∆&V¬#¢$÷ˆ&ññ∆óF6W2 ¢“¿¢&ÜVFW"#¢∞¢&6ˆÁFVÁB#¢$∑Wf ¢“¿¢&ÜVFW%Û"#¢∞¢&6ˆÁFVÁB#¢%6ó<:F«L;b ¢“¿¢&ÜVFW%Û2#¢∞¢&6ˆÁFVÁB#¢%l:G&óB ¢–¢“¿¢&&∆ˆ6∑2#¢∞¢'&˜r#¢∞¢&Ê÷R#¢%&ófí"¿¢'6WGFñÊw2#¢∞¢&ñ÷vR#¢∞¢&∆&V¬#¢$∑Wf ¢“¿¢&6Fñˆ‚#¢∞¢&∆&V¬#¢$∑WfFV∑7Fí"¿¢&FVfV«B#¢$∑WfFV∑7Fí ¢“¿¢&ÜVFñÊr#¢∞¢&∆&V¬#¢$˜G6ñ∂∂Ú"¿¢&FVfV«B#¢%&ófí ¢“¿¢'FWáB#¢∞¢&∆&V¬#¢%FV∑7Fí"¿¢&FVfV«B#¢#«‰∂˜&˜7Ff∆óG6V÷6íGV˜FWGF¬∂ˆ∂ˆV∆÷Fí&∆ˆvó˜7FW7F∆ó<:L:F‹:F∆Ã:B∑Wf‚FV∑7Fí‚∆ó<:L:BFñWFˆ6FgWVFW7FFíGóñ∆ó7L:BFíÏ:GóL:Bfñ∂∂'f˜7FV«R„¬˜‚ ¢“¿¢&'WGFˆÂˆ∆&V¬#¢∞¢&∆&V¬#¢%FV∑7FóñÊñ∂R"¿¢&FVfV«B#¢%FV∑7FóñÊñ∂R"¿¢&ñÊfÚ#¢$¶˜2Ü«VBññ∆˜GF¬¨:GL:BGñÜ¨:F∑6í ¢“¿¢&'WGFˆÂˆ∆ñÊ≤#¢∞¢&∆&V¬#¢%ñÊñ∂V∆ñÊ∂∂í ¢–¢–¢–¢“¿¢'&W6WG2#¢∞¢&Ê÷R#¢$÷ˆÊó&ófñÊV‚ ¢–¢“¿¢'Vñ6≤÷˜&FW"÷∆ó7B#¢∞¢&Ê÷R#¢%ñ∂Fñ∆W6«VWGFV∆Ú"¿¢'6WGFñÊw2#¢∞¢'6Ü˜uˆñ÷vR#¢∞¢&∆&V¬#¢$∑WfB ¢“¿¢'6Ü˜u˜6∑R#¢∞¢&∆&V¬#¢%4µR÷∂ˆˆFóB ¢“¿¢'f&ñÁG5˜W%˜vR#¢∞¢&∆&V¬#¢%fW'6ñˆóF6ógV∆∆ ¢–¢“¿¢'&W6WG2#¢∞¢&Ê÷R#¢%ñ∂Fñ∆W6«VWGFV∆Ú ¢–¢“¿¢&Fó66∆˜7W&W2#¢∞¢&Ê÷R#¢$ñ∆÷ˆóGV∑6WB"¿¢'6WGFñÊw2#¢∞¢'&w&Ç#¢∞¢&6ˆÁFVÁB#¢%L:F‹:F‚GV˜GFVV‚∂ˆ∆∆ó6WBGW'f∆∆ó7WW7f&ˆóGV∑6WB¶<:L:FL;g7FV‚VFV∆«óGL:F‹:GBñ∆÷ˆóGV∑6WB‚ ¢“¿¢&ÜVFñÊr#¢∞¢&∆&V¬#¢$˜G6ñ∂∂Ú ¢“¿¢&˜VÂˆ'ïˆFVfV«B#¢∞¢&∆&V¬#¢$fˆñÊÊˆ∆WGV∑6VÊ ¢–¢–¢–¢–ß–†

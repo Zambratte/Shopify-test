@@ -1,23 +1,269 @@
-<section class="page-width product-page">
-  <div class="product-gallery">
-    {% for image in product.images %}{{ image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '500,800,1200' }}{% endfor %}
-  </div>
-  <div class="product-info">
-    <div class="eyebrow">{{ product.vendor }}</div><h1>{{ product.title }}</h1>
-    <div class="product-price" data-product-price>{{ product.selected_or_first_available_variant.price | money }}</div>
-    <div class="rte">{{ product.description }}</div>
-    {% form 'product', product, class: 'product-form' %}
-      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-      {% unless product.has_only_default_variant %}
-        <label for="variant-{{ section.id }}">AusfÃ¼hrung</label>
-        <select id="variant-{{ section.id }}" data-variant-select>
-          {% for variant in product.variants %}<option value="{{ variant.id }}" data-price="{{ variant.price | money }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>{{ variant.title }}{% unless variant.available %} â€“ ausverkauft{% endunless %}</option>{% endfor %}
-        </select>
-      {% endunless %}
-      <button class="button" type="submit" {% unless product.available %}disabled{% endunless %}>{% if product.available %}In den Warenkorb{% else %}Ausverkauft{% endif %}</button>
-      {{ form | payment_button }}
-    {% endform %}
-    <div class="assurances"><div>âœ“ Sichere, versicherte Lieferung</div><div>âœ“ PersÃ¶nlicher Produktsupport</div><div>âœ“ 30 Tage RÃ¼ckgaberecht</div><div>âœ“ Herstellergarantie inklusive</div></div>
-  </div>
-</section>
-{% schema %}{"name":"Produktinformationen","settings":[]}{% endschema %}
+<product-info
+  id="MainProduct-{{ section.id }}"
+  class="section-{{ section.id }}-padding gradient color-{{ section.settings.color_scheme }}"
+  data-section="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-update-url="true"
+  data-url="{{ product.url }}"
+  {% if section.settings.image_zoom == 'hover' %}
+    data-zoom-on-hover
+  {% endif %}
+>
+  {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+  {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-slider.css' | asset_url | stylesheet_tag }}
+  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
+  {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+
+  {% unless product.has_only_default_variant %}
+    {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+  {% endunless %}
+  {%- if product.quantity_price_breaks_configured? -%}
+    {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
+  {%- endif -%}
+
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+  {%- endstyle -%}
+
+  <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+  {%- if product.quantity_price_breaks_configured? -%}
+    <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+
+  {% if section.settings.image_zoom == 'hover' %}
+    <script id="EnableZoomOnHover-main" src="{{ 'magnify.js' | asset_url }}" defer="defer"></script>
+  {% endif %}
+  {%- if request.design_mode -%}
+    <script src="{{ 'theme-editor.js' | asset_url }}" defer="defer"></script>
+  {%- endif -%}
+
+  {%- assign first_3d_model = product.media | where: 'media_type', 'model' | first -%}
+  {%- if first_3d_model -%}
+    {{ 'component-product-model.css' | asset_url | stylesheet_tag }}
+    <link
+      id="ModelViewerStyle"
+      rel="stylesheet"
+      href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
+      media="print"
+      onload="this.media='all'"
+    >
+    <link
+      id="ModelViewerOverride"
+      rel="stylesheet"
+      href="{{ 'component-model-viewer-ui.css' | asset_url }}"
+      media="print"
+      onload="this.media='all'"
+    >
+  {%- endif -%}
+
+  {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+  <product-component view-event-payload="{{ product | standard_event_data: 'view', context: 'page' | escape }}">
+    <div class="page-width">
+      <div class="product product--{{ section.settings.media_size }} product--{{ section.settings.media_position }} product--{{ section.settings.gallery_layout }} product--mobile-{{ section.settings.mobile_thumbnails }} grid grid--1-col {% if product.media.size > 0 %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
+        <div class="grid__item product__media-wrapper">
+          {% render 'product-media-gallery', variant_images: variant_images %}
+        </div>
+        <div class="product__info-wrapper grid__item{% if settings.page_width > 1400 and section.settings.media_size == "small" %} product__info-wrapper--extra-padding{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <section
+            id="ProductInfo-{{ section.id }}"
+            class="product__info-container{% if section.settings.enable_sticky_info %} product__column-sticky{% endif %}"
+          >
+            {%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+            {%- for block in section.blocks -%}
+              {%- case block.type -%}
+                {%- when '@app' -%}
+                  {% render block %}
+                {%- when 'text' -%}
+                  <p
+                    class="product__text inline-richtext{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{- block.settings.text -}}
+                  </p>
+                {%- when 'title' -%}
+                  <div class="product__title" {{ block.shopify_attributes }}>
+                    <h1>{{ product.title | escape }}</h1>
+                    <a href="{{ product.url }}" class="product__title">
+                      <h2 class="h1">
+                        {{ product.title | escape }}
+                      </h2>
+                    </a>
+                  </div>
+                {%- when 'price' -%}
+                  <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+                    {%- render 'price',
+                      product: product,
+                      use_variant: true,
+                      show_badges: true,
+                      price_class: 'price--large'
+                    -%}
+                  </div>
+                  {%- if product.quantity_price_breaks_configured? -%}
+                    <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
+                      <span>{{ 'products.product.volume_pricing.note' | t }}</span>
+                    </div>
+                  {%- endif -%}
+                  {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+                    <div class="product__tax caption rte">
+                      {%- if cart.duties_included and cart.taxes_included -%}
+                        {{ 'products.product.duties_and_taxes_included' | t }}
+                      {%- elsif cart.taxes_included -%}
+                        {{ 'products.product.taxes_included' | t }}
+                      {%- elsif cart.duties_included -%}
+                        {{ 'products.product.duties_included' | t }}
+                      {%- endif -%}
+                      {%- if shop.shipping_policy.body != blank -%}
+                        {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  <div {{ block.shopify_attributes }}>
+                    {%- assign product_form_installment_id = 'product-form-installment-' | append: section.id -%}
+                    {%- form 'product', product, id: product_form_installment_id, class: 'installment caption-large' -%}
+                      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                      {{ form | payment_terms }}
+                    {%- endform -%}
+                  </div>
+                {%- when 'inventory' -%}
+                  <p
+                    class="product__inventory{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.inventory_management != 'shopify' %} visibility-hidden{% endif %}"
+                    {{ block.shopify_attributes }}
+                    id="Inventory-{{ section.id }}"
+                    role="status"
+                  >
+                    {%- if product.selected_or_first_available_variant.inventory_management == 'shopify' -%}
+                      {%- if product.selected_or_first_available_variant.inventory_quantity > 0 -%}
+                        {%- if product.selected_or_first_available_variant.inventory_quantity
+                            <= block.settings.inventory_threshold
+                        -%}
+                          <span class="svg-wrapper" style="color: rgb(238, 148, 65)">
+                            {{- 'icon-inventory-status.svg' | inline_asset_content -}}
+                          </span>
+                          {%- if block.settings.show_inventory_quantity -%}
+                            {{-
+                              'products.product.inventory_low_stock_show_count'
+                              | t: quantity: product.selected_or_first_available_variant.inventory_quantity
+                            -}}
+                          {%- else -%}
+                            {{- 'products.product.inventory_low_stock' | t -}}
+                          {%- endif -%}
+                        {%- else -%}
+                          <span class="svg-wrapper" style="color: rgb(62, 214, 96)">
+                            {{- 'icon-inventory-status.svg' | inline_asset_content -}}
+                          </span>
+                          {%- if block.settings.show_inventory_quantity -%}
+                            {{-
+                              'products.product.inventory_in_stock_show_count'
+                              | t: quantity: product.selected_or_first_available_variant.inventory_quantity
+                            -}}
+                          {%- else -%}
+                            {{- 'products.product.inventory_in_stock' | t -}}
+                          {%- endif -%}
+                        {%- endif -%}
+                      {%- else -%}
+                        {%- if product.selected_or_first_available_variant.inventory_policy == 'continue' -%}
+                          <span class="svg-wrapper" style="color: rgb(62, 214, 96)">
+                            {{- 'icon-inventory-status.svg' | inline_asset_content -}}
+                          </span>
+                          {{- 'products.product.inventory_out_of_stock_continue_selling' | t -}}
+                        {%- else -%}
+                          <span class="svg-wrapper" style="color: rgb(200, 200, 200)">
+                            {{- 'icon-inventory-status.svg' | inline_asset_content -}}
+                          </span>
+                          {{- 'products.product.inventory_out_of_stock' | t -}}
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endif -%}
+                  </p>
+                {%- when 'description' -%}
+                  {%- if product.description != blank -%}
+                    <div class="product__description rte quick-add-hidden" {{ block.shopify_attributes }}>
+                      {{ product.description }}
+                    </div>
+                  {%- endif -%}
+                {%- when 'sku' -%}
+                  <p
+                    class="product__sku{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.sku.size == 0 %} visibility-hidden{% endif %}"
+                    id="Sku-{{ section.id }}"
+                    role="status"
+                    {{ block.shopify_attributes }}
+                  >
+                    <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
+                    {{- product.selected_or_first_available_variant.sku -}}
+                  </p>
+                {%- when 'custom_liquid' -%}
+                  {{ block.settings.custom_liquid }}
+                {%- when 'collapsible_tab' -%}
+                  <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
+                    <details id="Details-{{ block.id }}-{{ section.id }}">
+                      <summary>
+                        <div class="summary__title">
+                          {% render 'icon-accordion', icon: block.settings.icon %}
+                          <h2 class="h4 accordion__title inline-richtext">
+                            {{ block.settings.heading | default: block.settings.page.title | escape }}
+                          </h2>
+                        </div>
+                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                      </summary>
+                      <div class="accordion__content rte" id="ProductAccordion-{{ block.id }}-{{ section.id }}">
+                        {{ block.settings.content }}
+                        {{ block.settings.page.content }}
+                      </div>
+                    </details>
+                  </div>
+                {%- when 'quantity_selector' -%}
+                  <div
+                    id="Quantity-Form-{{ section.id }}"
+                    class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {% comment %} TODO: enable theme-check once `item_count_for_variant` is accepted as valid filter {% endcomment %}
+                    {% # theme-check-disable %}
+                    {%- assign cart_qty = cart
+                      | item_count_for_variant: product.selected_or_first_available_variant.id
+                    -%}
+                    {% # theme-check-enable %}
+                    <span class="visually-hidden" id="quantity-label-{{ section.id }}">
+                      {%- if cart_qty > 0 -%}
+                        {{- 'products.product.quantity.in_cart_aria_label' | t: quantity: cart_qty -}}
+                      {%- else -%}
+                        {{- 'products.product.quantity.label' | t -}}
+                      {%- endif -%}
+                    </span>
+                    <label
+                      class="quantity__label form__label"
+                      for="Quantity-{{ section.id }}"
+                      aria-labelledby="quantity-label-{{ section.id }}"
+                    >
+                      <span aria-hidden="true">{{ 'products.product.quantity.label' | t }}</span>
+                      <span class="quantity__rules-cart{% if cart_qty == 0 %} hidden{% endif %}" aria-hidden="true">
+                        {%- render 'loading-spinner' -%}
+                        <span
+                          >(
+                          {{- 'products.product.quantity.in_cart_html' | t: quantity: cart_qty -}}
+                          )</span
+                        >
+                      </span>
+                    </label>
+                    <div class="price-per-item__container">
+                      <quantity-input class="quantity" data-url="{{ product.url }}" data-section="{{ section.id }}">
+                        <button class="quantity__button" name="minus" type="button">
+                          <span class="visually-hidden">
+            ÛvÖÚ$z{-®éÜj×'fÇVR#¢'6†öR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6–Æ†÷VWGFR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6æ÷vfÆ¶R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F÷vF6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'G'V6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'v6†–ær"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCBæÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢'&WGW&â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–6öåó"æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–ÖvU÷–6¶W""À¢&–B#¢&–ÖvUó""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–ÖvUó"æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–æÆ–æU÷&–6‡FW‡B"À¢&–B#¢&†VF–æuó""À¢&FVfVÇB#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó"æFVfVÇB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó"æÆ&VÂ"À¢&–æfò#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æræ–æfò ¢ÒÀ¢°¢'G—R#¢&†VFW""À¢&6öçFVçB#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2ç—&–æuó2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&–6öåó2"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&æöæR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&&ææ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&&÷GFÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóBæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&&÷‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóRæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6'&÷B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóbæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6†Eö'V&&ÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6†V6µöÖ&²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6Æ—&ö&B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&F—'’"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&F—'•ög&VR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&G'–W""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&W–R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&f—&R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóBæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&vÇWFVåög&VR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóRæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&†V'B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóbæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&—&öâ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÆVb"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÆVF†W""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æ–v‡Fæ–æuö&öÇB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æ—7F–6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æö6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Ö÷–â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&çWEög&VR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#BæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'çG2"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#RæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'u÷&–çB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#bæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'WW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#ræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'W&gVÖR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'ÆæR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'ÆçB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&–6U÷Fr"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'VW7F–öåöÖ&²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&V7–6ÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó32æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&WGW&â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3BæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢''VÆW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3RæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6W'f–æuöF—6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3bæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†—'B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3ræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†öR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6–Æ†÷VWGFR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6æ÷vfÆ¶R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F÷vF6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'G'V6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'v6†–ær"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCBæÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢'G'V6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–6öåó2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–ÖvU÷–6¶W""À¢&–B#¢&–ÖvUó2"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–ÖvUó2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–æÆ–æU÷&–6‡FW‡B"À¢&–B#¢&†VF–æuó2"À¢&FVfVÇB#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó2æFVfVÇB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó2æÆ&VÂ"À¢&–æfò#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æræ–æfò ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'6WGF–æw2#¢°¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&Væ&ÆU÷7F–6·•ö–æfò"À¢&FVfVÇB#¢G'VRÀ¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æVæ&ÆU÷7F–6·•ö–æfòæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6öÆ÷%÷66†VÖR"À¢&–B#¢&6öÆ÷%÷66†VÖR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÆÂæ6öÆ÷'2æÆ&VÂ"À¢&FVfVÇB#¢'66†VÖRÓ ¢ÒÀ¢°¢'G—R#¢&†VFW""À¢&6öçFVçB#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ†VFW"æ6öçFVçB ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&ÖVF–÷6—¦R"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢'6ÖÆÂ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦Ræ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÖVF—VÒ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦Ræ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æ&vR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦Ræ÷F–öç5õó2æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&Æ&vR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦RæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&6öç7G&–å÷Fõ÷f–Ww÷'B"À¢&FVfVÇB#¢G'VRÀ¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ6öç7G&–å÷Fõ÷f–Ww÷'BæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&ÖVF–öf—B"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&6öçF–â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–öf—Bæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6÷fW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–öf—Bæ÷F–öç5õó"æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&6öçF–â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–öf—BæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&vÆÆW'•öÆ–÷WB"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢'7F6¶VB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2ævÆÆW'•öÆ–÷WBæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6öÇVÖç2"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2ævÆÆW'•öÆ–÷WBæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'F‡VÖ&æ–Â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2ævÆÆW'•öÆ–÷WBæ÷F–öç5õó2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'F‡VÖ&æ–Å÷6Æ–FW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2ævÆÆW'•öÆ–÷WBæ÷F–öç5õóBæÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢'7F6¶VB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2ævÆÆW'•öÆ–÷WBæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&Öö&–ÆU÷F‡VÖ&æ–Ç2"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&6öÇVÖç2"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖö&–ÆU÷F‡VÖ&æ–Ç2æ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†÷r"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖö&–ÆU÷F‡VÖ&æ–Ç2æ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&†–FR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖö&–ÆU÷F‡VÖ&æ–Ç2æ÷F–öç5õó2æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&†–FR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖö&–ÆU÷F‡VÖ&æ–Ç2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&ÖVF–÷÷6—F–öâ"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&ÆVgB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷÷6—F–öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&–v‡B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷÷6—F–öâæ÷F–öç5õó"æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&ÆVgB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷÷6—F–öâæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&–ÖvU÷¦ööÒ"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&Æ–v‡F&÷‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&†÷fW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&æöæR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæ÷F–öç5õó2æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&Æ–v‡F&÷‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&†–FU÷f&–çG2"À¢&FVfVÇB#¢fÇ6RÀ¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ†–FU÷f&–çG2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&Væ&ÆU÷f–FVõöÆö÷–ær"À¢&FVfVÇB#¢fÇ6RÀ¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æVæ&ÆU÷f–FVõöÆö÷–æræÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&†VFW""À¢&6öçFVçB#¢'C§6V7F–öç2æÆÂçFF–ærç6V7F–öå÷FF–æuö†VF–ær ¢ÒÀ¢°¢'G—R#¢'&ævR"À¢&–B#¢'FF–æu÷F÷"À¢&Ö–â#¢À¢&Ö‚#¢À¢'7FW#¢BÀ¢'Væ—B#¢'‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÆÂçFF–ærçFF–æu÷F÷"À¢&FVfVÇB#¢3`¢ÒÀ¢°¢'G—R#¢'&ævR"À¢&–B#¢'FF–æuö&÷GFöÒ"À¢&Ö–â#¢À¢&Ö‚#¢À¢'7FW#¢BÀ¢'Væ—B#¢'‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÆÂçFF–ærçFF–æuö&÷GFöÒ"À¢&FVfVÇB#¢3`¢Ğ¢Ğ§Ğ§²RVæG66†VÖWĞ

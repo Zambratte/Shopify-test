@@ -1,0 +1,635 @@
+{% comment %}
+	@pp blocks/pagepilot-ships-by 1.0.9
+{% endcomment %}
+
+{% liquid
+	capture container_properties
+		echo '--indicator-bg-color: ' | append: block.settings.indicator_color | default: 'transparent' | append: ';'
+		echo '--indicator-size: ' | append: block.settings.indicator_size | append: 'px;'
+		echo '--indicator-size-mobile: ' | append: block.settings.indicator_size_mobile | append: 'px;'
+
+		echo '--handling-font-size: ' | append: block.settings.handling_text_font_size | append: 'px;'
+		echo '--handling-font-size-mobile: ' | append: block.settings.handling_text_font_size_mobile | append: 'px;'
+		echo '--handling-font-weight: ' | append: block.settings.handling_text_weight | default: '400' | append: ';'
+		echo '--handling-text-color: ' | append: block.settings.handling_text_color | default: 'transparent' | append: ';'
+
+		echo '--shipping-font-size: ' | append: block.settings.shipping_text_font_size | append: 'px;'
+		echo '--shipping-font-size-mobile: ' | append: block.settings.shipping_text_font_size_mobile | append: 'px;'
+		echo '--shipping-font-weight: ' | append: block.settings.shipping_text_weight | default: '400' | append: ';'
+		echo '--shipping-text-color: ' | append: block.settings.shipping_text_color | default: 'transparent' | append: ';'
+
+		echo '--flag-size: ' | append: block.settings.flag_size | append: 'px;'
+		if block.settings.flag_ratio == 'square'
+			echo '--flag-ratio: 1 / 1;'
+		elsif block.settings.flag_ratio == 'rectangle'
+			echo '--flag-ratio: 4 / 3;'
+		endif
+	endcapture
+
+	assign container_classes = 'pp:flex pp:items-center pp:gap-2'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign handling_classes = 'pp:text-center pp:text-(length:--handling-font-size-mobile) pp:@3xl:text-(length:--handling-font-size) pp:font-(--handling-font-weight) pp:text-(--handling-text-color)'
+
+	capture handling_letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.handling_text_letter_spacing
+	endcapture
+	assign handling_classes = handling_classes | append: ' ' | append: handling_letter_spacing
+
+	capture handling_text_transform
+		render 'pagepilot-text-transform', value: block.settings.handling_text_case
+	endcapture
+	assign handling_classes = handling_classes | append: ' ' | append: handling_text_transform
+
+	assign shipping_classes = 'pp:text-(length:--shipping-font-size-mobile) pp:@3xl:text-(length:--shipping-font-size) pp:font-(--shipping-font-weight) pp:text-(--shipping-text-color)'
+
+	capture shipping_letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.shipping_text_letter_spacing
+	endcapture
+	assign shipping_classes = shipping_classes | append: ' ' | append: shipping_letter_spacing
+
+	capture shipping_text_transform
+		render 'pagepilot-text-transform', value: block.settings.shipping_text_case
+	endcapture
+	assign shipping_classes = shipping_classes | append: ' ' | append: shipping_text_transform
+
+	assign flag_classes = 'pp:aspect-(--flag-ratio) pp:h-(--flag-size)'
+
+	capture flag_border_radius
+		render 'pagepilot-border-radius', value: block.settings.flag_border_radius
+	endcapture
+	assign flag_classes = flag_classes | append: ' ' | append: flag_border_radius
+%}
+
+<pagepilot-ships-by
+	class='{{ container_classes }}'
+	style='{{ container_properties }}'
+	{{ block.shopify_attributes }}
+	data-handling-text='{{ block.settings.handling_text | escape }}'
+	data-handling-date-offset='{{ block.settings.handling_date_offset }}'
+	data-handling-date-format='{{ block.settings.handling_date_format }}'
+	data-handling-date-locale='{{ block.settings.handling_date_locale }}'
+	data-shipping-text='{{ block.settings.shipping_text | escape }}'
+>
+	<span class='pp:inline-flex pp:items-baseline pp:gap-2'>
+		{% if block.settings.indicator_show %}
+			<span class='pp:relative pp:inline-flex pp:size-(--indicator-size-mobile) pp:@3xl:size-(--indicator-size)'>
+				{% if block.settings.indicator_animation == 'pulse' %}
+					<span
+						class='pp:absolute pp:inline-flex pp:h-full pp:w-full pp:animate-ping pp:rounded-full pp:bg-(--indicator-bg-color)'
+					></span>
+				{% endif %}
+				<span
+					class='pp:relative pp:inline-flex pp:size-(--indicator-size-mobile) pp:rounded-full pp:bg-(--indicator-bg-color) pp:@3xl:size-(--indicator-size)'
+				></span>
+			</span>
+		{% endif %}
+		<span ref='handling' class='{{ handling_classes }}'></span>
+	</span>
+
+	<span ref='shippingWrapper' class='pp:hidden pp:items-center pp:gap-2'>
+		{% if block.settings.flag_show %}
+			<img ref='flag' alt='' class='{{ flag_classes }}' width='auto' height='auto' loading='lazy'>
+		{% endif %}
+		<div ref='shipping' class='{{ shipping_classes }}'></div>
+	</span>
+</pagepilot-ships-by>
+
+{% schema %}
+{
+	"name": "Ships By (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Indicator"
+		},
+		{
+			"type": "checkbox",
+			"id": "indicator_show",
+			"label": "Show",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "indicator_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "indicator_size",
+			"label": "Size",
+			"min": 8,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "indicator_size_mobile",
+			"label": "Mobile Size",
+			"min": 8,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "select",
+			"id": "indicator_animation",
+			"label": "Animation",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "pulse",
+					"label": "Pulse"
+				}
+			],
+			"default": "pulse"
+		},
+		{
+			"type": "header",
+			"content": "Handling"
+		},
+		{
+			"type": "range",
+			"id": "handling_date_offset",
+			"label": "Date Offset",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "d",
+			"default": 25,
+			"info": "The number of days for the handling date from current date."
+		},
+		{
+			"type": "select",
+			"id": "handling_date_format",
+			"label": "Date Format",
+			"options": [
+				{ "value": "ddd_mmm_d", "label": "Tue, Mar 17" },
+				{ "value": "dddd_mmmm_d_yyyy", "label": "Tuesday, March 17, 2026" },
+
+				{ "value": "d_mmm_yyyy", "label": "17 Mar 2026" },
+				{ "value": "d_mmmm_yyyy", "label": "17 March 2026" },
+
+				{ "value": "mmm_d_yyyy", "label": "Mar 17, 2026" },
+				{ "value": "mmmm_d_yyyy", "label": "March 17, 2026" },
+
+				{ "value": "dd_mm_yyyy", "label": "17/03/2026" },
+				{ "value": "mm_dd_yyyy", "label": "03/17/2026" },
+
+				{ "value": "d_m_yyyy", "label": "17/3/2026" },
+				{ "value": "dd_mm_yy", "label": "17/03/26" },
+
+				{ "value": "yyyy_mmm_d", "label": "2026 Mar 17" },
+				{ "value": "yyyy_mmmm_d", "label": "2026 March 17" },
+
+				{ "value": "ddd_d_mmm", "label": "Tue 17 Mar" },
+				{ "value": "dddd_d_mmmm", "label": "Tuesday 17 March" }
+			],
+			"default": "d_mmmm_yyyy"
+		},
+		{
+			"type": "select",
+			"id": "handling_date_locale",
+			"label": "Date Language",
+			"options": [
+				{
+					"value": "ar-SA",
+					"label": "Arabic"
+				},
+				{
+					"value": "bg-BG",
+					"label": "Bulgarian"
+				},
+				{
+					"value": "pt-BR",
+					"label": "Brazilian"
+				},
+				{
+					"value": "zh-CN",
+					"label": "Chinese"
+				},
+				{
+					"value": "cs-CZ",
+					"label": "Czech"
+				},
+				{
+					"value": "da-DK",
+					"label": "Danish"
+				},
+				{
+					"value": "nl-NL",
+					"label": "Dutch"
+				},
+				{
+					"value": "en-US",
+					"label": "English"
+				},
+				{
+					"value": "et-EE",
+					"label": "Estonian"
+				},
+				{
+					"value": "fi-FI",
+					"label": "Finnish"
+				},
+				{
+					"value": "fr-FR",
+					"label": "French"
+				},
+				{
+					"value": "ga-IE",
+					"label": "Irish"
+				},
+				{
+					"value": "de-DE",
+					"label": "German"
+				},
+				{
+					"value": "el-GR",
+					"label": "Greek"
+				},
+				{
+					"value": "hu-HU",
+					"label": "Hungarian"
+				},
+				{
+					"value": "is-IS",
+					"label": "Icelandic"
+				},
+				{
+					"value": "id-ID",
+					"label": "Indonesian"
+				},
+				{
+					"value": "it-IT",
+					"label": "Italian"
+				},
+				{
+					"value": "ja-JP",
+					"label": "Japanese"
+				},
+				{
+					"value": "ko-KR",
+					"label": "Korean"
+				},
+				{
+					"value": "lv-LV",
+					"label": "Latvian"
+				},
+				{
+					"value": "lt-LT",
+					"label": "Lithuanian"
+				},
+				{
+					"value": "nb-NO",
+					"label": "Norwegian"
+				},
+				{
+					"value": "pl-PL",
+					"label": "Polish"
+				},
+				{
+					"value": "pt-PT",
+					"label": "Portuguese"
+				},
+				{
+					"value": "ro-RO",
+					"label": "Romanian"
+				},
+				{
+					"value": "ru-RU",
+					"label": "Russian"
+				},
+				{
+					"value": "sk-SK",
+					"label": "Slovak"
+				},
+				{
+					"value": "sl-SI",
+					"label": "Slovenian"
+				},
+				{
+					"value": "es-ES",
+					"label": "Spanish"
+				},
+				{
+					"value": "sv-SE",
+					"label": "Swedish"
+				},
+				{
+					"value": "tr-TR",
+					"label": "Turkish"
+				},
+				{
+					"value": "uk-UA",
+					"label": "Ukrainian"
+				}
+			],
+			"default": "en-US"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "handling_text",
+			"label": "Text",
+			"default": "Ships by <strong>[date]</strong>",
+			"info": "You can use the following placeholder: [date]"
+		},
+		{
+			"type": "color",
+			"id": "handling_text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "handling_text_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "handling_text_font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "handling_text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "handling_text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "handling_text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Flag"
+		},
+		{
+			"type": "checkbox",
+			"id": "flag_show",
+			"label": "Show",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "flag_ratio",
+			"label": "Aspect Ratio",
+			"options": [
+				{
+					"value": "square",
+					"label": "Square"
+				},
+				{
+					"value": "rectangle",
+					"label": "Rectangle"
+				}
+			],
+			"default": "square"
+		},
+		{
+			"type": "range",
+			"id": "flag_size",
+			"label": "Size",
+			"min": 10,
+			"max": 20,
+			"step": 1,
+			"unit": "px",
+			"default": 20
+		},
+		{
+			"type": "range",
+			"id": "flag_border_radius",
+			"label": "Border Radius",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "header",
+			"content": "Shipping"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "shipping_text",
+			"label": "Text",
+			"default": "Fast <strong>[country_code]</strong> Shipping",
+			"info": "You can use the following placeholders: [country_code], [country_name]"
+		},
+		{
+			"type": "color",
+			"id": "shipping_text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "shipping_text_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "shipping_text_font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "shipping_text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "shipping_text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "shipping_text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Ships By (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

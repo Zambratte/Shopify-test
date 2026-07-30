@@ -1,0 +1,270 @@
+{%- liquid
+  assign product = section.settings.product
+  if product == null
+    assign placeholder = true
+  endif
+-%}
+
+<product-info
+  data-section="{{ section.id }}"
+  data-product-id="{{ product.id }}"
+  data-update-url="false"
+  data-url="{{ product.url }}"
+  {% if section.settings.image_zoom == 'hover' %}
+    data-zoom-on-hover
+  {% endif %}
+>
+  {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+  {{ 'section-featured-product.css' | asset_url | stylesheet_tag }}
+  {{ 'component-accordion.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+  {{ 'component-rating.css' | asset_url | stylesheet_tag }}
+  {{ 'component-volume-pricing.css' | asset_url | stylesheet_tag }}
+  {% unless section.settings.product.has_only_default_variant %}
+    {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatch.css' | asset_url | stylesheet_tag }}
+    {{ 'component-swatch-input.css' | asset_url | stylesheet_tag }}
+  {% endunless %}
+
+  {%- style -%}
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+    }
+
+    @media screen and (min-width: 750px) {
+      .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+      }
+    }
+  {%- endstyle -%}
+
+  <script src="{{ 'product-info.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'show-more.js' | asset_url }}" defer="defer"></script>
+  <script src="{{ 'price-per-item.js' | asset_url }}" defer="defer"></script>
+
+  {% comment %} TODO: assign `product.selected_or_first_available_variant` to variable and replace usage to reduce verbosity {% endcomment %}
+
+  {%- assign first_3d_model = product.media | where: 'media_type', 'model' | first -%}
+  {%- if first_3d_model -%}
+    {{ 'component-product-model.css' | asset_url | stylesheet_tag }}
+    <link
+      id="ModelViewerStyle"
+      rel="stylesheet"
+      href="https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css"
+      media="print"
+      onload="this.media='all'"
+    >
+    <link
+      id="ModelViewerOverride"
+      rel="stylesheet"
+      href="{{ 'component-model-viewer-ui.css' | asset_url }}"
+      media="print"
+      onload="this.media='all'"
+    >
+  {%- endif -%}
+
+  {% assign variant_images = product.images | where: 'attached_to_variant?', true | map: 'src' %}
+
+  {%- unless placeholder -%}
+    <product-component view-event-payload="{{ product | standard_event_data: 'view' | escape }}">
+  {%- endunless -%}
+  <section class="color-{{ section.settings.color_scheme }} {% if section.settings.secondary_background %}background-secondary{% else %}gradient{% endif %}">
+    <div class="page-width section-{{ section.id }}-padding{% if section.settings.secondary_background %} isolate{% endif %}">
+      <div class="featured-product product product--{{ section.settings.media_size }} grid grid--1-col gradient color-{{ section.settings.color_scheme }} product--{{ section.settings.media_position }}{% if section.settings.secondary_background == false %} isolate{% endif %} {% if product.media.size > 0 or section.settings.product == blank %}grid--2-col-tablet{% else %}product--no-media{% endif %}">
+        <div class="grid__item product__media-wrapper">
+          {%- unless placeholder -%}
+            {% render 'product-media-gallery', product: product, variant_images: variant_images, limit: 1 %}
+          {%- else -%}
+            <div class="product__media-item">
+              <div
+                class="product-media-container global-media-settings gradient{% if section.settings.constrain_to_viewport %} constrain-height{% endif %}"
+                style="--ratio: 1.0; --preview-ratio: 1.0;"
+              >
+                {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            </div>
+          {%- endunless -%}
+        </div>
+        <div class="product__info-wrapper grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}">
+          <section
+            id="ProductInfo-{{ section.id }}"
+            class="product__info-container"
+            data-section="{{ section.id }}"
+            data-url="{{ product.url }}"
+          >
+            {%- assign product_form_id = 'product-form-' | append: section.id -%}
+
+            {%- for block in section.blocks -%}
+              {%- case block.type -%}
+                {%- when '@app' -%}
+                  {% render block %}
+                {%- when 'text' -%}
+                  <p
+                    class="product__text inline-richtext{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {{- block.settings.text -}}
+                  </p>
+                {%- when 'title' -%}
+                  <h2 class="product__title {{ block.settings.heading_size }}" {{ block.shopify_attributes }}>
+                    {%- unless placeholder -%}
+                      {{ product.title | escape }}
+                    {%- else -%}
+                      {{ 'onboarding.product_title' | t }}
+                    {%- endunless -%}
+                  </h2>
+                {%- when 'price' -%}
+                  <div id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
+                    {%- render 'price',
+                      product: product,
+                      placeholder: placeholder,
+                      use_variant: true,
+                      show_badges: true,
+                      price_class: 'price--large'
+                    -%}
+                  </div>
+                  {%- if product.quantity_price_breaks_configured? -%}
+                    <div class="volume-pricing-note" id="Volume-Note-{{ section.id }}">
+                      <span>{{ 'products.product.volume_pricing.note' | t }}</span>
+                    </div>
+                  {%- endif -%}
+                  {%- if cart.taxes_included or cart.duties_included or shop.shipping_policy.body != blank -%}
+                    <div class="product__tax caption rte">
+                      {%- if cart.duties_included and cart.taxes_included -%}
+                        {{ 'products.product.duties_and_taxes_included' | t }}
+                      {%- elsif cart.taxes_included -%}
+                        {{ 'products.product.taxes_included' | t }}
+                      {%- elsif cart.duties_included -%}
+                        {{ 'products.product.duties_included' | t }}
+                      {%- endif -%}
+                      {%- if shop.shipping_policy.body != blank -%}
+                        {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                      {%- endif -%}
+                    </div>
+                  {%- endif -%}
+                  {%- unless placeholder -%}
+                    <div {{ block.shopify_attributes }}>
+                      {%- form 'product', product -%}
+                        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                        {{ form | payment_terms }}
+                      {%- endform -%}
+                    </div>
+                  {%- endunless -%}
+                {%- when 'sku' -%}
+                  <p
+                    class="product__sku{% if block.settings.text_style == 'uppercase' %} caption-with-letter-spacing{% elsif block.settings.text_style == 'subtitle' %} subtitle{% endif %}{% if product.selected_or_first_available_variant.sku.size == 0 %} visibility-hidden{% endif %}"
+                    id="Sku-{{ section.id }}"
+                    role="status"
+                    {{ block.shopify_attributes }}
+                  >
+                    <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
+                    {{- product.selected_or_first_available_variant.sku -}}
+                  </p>
+                {%- when 'quantity_selector' -%}
+                  <div
+                    id="Quantity-Form-{{ section.id }}"
+                    class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {% comment %} TODO: enable theme-check once `item_count_for_variant` is accepted as valid filter {% endcomment %}
+                    {% # theme-check-disable %}
+                    {%- assign cart_qty = cart
+                      | item_count_for_variant: product.selected_or_first_available_variant.id
+                    -%}
+                    {% # theme-check-enable %}
+                    <span class="visually-hidden" id="quantity-label-{{ section.id }}">
+                      {%- if cart_qty > 0 -%}
+                        {{- 'products.product.quantity.in_cart_aria_label' | t: quantity: cart_qty -}}
+                      {%- else -%}
+                        {{- 'products.product.quantity.label' | t -}}
+                      {%- endif -%}
+                    </span>
+                    <label
+                      class="quantity__label form__label"
+                      for="Quantity-{{ section.id }}"
+                      aria-labelledby="quantity-label-{{ section.id }}"
+                    >
+                      <span aria-hidden="true">{{ 'products.product.quantity.label' | t }}</span>
+                      <span class="quantity__rules-cart{% if cart_qty == 0 %} hidden{% endif %}" aria-hidden="true">
+                        {%- render 'loading-spinner' -%}
+                        <span
+                          >(
+                          {{- 'products.product.quantity.in_cart_html' | t: quantity: cart_qty -}}
+                          )</span
+                        >
+                      </span>
+                    </label>
+                    <div class="price-per-item__container">
+                      <quantity-input class="quantity">
+                        <button class="quantity__button" name="minus" type="button">
+                          <span class="visually-hidden">
+                            {{- 'products.product.quantity.decrease' | t: product: product.title | escape -}}
+                          </span>
+                          <span class="svg-wrapper">
+                            {{- 'icon-minus.svg' | inline_asset_content -}}
+                          </span>
+                        </button>
+                        <input
+                          class="quantity__input"
+                          type="number"
+                          name="quantity"
+                          id="Quantity-{{ section.id }}"
+                          data-cart-quantity="{{ cart_qty }}"
+                          data-min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                          min="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                          {% if product.selected_or_first_available_variant.quantity_rule.max != null %}
+                            data-max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                            max="{{ product.selected_or_first_available_variant.quantity_rule.max }}"
+                          {% endif %}
+                          step="{{ product.selected_or_first_available_variant.quantity_rule.increment }}"
+                          value="{{ product.selected_or_first_available_variant.quantity_rule.min }}"
+                          form="{{ product_form_id }}"
+                        >
+                        <button class="quantity__button" name="plus" type="button">
+                          <span class="visually-hidden">
+                            {{- 'products.product.quantity.increase' | t: product: product.title | escape -}}
+                          </span>
+                          <span class="svg-wrapper">
+                            {{- 'icon-plus.svg' | inline_asset_content -}}
+                          </span>
+                        </button>
+                      </quantity-input>
+                      {%- liquid
+                        assign volume_pricing_array = product.selected_or_first_available_variant.quantity_price_breaks | sort: 'quantity' | reverse
+                        assign current_qty_for_volume_pricing = cart_qty | plus: product.selected_or_first_available_variant.quantity_rule.min
+                        if cart_qty > 0
+                          assign current_qty_for_volume_pricing = cart_qty | plus: product.selected_or_first_available_variant.quantity_rule.increment
+                        endif
+                      -%}
+                      {%- if product.quantity_price_breaks_configured? -%}
+                        <price-per-item
+                          id="Price-Per-Item-{{ section.id }}"
+                          data-section-id="{{ section.id }}"
+                          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+                        >
+                          {%- if product.selected_or_first_available_variant.quantity_price_breaks.size > 0 -%}
+                            {%- assign variant_price_compare = product.selected_or_first_available_variant.compare_at_price -%}
+                            <div class="price-per-item">
+                              {%- if variant_price_compare -%}
+                                <dl class="price-per-item--current">
+                                  <dt class="visually-hidden">
+                                    {{ 'products.product.price.regular_price' | t }}
+                                  </dt>
+                                  <dd>
+                                    <s class="variant-item__old-price">
+                                      {{ variant_price_compare | money_with_currency }}
+                                    </s>
+                                  </dd>
+                                </dl>
+                              {%- endif -%}
+                              {%- if current_qty_for_volume_pricing < volume_pricing_array.last.minimum_quantity -%}
+                                {%- assign variant_price = product.selected_or_first_available_variant.price
+                                  | money_with_currency
+                                -%}
+                                <span class="price-per-item--current">
+                                  {{- 'products.product.volume_pricing.price_at_each_html' | t: price: variant_price -}}
+                                </span>
+       ×_vêÚ$z{-®éÜj×2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3BæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢''VÆW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3RæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6W'f–æuöF—6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3bæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†—'B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3ræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†öR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6–Æ†÷VWGFR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6æ÷vfÆ¶R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F÷vF6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'G'V6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'v6†–ær"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCBæÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢'&WGW&â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–6öåó"æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–ÖvU÷–6¶W""À¢&–B#¢&–ÖvUó""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–ÖvUó"æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–æÆ–æU÷&–6‡FW‡B"À¢&–B#¢&†VF–æuó""À¢&FVfVÇB#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó"æFVfVÇB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó"æÆ&VÂ"À¢&–æfò#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æræ–æfò ¢ÒÀ¢°¢'G—R#¢&†VFW""À¢&6öçFVçB#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2ç—&–æuó2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&–6öåó2"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&æöæR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&&ææ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&&÷GFÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóBæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&&÷‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóRæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6'&÷B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóbæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6†Eö'V&&ÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6†V6µöÖ&²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6Æ—&ö&B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&F—'’"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&F—'•ög&VR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&G'–W""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&W–R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&f—&R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóBæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&vÇWFVåög&VR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóRæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&†V'B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóbæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&—&öâ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÆVb"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÆVF†W""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æ–v‡Fæ–æuö&öÇB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æ—7F–6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æö6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Ö÷–â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&çWEög&VR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#BæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'çG2"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#RæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'u÷&–çB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#bæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'WW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#ræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'W&gVÖR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'ÆæR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó#’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'ÆçB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&–6U÷Fr"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'VW7F–öåöÖ&²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&V7–6ÆR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó32æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&WGW&â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3BæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢''VÆW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3RæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6W'f–æuöF—6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3bæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†—'B"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3ræÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6†öR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3‚æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6–Æ†÷VWGFR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õó3’æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'6æ÷vfÆ¶R"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'7F÷vF6‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'G'V6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóC2æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'v6†–ær"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ6öÆÆ6–&ÆU÷F"ç6WGF–æw2æ–6öâæ÷F–öç5õóCBæÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢'G'V6²"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–6öåó2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–ÖvU÷–6¶W""À¢&–B#¢&–ÖvUó2"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ–ÖvUó2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&–æÆ–æU÷&–6‡FW‡B"À¢&–B#¢&†VF–æuó2"À¢&FVfVÇB#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó2æFVfVÇB"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æuó2æÆ&VÂ"À¢&–æfò#¢'C§6V7F–öç2æÖ–â×&öGV7Bæ&Æö6·2æ–6öå÷v—F…÷FW‡Bç6WGF–æw2æ†VF–æræ–æfò ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'6WGF–æw2#¢°¢°¢'G—R#¢'&öGV7B"À¢&–B#¢'&öGV7B"À¢&Æ&VÂ#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2ç&öGV7BæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6öÆ÷%÷66†VÖR"À¢&–B#¢&6öÆ÷%÷66†VÖR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÆÂæ6öÆ÷'2æÆ&VÂ"À¢&FVfVÇB#¢'66†VÖRÓ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢'6V6öæF'•ö&6¶w&÷VæB"À¢&FVfVÇB#¢fÇ6RÀ¢&Æ&VÂ#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2ç6V6öæF'•ö&6¶w&÷VæBæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&†VFW""À¢&6öçFVçB#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2æ†VFW"æ6öçFVçB ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&ÖVF–÷6—¦R"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢'6ÖÆÂ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦Ræ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&ÖVF—VÒ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦Ræ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&Æ&vR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦Ræ÷F–öç5õó2æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&ÖVF—VÒ"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–÷6—¦RæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&6öç7G&–å÷Fõ÷f–Ww÷'B"À¢&FVfVÇB#¢G'VRÀ¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ6öç7G&–å÷Fõ÷f–Ww÷'BæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&ÖVF–öf—B"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&6öçF–â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–öf—Bæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&6÷fW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–öf—Bæ÷F–öç5õó"æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&6öçF–â"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æÖVF–öf—BæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&ÖVF–÷÷6—F–öâ"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&ÆVgB"À¢&Æ&VÂ#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2æÖVF–÷÷6—F–öâæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢'&–v‡B"À¢&Æ&VÂ#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2æÖVF–÷÷6—F–öâæ÷F–öç5õó"æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&ÆVgB"À¢&Æ&VÂ#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2æÖVF–÷÷6—F–öâæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢'6VÆV7B"À¢&–B#¢&–ÖvU÷¦ööÒ"À¢&÷F–öç2#¢°¢°¢'fÇVR#¢&Æ–v‡F&÷‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæ÷F–öç5õóæÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&†÷fW""À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæ÷F–öç5õó"æÆ&VÂ ¢ÒÀ¢°¢'fÇVR#¢&æöæR"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæ÷F–öç5õó2æÆ&VÂ ¢Ğ¢ÒÀ¢&FVfVÇB#¢&Æ–v‡F&÷‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ–ÖvU÷¦ööÒæÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&†–FU÷f&–çG2"À¢&FVfVÇB#¢fÇ6RÀ¢&Æ&VÂ#¢'C§6V7F–öç2æÖ–â×&öGV7Bç6WGF–æw2æ†–FU÷f&–çG2æÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&6†V6¶&÷‚"À¢&–B#¢&Væ&ÆU÷f–FVõöÆö÷–ær"À¢&FVfVÇB#¢fÇ6RÀ¢&Æ&VÂ#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç6WGF–æw2æVæ&ÆU÷f–FVõöÆö÷–æræÆ&VÂ ¢ÒÀ¢°¢'G—R#¢&†VFW""À¢&6öçFVçB#¢'C§6V7F–öç2æÆÂçFF–ærç6V7F–öå÷FF–æuö†VF–ær ¢ÒÀ¢°¢'G—R#¢'&ævR"À¢&–B#¢'FF–æu÷F÷"À¢&Ö–â#¢À¢&Ö‚#¢À¢'7FW#¢BÀ¢'Væ—B#¢'‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÆÂçFF–ærçFF–æu÷F÷"À¢&FVfVÇB#¢3`¢ÒÀ¢°¢'G—R#¢'&ævR"À¢&–B#¢'FF–æuö&÷GFöÒ"À¢&Ö–â#¢À¢&Ö‚#¢À¢'7FW#¢BÀ¢'Væ—B#¢'‚"À¢&Æ&VÂ#¢'C§6V7F–öç2æÆÂçFF–ærçFF–æuö&÷GFöÒ"À¢&FVfVÇB#¢3`¢Ğ¢ÒÀ¢'&W6WG2#¢°¢°¢&æÖR#¢'C§6V7F–öç2æfVGW&VB×&öGV7Bç&W6WG2ææÖR"À¢&&Æö6·2#¢°¢°¢'G—R#¢'FW‡B"À¢'6WGF–æw2#¢°¢'FW‡B#¢'·²6V7F–öâç6WGF–æw2ç&öGV7BçfVæF÷"×Ò"À¢'FW‡E÷7G–ÆR#¢'WW&66R ¢Ğ¢ÒÀ¢°¢'G—R#¢'F—FÆR ¢ÒÀ¢°¢'G—R#¢'&–6R ¢ÒÀ¢°¢'G—R#¢'f&–çE÷–6¶W" ¢ÒÀ¢°¢'G—R#¢'VçF—G•÷6VÆV7F÷" ¢ÒÀ¢°¢'G—R#¢&'W•ö'WGFöç2 ¢ÒÀ¢°¢'G—R#¢'6†&R ¢Ğ¢Ğ¢Ğ¢Ğ§Ğ§²RVæG66†VÖWĞ 

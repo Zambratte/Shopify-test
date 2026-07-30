@@ -1,0 +1,345 @@
+{% comment %}
+	@pp blocks/pagepilot-masonry 1.0.8
+{% endcomment %}
+
+{% liquid
+	capture container_styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--columns: ' | append: block.settings.columns | append: ';'
+		echo '--columns-mobile: ' | append: block.settings.columns_mobile | append: ';'
+
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: block.settings.gap_mobile | append: 'px;'
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-masonry pp:relative pp:w-full'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:pr-(--padding-right-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) pp:@3xl:pr-(--padding-right)'
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	assign grid_classes = 'pp:grid pp:grid-cols-[repeat(var(--columns-mobile),1fr)] pp:gap-[var(--gap-mobile)] pp:@3xl:grid-cols-[repeat(var(--columns),1fr)] pp:@3xl:gap-[var(--gap)]'
+
+	assign columns = block.settings.columns | default: 4
+%}
+
+<pagepilot-masonry
+	class='{{ container_classes }}'
+	style='{{ container_styles }}'
+	data-columns='{{ block.settings.columns | default: 4 }}'
+	data-columns-mobile='{{ block.settings.columns_mobile | default: 1 }}'
+	{{ block.shopify_attributes }}
+>
+	<div class='{{ grid_classes }}' data-masonry-grid>
+		{% for i in (0..columns) %}
+			{% if i < columns %}
+				<div class='pp:flex pp:flex-col pp:gap-[var(--gap-mobile)] pp:@3xl:gap-[var(--gap)]' data-masonry-column>
+					{% for nested_block in block.blocks %}
+						{% assign block_index = forloop.index0 %}
+						{% assign col_index = block_index | modulo: columns %}
+						{% if col_index == i %}
+							<div data-masonry-item='{{ block_index }}'>
+								{% render nested_block %}
+							</div>
+						{% endif %}
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endfor %}
+	</div>
+</pagepilot-masonry>
+
+{% schema %}
+{
+	"name": "Reviews Grid (PP)",
+	"class": "pagepilot-block",
+	"blocks": [
+		{
+			"type": "pagepilot_video"
+		},
+		{
+			"type": "pagepilot_image"
+		},
+		{
+			"type": "pagepilot_review_card"
+		}
+	],
+	"settings": [
+		{
+			"type": "range",
+			"id": "columns",
+			"label": "Columns",
+			"min": 3,
+			"max": 6,
+			"step": 1,
+			"unit": "col",
+			"default": 4
+		},
+		{
+			"type": "range",
+			"id": "columns_mobile",
+			"label": "Mobile Columns",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "col",
+			"default": 1
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 90,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Masonry (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

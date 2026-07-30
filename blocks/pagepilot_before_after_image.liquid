@@ -1,0 +1,487 @@
+{% comment %}
+	@pp blocks/pagepilot-before-after-image 1.0.9
+{% endcomment %}
+
+{% liquid
+	assign before_img = block.settings.before_image
+	assign after_img = block.settings.after_image
+
+	capture styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--position: ' | append: 50 | append: '%' | append: ';'
+
+		case block.settings.image_ratio
+			when 'adapt'
+				echo '--ratio: ' | append: 'auto' | append: ';'
+			when 'square'
+				echo '--ratio: ' | append: '1 / 1' | append: ';'
+			when 'portrait'
+				echo '--ratio: ' | append: '4 / 5' | append: ';'
+			when 'landscape'
+				echo '--ratio: ' | append: '16 / 9' | append: ';'
+		endcase
+
+		echo '--image-max-width: ' | append: block.settings.max_width | append: '%;'
+		echo '--image-max-width-mobile: ' | append: block.settings.max_width_mobile | append: '%;'
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | default: 0 | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		if block.settings.show_labels
+			echo '--label-background-color: ' | append: block.settings.label_background_color | default: 'transparent' | append: ';'
+			echo '--label-text-color: ' | append: block.settings.label_text_color | default: 'transparent' | append: ';'
+		endif
+
+		echo 'opacity: 0;'
+	endcapture
+
+	assign container_classes = 'pp-before-after-image'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pb-(--padding-bottom) pp:pl-(--padding-left) pp:pr-(--padding-right)'
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign block_classes = 'pp-frame pp:relative pp:w-full pp:h-full pp:mx-auto pp:cursor-crosshair pp:overflow-hidden pp:select-none'
+	assign block_classes = block_classes | append: ' pp:w-full pp:max-w-(--image-max-width-mobile) pp:@3xl:max-w-(--image-max-width)'
+	assign block_classes = block_classes | append: ' pp:aspect-(--ratio)'
+
+	if block.settings.image_ratio == 'adapt'
+		case block.settings.height
+			when 'fit'
+				assign block_classes = block_classes | append: ' pp:@3xl:h-fit'
+			when 'fill'
+				assign block_classes = block_classes | append: ' pp:@3xl:h-full'
+		endcase
+	endif
+
+	assign image_wrapper_classes = 'pp:absolute pp:inset-0 pp:overflow-hidden'
+
+	capture image_wrapper_border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign image_wrapper_classes = image_wrapper_classes | append: ' ' | append: image_wrapper_border_radius
+
+	assign image_classes = 'pp:w-full pp:h-full pp:object-contain pp:object-center'
+
+	capture image_border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign image_classes = image_classes | append: ' ' | append: image_border_radius
+
+	capture label_styles
+		if block.settings.show_labels
+			echo 'background: ' | append: 'var(--label-background-color)' | append: ';'
+		endif
+	endcapture
+
+	assign label_classes = 'pp:absolute pp:top-4 pp:px-2! pp:py-1! pp:text-sm pp:font-medium pp:text-(--label-text-color)'
+
+	capture label_border_radius
+		render 'pagepilot-border-radius', value: block.settings.label_border_radius
+	endcapture
+	assign label_classes = label_classes | append: ' ' | append: label_border_radius
+%}
+
+<pagepilot-before-after
+	class='{{ container_classes }}'
+	style='{{ styles }}'
+	{{ block.shopify_attributes }}
+>
+	<div ref='frame' class='{{ block_classes }}'>
+		{% if before_img != blank %}
+			{{
+				before_img
+				| image_url: width: before_img.width
+				| image_tag:
+					width: before_img.width,
+					height: before_img.height,
+					alt: before_img.alt,
+					class: 'pp:w-full pp:h-full pp:opacity-0 pp:pointer-events-none',
+					draggable: 'false'
+			}}
+		{% else %}
+			<img
+				src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+				alt='Before image'
+				width='1024'
+				height='1024'
+				class='pp:w-full pp:h-full pp:opacity-0 pp:pointer-events-none'
+			>
+		{% endif %}
+		<div class='{{ image_wrapper_classes }}'>
+			<div
+				class='pp:absolute pp:inset-0'
+				style='clip-path: polygon(0 0, var(--position) 0, var(--position) 100%, 0 100%);'
+			>
+				{% if before_img != blank %}
+					{{
+						before_img
+						| image_url: width: before_img.width
+						| image_tag:
+							width: before_img.width,
+							height: before_img.height,
+							alt: before_img.alt,
+							class: image_classes,
+							draggable: 'false'
+					}}
+				{% else %}
+					<img
+						src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+						alt='Before image'
+						width='1024'
+						height='1024'
+						class='{{ image_classes }}'
+					>
+				{% endif %}
+			</div>
+
+			<div
+				class='pp:absolute pp:inset-0'
+				style='clip-path: polygon(var(--position) 0, 100% 0, 100% 100%, var(--position) 100%);'
+			>
+				{% if after_img != blank %}
+					{{
+						after_img
+						| image_url: width: after_img.width
+						| image_tag:
+							width: after_img.width,
+							height: after_img.height,
+							alt: after_img.alt,
+							loading: 'lazy',
+							class: image_classes,
+							draggable: 'false'
+					}}
+				{% else %}
+					<img
+						src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+						alt='After image'
+						width='1024'
+						height='1024'
+						class='{{ image_classes }}'
+					>
+				{% endif %}
+			</div>
+
+			<div
+				ref='slider'
+				class='pp-slider pp:absolute pp:top-0 pp:bottom-0 pp:z-20 pp:w-8 pp:cursor-ew-resize'
+				style='left: calc(var(--position) - 16px)'
+			>
+				<div
+					class='pp:absolute pp:top-0 pp:left-1/2 pp:w-[2px] pp:-translate-x-1/2 pp:transform pp:bg-white pp:shadow-lg'
+					style='height: calc(50% - 16px);'
+				></div>
+				<div
+					class='pp:absolute pp:bottom-0 pp:left-1/2 pp:w-[2px] pp:-translate-x-1/2 pp:transform pp:bg-white pp:shadow-lg'
+					style='height: calc(50% - 16px);'
+				></div>
+				<div class='pp:absolute pp:top-1/2 pp:left-1/2 pp:flex pp:size-12 pp:-translate-x-1/2 pp:-translate-y-1/2 pp:transform pp:items-center pp:justify-center pp:rounded-full pp:border-2 pp:border-white pp:bg-black/20 pp:text-white pp:shadow-lg pp:backdrop-blur-sm pp:transition-transform'>
+					<i data-lucide='chevron-left'></i>
+					<i data-lucide='chevron-right'></i>
+				</div>
+			</div>
+		</div>
+		{% if block.settings.show_labels %}
+			<div class='{{ label_classes }} pp:left-4' style='{{ label_styles }}'>
+				{{ block.settings.label_before_text }}
+			</div>
+			<div class='{{ label_classes }} pp:right-4' style='{{ label_styles }}'>
+				{{ block.settings.label_after_text }}
+			</div>
+		{% endif %}
+	</div>
+</pagepilot-before-after>
+
+{% schema %}
+{
+	"name": "Before & After Image (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Images"
+		},
+		{
+			"type": "image_picker",
+			"id": "before_image",
+			"label": "Before"
+		},
+		{
+			"type": "image_picker",
+			"id": "after_image",
+			"label": "After"
+		},
+		{
+			"type": "header",
+			"content": "Labels"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_labels",
+			"label": "Show labels",
+			"default": false
+		},
+		{
+			"type": "text",
+			"id": "label_before_text",
+			"label": "Before",
+			"default": "Before",
+			"visible_if": "{{ block.settings.show_labels == true }}"
+		},
+		{
+			"type": "text",
+			"id": "label_after_text",
+			"label": "After",
+			"default": "After",
+			"visible_if": "{{ block.settings.show_labels == true }}"
+		},
+		{
+			"type": "color",
+			"id": "label_text_color",
+			"label": "Text Color",
+			"default": "#ffffff",
+			"visible_if": "{{ block.settings.show_labels == true }}"
+		},
+		{
+			"type": "color_background",
+			"id": "label_background_color",
+			"label": "Background Color",
+			"default": "#010101",
+			"visible_if": "{{ block.settings.show_labels == true }}"
+		},
+		{
+			"type": "range",
+			"id": "label_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.show_labels == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Size"
+		},
+		{
+			"type": "select",
+			"id": "image_ratio",
+			"options": [
+				{
+					"value": "adapt",
+					"label": "Auto"
+				},
+				{
+					"value": "portrait",
+					"label": "Portrait"
+				},
+				{
+					"value": "square",
+					"label": "Square"
+				},
+				{
+					"value": "landscape",
+					"label": "Landscape"
+				}
+			],
+			"default": "adapt",
+			"label": "Aspect ratio"
+		},
+		{
+			"type": "range",
+			"id": "max_width",
+			"label": "Width",
+			"min": 1,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "range",
+			"id": "max_width_mobile",
+			"label": "Mobile Width",
+			"min": 1,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "select",
+			"id": "height",
+			"label": "Height",
+			"options": [
+				{
+					"value": "fit",
+					"label": "Fit"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "fit",
+			"visible_if": "{{ block.settings.image_ratio == \"adapt\" }}"
+		},
+		{
+			"type": "header",
+			"content": "Borders"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the image. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Before & After Image (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

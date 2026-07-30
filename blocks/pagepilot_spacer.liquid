@@ -1,0 +1,189 @@
+{% comment %}
+	@pp blocks/pagepilot-spacer 1.0.5
+{% endcomment %}
+
+{% liquid
+	capture styles
+		if block.settings.width_unit == 'px'
+			echo '--width: ' | append: block.settings.width_px | append: 'px;'
+		endif
+		if block.settings.width_unit == '%'
+			echo '--width: ' | append: block.settings.width_percent | append: '%;'
+		endif
+		if block.settings.height_unit == 'px'
+			echo '--height: ' | append: block.settings.height_px | append: 'px;'
+		endif
+		if block.settings.height_unit == '%'
+			echo '--height: ' | append: block.settings.height_percent | append: '%;'
+		endif
+		if block.settings.width_unit_mobile == 'px'
+			echo '--width-mobile: ' | append: block.settings.width_mobile_px | append: 'px;'
+		endif
+		if block.settings.width_unit_mobile == '%'
+			echo '--width-mobile: ' | append: block.settings.width_mobile_percent | append: '%;'
+		endif
+		if block.settings.height_unit_mobile == 'px'
+			echo '--height-mobile: ' | append: block.settings.height_mobile_px | append: 'px;'
+		endif
+		if block.settings.height_unit_mobile == '%'
+			echo '--height-mobile: ' | append: block.settings.height_mobile_percent | append: '%;'
+		endif
+	endcapture
+
+	assign classes = 'pp-spacer pp:h-(--height-mobile) pp:w-(--width-mobile) pp:@3xl:h-(--height) pp:@3xl:w-(--width)'
+	if block.settings.custom_class != blank
+		assign classes = classes | append: ' ' | append: block.settings.custom_class
+	endif
+%}
+
+<div class='{{ classes }}' style='{{ styles }}' {{ block.shopify_attributes }}></div>
+
+{% schema %}
+{
+	"name": "Spacer (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{ "type": "header", "content": "Spacing" },
+		{
+			"type": "select",
+			"id": "width_unit",
+			"label": "Width Unit",
+			"options": [
+				{ "value": "px", "label": "Pixels" },
+				{ "value": "%", "label": "Percentage" }
+			],
+			"default": "px"
+		},
+		{
+			"type": "select",
+			"id": "width_unit_mobile",
+			"label": "Mobile Width Unit",
+			"options": [
+				{ "value": "px", "label": "Pixels" },
+				{ "value": "%", "label": "Percentage" }
+			],
+			"default": "px"
+		},
+		{
+			"type": "range",
+			"id": "width_px",
+			"label": "Width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 50,
+			"visible_if": "{{ block.settings.width_unit == \"px\" }}"
+		},
+		{
+			"type": "range",
+			"id": "width_mobile_px",
+			"label": "Mobile Width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 50,
+			"visible_if": "{{ block.settings.width_unit_mobile == \"px\" }}"
+		},
+		{
+			"type": "range",
+			"id": "width_percent",
+			"label": "Width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 20,
+			"visible_if": "{{ block.settings.width_unit == \"%\" }}"
+		},
+		{
+			"type": "range",
+			"id": "width_mobile_percent",
+			"label": "Mobile Width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 20,
+			"visible_if": "{{ block.settings.width_unit_mobile == \"%\" }}"
+		},
+		{
+			"type": "select",
+			"id": "height_unit",
+			"label": "Height Unit",
+			"options": [
+				{ "value": "px", "label": "Pixels" },
+				{ "value": "%", "label": "Percentage" }
+			],
+			"default": "px"
+		},
+		{
+			"type": "select",
+			"id": "height_unit_mobile",
+			"label": "Mobile Height Unit",
+			"options": [
+				{ "value": "px", "label": "Pixels" },
+				{ "value": "%", "label": "Percentage" }
+			],
+			"default": "px"
+		},
+		{
+			"type": "range",
+			"id": "height_px",
+			"label": "Height",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 50,
+			"visible_if": "{{ block.settings.height_unit == \"px\" }}"
+		},
+		{
+			"type": "range",
+			"id": "height_mobile_px",
+			"label": "Mobile Height",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 50,
+			"visible_if": "{{ block.settings.height_unit_mobile == \"px\" }}"
+		},
+		{
+			"type": "range",
+			"id": "height_percent",
+			"label": "Height",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 20,
+			"visible_if": "{{ block.settings.height_unit == \"%\" }}"
+		},
+		{
+			"type": "range",
+			"id": "height_mobile_percent",
+			"label": "Mobile Height",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 20,
+			"visible_if": "{{ block.settings.height_unit_mobile == \"%\" }}"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the group. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Spacer (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

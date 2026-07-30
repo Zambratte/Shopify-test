@@ -1,0 +1,19 @@
+{% comment %}
+	@pp snippets/pagepilot-object-fit 1.0.5
+{% endcomment %}
+
+{%- assign value = value | default: 'cover' -%}
+{%- assign prefix = prefix | default: 'pp:' -%}
+
+{%- case value -%}
+	{%- when 'contain' -%}
+		{{ prefix }}object-contain
+	{%- when 'cover' -%}
+		{{ prefix }}object-cover
+	{%- when 'fill' -%}
+		{{ prefix }}object-fill
+	{%- when 'none' -%}
+		{{ prefix }}object-none
+	{%- when 'scale-down' -%}
+		{{ prefix }}object-scale-down
+{%- endcase -%}

@@ -1,0 +1,431 @@
+{% comment %}
+	@pp blocks/pagepilot-author 1.0.1
+{% endcomment %}
+
+{% liquid
+	assign image_size = block.settings.image_size | default: 48
+
+	capture styles
+		echo '--image-size: ' | append: image_size | append: 'px;'
+		echo '--image-object-position: ' | append: block.settings.image_object_position | default: 'center' | append: ';'
+		echo '--title-text-size: ' | append: block.settings.title_text_size | append: 'px;'
+		echo '--title-text-color: ' | append: block.settings.title_text_color | default: '#212529' | append: ';'
+		echo '--title-text-weight: ' | append: block.settings.title_text_weight | default: '600' | append: ';'
+		echo '--subtitle-text-size: ' | append: block.settings.subtitle_text_size | append: 'px;'
+		echo '--subtitle-text-color: ' | append: block.settings.subtitle_text_color | default: '#212529' | append: ';'
+		echo '--subtitle-text-weight: ' | append: block.settings.subtitle_text_weight | default: '400' | append: ';'
+	endcapture
+
+	assign container_classes = 'pp-author pp:flex pp:items-center pp:gap-3 pp:whitespace-nowrap'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:flex'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:flex'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign image_classes = 'pp:shrink-0 pp:rounded-full pp:size-(--image-size) pp:object-(--image-object-position)'
+
+	capture object_fit
+		render 'pagepilot-object-fit', value: block.settings.image_object_fit
+	endcapture
+	assign image_classes = image_classes | append: ' ' | append: object_fit
+
+	assign title_classes = 'pp:text-(length:--title-text-size) pp:font-(--title-text-weight) pp:text-(--title-text-color)'
+
+	capture title_letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.title_text_letter_spacing
+	endcapture
+	assign title_classes = title_classes | append: ' ' | append: title_letter_spacing
+
+	capture title_text_transform
+		render 'pagepilot-text-transform', value: block.settings.title_text_case
+	endcapture
+	assign title_classes = title_classes | append: ' ' | append: title_text_transform
+
+	assign subtitle_classes = 'pp:text-(length:--subtitle-text-size) pp:font-(--subtitle-text-weight) pp:text-(--subtitle-text-color)'
+
+	capture subtitle_letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.subtitle_text_letter_spacing
+	endcapture
+	assign subtitle_classes = subtitle_classes | append: ' ' | append: subtitle_letter_spacing
+
+	capture subtitle_text_transform
+		render 'pagepilot-text-transform', value: block.settings.subtitle_text_case
+	endcapture
+	assign subtitle_classes = subtitle_classes | append: ' ' | append: subtitle_text_transform
+
+	if block.settings.image != blank
+		assign image_content = block.settings.image
+	else
+		assign image_content = null
+	endif
+%}
+
+<div class='{{ container_classes }} {{ block.id }}' style='{{ styles }}' {{ block.shopify_attributes }}>
+	{% if image_content != blank %}
+		<img
+			class='{{ image_classes }}'
+			src='{{ image_content | image_url: width: 1000 }}'
+			alt='{{ block.settings.title | default: "Author" | escape }}'
+			width='{{ image_size }}'
+			height='{{ image_size }}'
+			loading='lazy'
+		>
+	{% else %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-product-square.svg'
+			alt='Placeholder image'
+			width='1024'
+			height='1024'
+			class='{{ image_classes }}'
+		>
+	{% endif %}
+
+	<div class='pp:flex pp:min-w-0 pp:flex-col pp:gap-0.5'>
+		{% if block.settings.title != blank %}
+			<span class='{{ title_classes }}'>{{ block.settings.title }}</span>
+		{% endif %}
+		{% if block.settings.subtitle != blank %}
+			<span class='{{ subtitle_classes }}'>{{ block.settings.subtitle }}</span>
+		{% endif %}
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Author (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Image"
+		},
+		{
+			"type": "image_picker",
+			"id": "image",
+			"label": "Image"
+		},
+		{
+			"type": "range",
+			"id": "image_size",
+			"label": "Size",
+			"min": 24,
+			"max": 120,
+			"step": 1,
+			"unit": "px",
+			"default": 48
+		},
+		{
+			"type": "select",
+			"id": "image_object_fit",
+			"label": "Object Fit",
+			"options": [
+				{
+					"value": "contain",
+					"label": "Contain"
+				},
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "scale-down",
+					"label": "Scale down"
+				}
+			],
+			"default": "cover"
+		},
+		{
+			"type": "select",
+			"id": "image_object_position",
+			"label": "Object Position",
+			"options": [
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				},
+				{
+					"value": "bottom",
+					"label": "Bottom"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				}
+			],
+			"default": "center"
+		},
+		{
+			"type": "header",
+			"content": "Author"
+		},
+		{
+			"type": "text",
+			"id": "title",
+			"label": "Text",
+			"default": "Jane Doe"
+		},
+		{
+			"type": "range",
+			"id": "title_text_size",
+			"label": "Size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "color",
+			"id": "title_text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "select",
+			"id": "title_text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "600"
+		},
+		{
+			"type": "select",
+			"id": "title_text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "title_text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Subtitle"
+		},
+		{
+			"type": "text",
+			"id": "subtitle",
+			"label": "Text",
+			"default": "Posted 2 days ago"
+		},
+		{
+			"type": "range",
+			"id": "subtitle_text_size",
+			"label": "Size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "color",
+			"id": "subtitle_text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "select",
+			"id": "subtitle_text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "subtitle_text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "subtitle_text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the author block. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Author (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

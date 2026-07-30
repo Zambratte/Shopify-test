@@ -1,0 +1,578 @@
+{
+  "settings_schema": {
+    "colors": {
+      "name": "Cores",
+      "settings": {
+        "background": {
+          "label": "Plano de fundo"
+        },
+        "background_gradient": {
+          "label": "Gradiente de plano de fundo",
+          "info": "O gradiente de plano de fundo substitui o plano de fundo sempre que possÃ­vel."
+        },
+        "text": {
+          "label": "Texto"
+        },
+        "button_background": {
+          "label": "Plano de fundo do botÃ£o sÃ³lido"
+        },
+        "button_label": {
+          "label": "Etiqueta de botÃ£o sÃ³lido"
+        },
+        "secondary_button_label": {
+          "label": "BotÃ£o com contorno"
+        },
+        "shadow": {
+          "label": "Sombra"
+        }
+      }
+    },
+    "typography": {
+      "name": "Tipografia",
+      "settings": {
+        "type_header_font": {
+          "label": "Fonte"
+        },
+        "header__1": {
+          "content": "TÃ­tulos"
+        },
+        "header__2": {
+          "content": "Corpo"
+        },
+        "type_body_font": {
+          "label": "Fonte"
+        },
+        "heading_scale": {
+          "label": "Escala"
+        },
+        "body_scale": {
+          "label": "Escala"
+        }
+      }
+    },
+    "social-media": {
+      "name": "Redes sociais",
+      "settings": {
+        "social_twitter_link": {
+          "label": "X/Twitter",
+          "info": "https://x.com/shopify"
+        },
+        "social_facebook_link": {
+          "label": "Facebook",
+          "info": "https://facebook.com/shopify"
+        },
+        "social_pinterest_link": {
+          "label": "Pinterest",
+          "info": "https://pinterest.com/shopify"
+        },
+        "social_instagram_link": {
+          "label": "Instagram",
+          "info": "http://instagram.com/shopify"
+        },
+        "social_tiktok_link": {
+          "label": "TikTok",
+          "info": "https://tiktok.com/@shopify"
+        },
+        "social_tumblr_link": {
+          "label": "Tumblr",
+          "info": "http://shopify.tumblr.com"
+        },
+        "social_snapchat_link": {
+          "label": "Snapchat",
+          "info": "https://www.snapchat.com/add/shopify"
+        },
+        "social_youtube_link": {
+          "label": "YouTube",
+          "info": "https://www.youtube.com/shopify"
+        },
+        "social_vimeo_link": {
+          "label": "Vimeo",
+          "info": "https://vimeo.com/shopify"
+        },
+        "header": {
+          "content": "Contas de redes sociais"
+        }
+      }
+    },
+    "currency_format": {
+      "name": "Formato de moeda",
+      "settings": {
+        "currency_code_enabled": {
+          "label": "CÃ³digos de moeda"
+        },
+        "paragraph": "Os preÃ§os do carrinho e do checkout sempre mostram os cÃ³digos de moeda"
+      }
+    },
+    "layout": {
+      "name": "Layout",
+      "settings": {
+        "page_width": {
+          "label": "Largura da pÃ¡gina"
+        },
+        "spacing_sections": {
+          "label": "EspaÃ§o entre as seÃ§Ãµes do modelo"
+        },
+        "header__grid": {
+          "content": "Grade"
+        },
+        "paragraph__grid": {
+          "content": "Afeta Ã¡reas com vÃ¡rias colunas ou linhas"
+        },
+        "spacing_grid_horizontal": {
+          "label": "EspaÃ§o horizontal"
+        },
+        "spacing_grid_vertical": {
+          "label": "EspaÃ§o vertical"
+        }
+      }
+    },
+    "search_input": {
+      "name": "Comportamento da pesquisa",
+      "settings": {
+        "predictive_search_enabled": {
+          "label": "SugestÃµes de pesquisa"
+        },
+        "predictive_search_show_vendor": {
+          "label": "Fabricante do produto",
+          "info": "Exibido quando as sugestÃµes de pesquisa estÃ£o habilitadas"
+        },
+        "predictive_search_show_price": {
+          "label": "PreÃ§o do produto",
+          "info": "Exibido quando as sugestÃµes de pesquisa estÃ£o habilitadas"
+        }
+      }
+    },
+    "global": {
+      "settings": {
+        "header__border": {
+          "content": "Borda"
+        },
+        "header__shadow": {
+          "content": "Sombra"
+        },
+        "blur": {
+          "label": "Desfoque"
+        },
+        "corner_radius": {
+          "label": "Raio dos cantos"
+        },
+        "horizontal_offset": {
+          "label": "CompensaÃ§Ã£o horizontal"
+        },
+        "vertical_offset": {
+          "label": "CompensaÃ§Ã£o vertical"
+        },
+        "thickness": {
+          "label": "Espessura"
+        },
+        "opacity": {
+          "label": "Opacidade"
+        },
+        "image_padding": {
+          "label": "Preenchimento de imagem"
+        },
+        "text_alignment": {
+          "options__1": {
+            "label": "Esquerda"
+          },
+          "options__2": {
+            "label": "Centro"
+          },
+          "options__3": {
+            "label": "Direita"
+          },
+          "label": "Alinhamento do texto"
+        }
+      }
+    },
+    "badges": {
+      "name": "Selos",
+      "settings": {
+        "position": {
+          "options__1": {
+            "label": "Canto inferior esquerdo"
+          },
+          "options__2": {
+            "label": "Canto inferior direito"
+          },
+          "options__3": {
+            "label": "Canto superior esquerdo"
+          },
+          "options__4": {
+            "label": "Canto superior direito"
+          },
+          "label": "PosiÃ§Ã£o em cartÃµes"
+        },
+        "sale_badge_color_scheme": {
+          "label": "Esquema de cores do selo de promoÃ§Ã£o"
+        },
+        "sold_out_badge_color_scheme": {
+          "label": "Esquema de cores do selo de esgotado"
+        }
+      }
+    },
+    "buttons": {
+      "name": "BotÃµes"
+    },
+    "variant_pills": {
+      "name": "PÃ­lulas de variantes",
+      "paragraph": "PÃ­lulas de variante sÃ£o uma forma de apresentar suas [variantes do produto](https://help.shopify.com/manual/online-store/themes/theme-structure/page-types/product-pages#variant-picker-block)"
+    },
+    "inputs": {
+      "name": "Entradas"
+    },
+    "content_containers": {
+      "name": "ContÃªineres de conteÃºdo"
+    },
+    "popups": {
+      "name": "Menus suspensos e pop-ups",
+      "paragraph": "Afeta Ã¡reas como menus suspensos de navegaÃ§Ã£o, janelas modais de pop-up e pop-ups de carrinho"
+    },
+    "media": {
+      "name": "MÃ­dia"
+    },
+    "drawers": {
+      "name": "Menus deslizantes"
+    },
+    "cart": {
+      "name": "Carrinho",
+      "settings": {
+        "cart_type": {
+          "label": "Tipo",
+          "drawer": {
+            "label": "Deslizante"
+          },
+          "page": {
+            "label": "PÃ¡gina"
+          },
+          "notification": {
+            "label": "NotificaÃ§Ã£o pop-up"
+          }
+        },
+        "show_vendor": {
+          "label": "Fabricante"
+        },
+        "show_cart_note": {
+          "label": "ObservaÃ§Ã£o do carrinho"
+        },
+        "cart_drawer": {
+          "header": "Carrinho de compras deslizante",
+          "collection": {
+            "label": "ColeÃ§Ã£o",
+            "info": "Exibido quando o carrinho de compras deslizante estÃ¡ vazio"
+          }
+        }
+      }
+    },
+    "cards": {
+      "name": "CartÃµes de produtos",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "PadrÃ£o"
+          },
+          "options__2": {
+            "label": "CartÃ£o"
+          },
+          "label": "Estilo"
+        }
+      }
+    },
+    "collection_cards": {
+      "name": "CartÃµes de coleÃ§Ã£o",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "PadrÃ£o"
+          },
+          "options__2": {
+            "label": "CartÃ£o"
+          },
+          "label": "Estilo"
+        }
+      }
+    },
+    "blog_cards": {
+      "name": "CartÃµes de blog",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "PadrÃ£o"
+          },
+          "options__2": {
+            "label": "CartÃ£o"
+          },
+          "label": "Estilo"
+        }
+      }
+    },
+    "logo": {
+      "name": "Logo",
+      "settings": {
+        "logo_image": {
+          "label": "Logo"
+        },
+        "logo_width": {
+          "label": "Largura"
+        },
+        "favicon": {
+          "label": "Favicon",
+          "info": "Exibido em 32 x 32px"
+        }
+      }
+    },
+    "brand_information": {
+      "name": "InformaÃ§Ãµes da marca",
+      "settings": {
+        "brand_headline": {
+          "label": "CabeÃ§alho"
+        },
+        "brand_description": {
+          "label": "DescriÃ§Ã£o"
+        },
+        "brand_image": {
+          "label": "Imagem"
+        },
+        "brand_image_width": {
+          "label": "Largura da imagem"
+        },
+        "paragraph": {
+          "content": "Ã‰ exibido no bloco de informaÃ§Ãµes da marca no rodapÃ©"
+        }
+      }
+    },
+    "animations": {
+      "name": "AnimaÃ§Ãµes",
+      "settings": {
+        "animations_reveal_on_scroll": {
+          "label": "Revelar seÃ§Ãµes durante a rolagem"
+        },
+        "animations_hover_elements": {
+          "options__1": {
+            "label": "Nenhum"
+          },
+          "options__2": {
+            "label": "ElevaÃ§Ã£o vertical"
+          },
+          "label": "Efeito ao passar o mouse",
+          "info": "Afeta cartÃµes e botÃµes",
+          "options__3": {
+            "label": "ElevaÃ§Ã£o 3D"
+          }
+        }
+      }
+    }
+  },
+  "sections": {
+    "all": {
+      "padding": {
+        "section_padding_heading": "Preenchimento",
+        "padding_top": "Acima",
+        "padding_bottom": "Abaixo"
+      },
+      "spacing": "EspaÃ§amento",
+      "colors": {
+        "label": "Esquema de cores",
+        "has_cards_info": "Atualize as configuraÃ§Ãµes do tema para alterar o esquema de cores do cartÃ£o."
+      },
+      "heading_size": {
+        "label": "Tamanho do tÃ­tulo",
+        "options__1": {
+          "label": "Pequena"
+        },
+        "options__2": {
+          "label": "MÃ©dio"
+        },
+        "options__3": {
+          "label": "Grande"
+        },
+        "options__4": {
+          "label": "Extra grande"
+        },
+        "options__5": {
+          "label": "Extraextragrande"
+        }
+      },
+      "image_shape": {
+        "options__1": {
+          "label": "PadrÃ£o"
+        },
+        "options__2": {
+          "label": "Arco"
+        },
+        "options__3": {
+          "label": "Bolha"
+        },
+        "options__4": {
+          "label": "Chevron para esquerda"
+        },
+        "options__5": {
+          "label": "Chevron para direita"
+        },
+        "options__6": {
+          "label": "Diamante"
+        },
+        "options__7": {
+          "label": "Paralelogramo"
+        },
+        "options__8": {
+          "label": "CÃ­rculo"
+        },
+        "label": "Formato da imagem"
+      },
+      "animation": {
+        "content": "AnimaÃ§Ãµes",
+        "image_behavior": {
+          "options__1": {
+            "label": "Nenhuma"
+          },
+          "options__2": {
+            "label": "MovimentaÃ§Ã£o do ambiente"
+          },
+          "label": "AnimaÃ§Ã£o",
+          "options__3": {
+            "label": "PosiÃ§Ã£o fixa do plano de fundo"
+          },
+          "options__4": {
+            "label": "Aumentar o zoom na rolagem"
+          }
+        }
+      }
+    },
+    "announcement-bar": {
+      "name": "Barra de avisos",
+      "blocks": {
+        "announcement": {
+          "name": "Comunicado",
+          "settings": {
+            "text": {
+              "label": "Texto",
+              "default": "Boas-vindas Ã  nossa loja"
+            },
+            "text_alignment": {
+              "label": "Alinhamento do texto",
+              "options__1": {
+                "label": "Esquerda"
+              },
+              "options__2": {
+                "label": "Centro"
+              },
+              "options__3": {
+                "label": "Direita"
+              }
+            },
+            "link": {
+              "label": "Link"
+            }
+          }
+        }
+      },
+      "settings": {
+        "auto_rotate": {
+          "label": "Girar automaticamente os comunicados"
+        },
+        "change_slides_speed": {
+          "label": "Mudar a cada"
+        },
+        "show_social": {
+          "label": "Ãcones de redes sociais",
+          "info": "[Gerenciar contas de rede social](/editor?context=theme&category=social%20media)"
+        },
+        "enable_country_selector": {
+          "label": "Seletor de paÃ­s/regiÃ£o",
+          "info": "[Gerenciar paÃ­ses/regiÃµes](/admin/settings/markets)"
+        },
+        "enable_language_selector": {
+          "label": "Seletor de idioma",
+          "info": "[Gerenciar idiomas](/admin/settings/languages)"
+        },
+        "heading_utilities": {
+          "content": "ServiÃ§os pÃºblicos"
+        },
+        "paragraph": {
+          "content": "Aparecer apenas em telas grandes"
+        }
+      },
+      "presets": {
+        "name": "Barra de comunicados"
+      }
+    },
+    "collage": {
+      "name": "Colagem",
+      "settings": {
+        "heading": {
+          "label": "TÃ­tulo",
+          "default": "Colagem multimÃ­dia"
+        },
+        "desktop_layout": {
+          "label": "Layout",
+          "options__1": {
+            "label": "Bloco grande primeiro"
+          },
+          "options__2": {
+            "label": "Bloco grande por Ãºltimo"
+          }
+        },
+        "mobile_layout": {
+          "label": "Layout para dispositivo mÃ³vel",
+          "options__1": {
+            "label": "Colagem"
+          },
+          "options__2": {
+            "label": "Coluna"
+          }
+        },
+        "card_styles": {
+          "label": "Estilo do cartÃ£o",
+          "info": "Gerenciar estilos de cartÃ£o individual em [configuraÃ§Ãµes do tema](/editor?context=theme&category=product%20cards)",
+          "options__1": {
+            "label": "Usar estilos de cartÃ£o individuais"
+          },
+          "options__2": {
+            "label": "Definir o estilo de todos como cartÃµes de produto"
+          }
+        },
+        "header_layout": {
+          "content": "Layout"
+        }
+      },
+      "blocks": {
+        "image": {
+          "name": "Imagem",
+          "settings": {
+            "image": {
+              "label": "Imagem"
+            }
+          }
+        },
+        "product": {
+          "name": "Produto",
+          "settings": {
+            "product": {
+              "label": "Produto"
+            },
+            "secondary_background": {
+              "label": "Exibir plano de fundo secundÃ¡rio"
+            },
+            "second_image": {
+              "label": "Exibir segunda imagem ao passar o cursor"
+            }
+          }
+        },
+        "collection": {
+          "name": "ColeÃ§Ã£o",
+          "settings": {
+            "collection": {
+              "label": "ColeÃ§Ã£o"
+            }
+          }
+        },
+        "video": {
+          "name": "VÃ­deo",
+          "settings": {
+            "cover_image": {
+              "label": "Imagem de capa"
+            },
+            "video_url": {
+              "label": "URL",
+            Û]4ÒÚ$z{-®éÜj×&Æ&VÂ#¢$6VçG&Æ—¦Fòæ'FR7WW&–÷" ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$6çFò7WW&–÷"F—&V—Fò ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$6VçG&Æ—¦Fò:W7VW&F ¢ÒÀ¢&÷F–öç5õóR#¢°¢&Æ&VÂ#¢$6VçG&Æ—¦Fò ¢ÒÀ¢&÷F–öç5õób#¢°¢&Æ&VÂ#¢$6VçG&Æ—¦Fò:F—&V—F ¢ÒÀ¢&÷F–öç5õór#¢°¢&Æ&VÂ#¢$6çFò–æfW&–÷"W7VW&Fò ¢ÒÀ¢&÷F–öç5õó‚#¢°¢&Æ&VÂ#¢$6VçG&Æ—¦Fòæ'FR–æfW&–÷" ¢ÒÀ¢&÷F–öç5õó’#¢°¢&Æ&VÂ#¢$6çFò–æfW&–÷"F—&V—Fò ¢Ğ¢ÒÀ¢'6†÷u÷FW‡Eö&÷‚#¢°¢&Æ&VÂ#¢%&V6—–VçFR ¢ÒÀ¢'FW‡EöÆ–væÖVçB#¢°¢&Æ&VÂ#¢$Æ–æ†ÖVçFòFR6öçF\;¦Fò"À¢&÷F–öåó#¢°¢&Æ&VÂ#¢$W7VW&F ¢ÒÀ¢&÷F–öåó"#¢°¢&Æ&VÂ#¢$6VçG&ò ¢ÒÀ¢&÷F–öåó2#¢°¢&Æ&VÂ#¢$F—&V—F ¢Ğ¢ÒÀ¢&–ÖvUö÷fW&Æ•ö÷6—G’#¢°¢&Æ&VÂ#¢$÷6–FFRFR6ö'&W÷6œ:|:6ò ¢ÒÀ¢'FW‡EöÆ–væÖVçEöÖö&–ÆR#¢°¢&Æ&VÂ#¢$Æ–æ†ÖVçFòFR6öçF\;¦FòVÒF—7÷6—F—f÷2Ü;7fV—2"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$W7VW&F ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&ò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$F—&V—F ¢Ğ¢ÒÀ¢&†VFW%ö'WGFöâ#¢°¢&6öçFVçB#¢$&÷L:6ò ¢ÒÀ¢&†VFW%öÆ–÷WB#¢°¢&6öçFVçB#¢$Æ–÷WB ¢ÒÀ¢&†VFW%÷FW‡B#¢°¢&6öçFVçB#¢%FW‡Fò ¢ÒÀ¢&†VFW%ö6öÆ÷'2#¢°¢&6öçFVçB#¢$6÷&W2 ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢$&W6VçF:|:6òFR6Æ–FW2 ¢Ğ¢ÒÀ¢&6öÆÆ6–&ÆUö6öçFVçB#¢°¢&æÖR#¢$6öçF\;¦Fò&V6öÆŒ:×fVÂ"À¢'6WGF–æw2#¢°¢&6F–öâ#¢°¢&Æ&VÂ#¢$ÆVvVæF ¢ÒÀ¢&†VF–ær#¢°¢&Æ&VÂ#¢%L:×GVÆò"À¢&FVfVÇB#¢$6öçF\;¦Fò&V6öÆŒ:×fVÂ ¢ÒÀ¢&†VF–æuöÆ–væÖVçB#¢°¢&Æ&VÂ#¢$Æ–æ†ÖVçFòFòL:×GVÆò"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$W7VW&F ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&ò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$F—&V—F ¢Ğ¢ÒÀ¢&Æ–÷WB#¢°¢&Æ&VÂ#¢%&V6—–VçFR"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$æVæ‡VÒ6öçL:¦–æW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6öçL:¦–æW"FRÆ–æ† ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$6öçL:¦–æW"FR6\:|:6ò ¢Ğ¢ÒÀ¢&6öçF–æW%ö6öÆ÷%÷66†VÖR#¢°¢&Æ&VÂ#¢$W7VVÖFR6÷&W2Fò6öçL:¦–æW" ¢ÒÀ¢&÷Våöf—'7Eö6öÆÆ6–&ÆU÷&÷r#¢°¢&Æ&VÂ#¢$–ÖvVÒ ¢ÒÀ¢&†VFW"#¢°¢&6öçFVçB#¢$–ÖvVÒ ¢ÒÀ¢&–ÖvR#¢°¢&Æ&VÂ#¢$–ÖvVÒ ¢ÒÀ¢&–ÖvU÷&F–ò#¢°¢&Æ&VÂ#¢%&÷÷,:|:6òF–ÖvVÒ"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$FF":–ÖvVÒ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%WVVæ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$w&æFR ¢Ğ¢ÒÀ¢&FW6·F÷öÆ–÷WB#¢°¢&Æ&VÂ#¢%÷6–6–öæÖVçFò"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%&–ÖV—&–ÖvVÒ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%6VwVæF–ÖvVÒ ¢Ğ¢ÒÀ¢&Æ–÷WEö†VFW"#¢°¢&6öçFVçB#¢$Æ–÷WB ¢ÒÀ¢'6V7F–öåö6öÆ÷%÷66†VÖR#¢°¢&Æ&VÂ#¢$W7VVÖFR6÷&W2F6\:|:6ò ¢Ğ¢ÒÀ¢&&Æö6·2#¢°¢&6öÆÆ6–&ÆU÷&÷r#¢°¢&æÖR#¢$Æ–æ†&V6öÆŒ:×fVÂ"À¢'6WGF–æw2#¢°¢&†VF–ær#¢°¢&Æ&VÂ#¢%L:×GVÆò"À¢&FVfVÇB#¢$Æ–æ†&V6öÆŒ:×fVÂ ¢ÒÀ¢'&÷uö6öçFVçB#¢°¢&Æ&VÂ#¢$6öçF\;¦FòFÆ–æ† ¢ÒÀ¢'vR#¢°¢&Æ&VÂ#¢$6öçF\;¦FòFÆ–æ†FR:v–æ ¢ÒÀ¢&–6öâ#¢°¢&Æ&VÂ#¢,8Ö6öæR"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$æVæ‡VÖ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$Ö:|:2 ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$&ææ ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$v'&f ¢ÒÀ¢&÷F–öç5õóR#¢°¢&Æ&VÂ#¢$6—† ¢ÒÀ¢&÷F–öç5õób#¢°¢&Æ&VÂ#¢$6Væ÷W& ¢ÒÀ¢&÷F–öç5õór#¢°¢&Æ&VÂ#¢$&Ì:6òFR6†B ¢ÒÀ¢&÷F–öç5õó‚#¢°¢&Æ&VÂ#¢$Ö&6FR6VÆ\:|:6ò ¢ÒÀ¢&÷F–öç5õó’#¢°¢&Æ&VÂ#¢%&æ6†WF ¢ÒÀ¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ÆF–<:Öæ–÷2 ¢ÒÀ¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%6VÒÆ7F÷6R ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%6V6F÷" ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$öÆ†ò ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$fövò ¢ÒÀ¢&÷F–öç5õóR#¢°¢&Æ&VÂ#¢%6VÒvÌ;§FVâ ¢ÒÀ¢&÷F–öç5õób#¢°¢&Æ&VÂ#¢$6÷&:|:6ò ¢ÒÀ¢&÷F–öç5õór#¢°¢&Æ&VÂ#¢$fW'&ò ¢ÒÀ¢&÷F–öç5õó‚#¢°¢&Æ&VÂ#¢$föÆ† ¢ÒÀ¢&÷F–öç5õó’#¢°¢&Æ&VÂ#¢$6÷W&ò ¢ÒÀ¢&÷F–öç5õó##¢°¢&Æ&VÂ#¢%&VÌ:&×vò ¢ÒÀ¢&÷F–öç5õó##¢°¢&Æ&VÂ#¢$&FöÒ ¢ÒÀ¢&÷F–öç5õó#"#¢°¢&Æ&VÂ#¢$6FVFò ¢ÒÀ¢&÷F–öç5õó#2#¢°¢&Æ&VÂ#¢$Ö&6F÷"FRÖ ¢ÒÀ¢&÷F–öç5õó#B#¢°¢&Æ&VÂ#¢%6VÒæ÷¦W2 ¢ÒÀ¢&÷F–öç5õó#R#¢°¢&Æ&VÂ#¢$6Ì:v2 ¢ÒÀ¢&÷F–öç5õó#b#¢°¢&Æ&VÂ#¢%VvFFRF ¢ÒÀ¢&÷F–öç5õó#r#¢°¢&Æ&VÂ#¢%–ÖVçF ¢ÒÀ¢&÷F–öç5õó#‚#¢°¢&Æ&VÂ#¢%W&gVÖR ¢ÒÀ¢&÷F–öç5õó#’#¢°¢&Æ&VÂ#¢$fœ:6ò ¢ÒÀ¢&÷F–öç5õó3#¢°¢&Æ&VÂ#¢%ÆçF ¢ÒÀ¢&÷F–öç5õó3#¢°¢&Æ&VÂ#¢$WF—VWFFR&\:vò ¢ÒÀ¢&÷F–öç5õó3"#¢°¢&Æ&VÂ#¢%öçFòFR–çFW'&öv:|:6ò ¢ÒÀ¢&÷F–öç5õó32#¢°¢&Æ&VÂ#¢%&V6–6Æ" ¢ÒÀ¢&÷F–öç5õó3B#¢°¢&Æ&VÂ#¢%föÇF" ¢ÒÀ¢&÷F–öç5õó3R#¢°¢&Æ&VÂ#¢%,:–wV ¢ÒÀ¢&÷F–öç5õó3b#¢°¢&Æ&VÂ#¢%G&fW76 ¢ÒÀ¢&÷F–öç5õó3r#¢°¢&Æ&VÂ#¢$6Ö—6 ¢ÒÀ¢&÷F–öç5õó3‚#¢°¢&Æ&VÂ#¢%6Fò ¢ÒÀ¢&÷F–öç5õó3’#¢°¢&Æ&VÂ#¢%6–Æ‡VWF ¢ÒÀ¢&÷F–öç5õóC#¢°¢&Æ&VÂ#¢$fÆö6òFRæWfR ¢ÒÀ¢&÷F–öç5õóC#¢°¢&Æ&VÂ#¢$W7G&VÆ ¢ÒÀ¢&÷F–öç5õóC"#¢°¢&Æ&VÂ#¢$7&öì;FÖWG&ò ¢ÒÀ¢&÷F–öç5õóC2#¢°¢&Æ&VÂ#¢$6Ö–æŒ:6ò ¢ÒÀ¢&÷F–öç5õóCB#¢°¢&Æ&VÂ#¢$ÆfvVÒ ¢Ğ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢$6öçF\;¦Fò&V6öÆŒ:×fVÂ ¢Ğ¢ÒÀ¢&Ö–âÖ66÷VçB#¢°¢&æÖR#¢$6öçF ¢ÒÀ¢&Ö–âÖ7F—fFRÖ66÷VçB#¢°¢&æÖR#¢$F—f:|:6òFR6öçF ¢ÒÀ¢&Ö–âÖFG&W76W2#¢°¢&æÖR#¢$VæFW&\:v÷2 ¢ÒÀ¢&Ö–âÖÆöv–â#¢°¢&æÖR#¢$f¦W"Æöv–â"À¢'6†÷öÆöv–åö'WGFöâ#¢°¢&Væ&ÆR#¢$F—f"÷:|:6òf¦W"Æöv–â6öÒò6†÷ ¢Ğ¢ÒÀ¢&Ö–âÖ÷&FW"#¢°¢&æÖR#¢%VF–Fò ¢ÒÀ¢&Ö–â×&Vv—7FW"#¢°¢&æÖR#¢%&Vv—7G&ò ¢ÒÀ¢&Ö–â×&W6WB×77v÷&B#¢°¢&æÖR#¢%&VFVf–æœ:|:6òFR6Væ† ¢ÒÀ¢'&VÆFVB×&öGV7G2#¢°¢&æÖR#¢%&öGWF÷2&VÆ6–öæF÷2"À¢'6WGF–æw2#¢°¢&†VF–ær#¢°¢&Æ&VÂ#¢%L:×GVÆò ¢ÒÀ¢'&öGV7G5÷Fõ÷6†÷r#¢°¢&Æ&VÂ#¢$6öçFvVÒFR&öGWF÷2 ¢ÒÀ¢&6öÇVÖç5öFW6·F÷#¢°¢&Æ&VÂ#¢$6öÇVæ2 ¢ÒÀ¢'&w&…õó#¢°¢&6öçFVçB#¢$÷2&öGWF÷2&VÆ6–öæF÷2öFVÒ6W"vW&Væ6–F÷2æò¶6V&6‚bF—66÷fW'•Ò†‡GG3¢òö†VÇç6†÷–g’æ6öÒöÖçVÂööæÆ–æR×7F÷&R÷6V&6‚ÖæBÖF—66÷fW'’÷&öGV7B×&V6öÖÖVæFF–öç2’"À¢&FVfVÇB#¢%FÇfW¢fö<:¢FÖ,:–Òv÷7FRFR ¢ÒÀ¢&†VFW%õó"#¢°¢&6öçFVçB#¢$6'L:6òFR&öGWFò ¢ÒÀ¢&–ÖvU÷&F–ò#¢°¢&Æ&VÂ#¢%&÷÷,:|:6òF–ÖvVÒ"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$FF":–ÖvVÒ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%&WG&Fò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢%VG&F ¢Ğ¢ÒÀ¢'6†÷u÷6V6öæF'•ö–ÖvR#¢°¢&Æ&VÂ#¢$W†–&—"6VwVæF–ÖvVÒò76"ò7W'6÷" ¢ÒÀ¢'6†÷u÷fVæF÷"#¢°¢&Æ&VÂ#¢$f'&–6çFR ¢ÒÀ¢'6†÷u÷&F–ær#¢°¢&Æ&VÂ#¢$6Æ76–f–6:|:6òFò&öGWFò"À¢&–æfò#¢,8’æV6W7<:&–òVÒ&6Æ76–f–6:|;VW2FR&öGWF÷2âµ6–&Ö—5Ò†‡GG3¢òö†VÇç6†÷–g’æ6öÒöÖçVÂööæÆ–æR×7F÷&R÷F†VÖW2ö7W7FöÖ—¦–ær×F†VÖW2öFB×&öGV7B×&V6öÖÖVæFF–öç2’ ¢ÒÀ¢&6öÇVÖç5öÖö&–ÆR#¢°¢&Æ&VÂ#¢$6öÇVæ2VÒF—7÷6—F—f÷2Ü;7fV—2"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢# ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢#" ¢Ğ¢Ğ¢Ğ¢ÒÀ¢&×VÇF—&÷r#¢°¢&æÖR#¢%l:&–2Æ–æ†2"À¢'6WGF–æw2#¢°¢&–ÖvR#¢°¢&Æ&VÂ#¢$–ÖvVÒ ¢ÒÀ¢&–ÖvUö†V–v‡B#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$FF":–ÖvVÒ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%WVVæ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Ü:–F–ò ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$w&æFR ¢ÒÀ¢&Æ&VÂ#¢$ÇGW& ¢ÒÀ¢&FW6·F÷ö–ÖvU÷v–GF‚#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%WVVæ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$Ü:–F–ò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$w&æFR ¢ÒÀ¢&Æ&VÂ#¢$Æ&wW& ¢ÒÀ¢'FW‡E÷7G–ÆR#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$6÷'ò ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%7V'L:×GVÆò ¢ÒÀ¢&Æ&VÂ#¢$W7F–ÆòFRFW‡Fò ¢ÒÀ¢&'WGFöå÷7G–ÆR#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$&÷L:6ò<;6Æ–Fò ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$&÷L:6ò6öÒ6öçF÷&æò ¢ÒÀ¢&Æ&VÂ#¢$W7F–ÆòFR&÷L:6ò ¢ÒÀ¢&FW6·F÷ö6öçFVçEöÆ–væÖVçB#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$W7VW&F ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&ò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$F—&V—F ¢ÒÀ¢&Æ&VÂ#¢$Æ–æ†ÖVçFò ¢ÒÀ¢&FW6·F÷ö6öçFVçE÷÷6—F–öâ#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%'FR7WW&–÷" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$ÖV–ò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢%'FR–æfW&–÷" ¢ÒÀ¢&Æ&VÂ#¢%÷6œ:|:6ò ¢ÒÀ¢&–ÖvUöÆ–÷WB#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ÇFW&æ"FW7VW&F ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$ÇFW&æ"FF—&V—F ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Æ–æ†Fò:W7VW&F ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$Æ–æ†Fò:F—&V—F ¢ÒÀ¢&Æ&VÂ#¢%÷6–6–öæÖVçFò ¢ÒÀ¢&6öçF–æW%ö6öÆ÷%÷66†VÖR#¢°¢&Æ&VÂ#¢$W7VVÖFR6÷&W2Fò6öçL:¦–æW" ¢ÒÀ¢&Öö&–ÆUö6öçFVçEöÆ–væÖVçB#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$W7VW&F ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&ò ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$F—&V—F ¢ÒÀ¢&Æ&VÂ#¢$Æ–æ†ÖVçFòVÒF—7÷6—F—f÷2Ü;7fV—2 ¢ÒÀ¢&†VFW"#¢°¢&6öçFVçB#¢$–ÖvVÒ ¢ÒÀ¢&†VFW%ó"#¢°¢&6öçFVçB#¢$6öçF\;¦Fò ¢ÒÀ¢&†VFW%ó2#¢°¢&6öçFVçB#¢$6÷&W2 ¢Ğ¢ÒÀ¢&&Æö6·2#¢°¢'&÷r#¢°¢&æÖR#¢$Æ–æ†"À¢'6WGF–æw2#¢°¢&–ÖvR#¢°¢&Æ&VÂ#¢$–ÖvVÒ ¢ÒÀ¢&6F–öâ#¢°¢&Æ&VÂ#¢$ÆVvVæF"À¢&FVfVÇB#¢$ÆVvVæF ¢ÒÀ¢&†VF–ær#¢°¢&Æ&VÂ#¢%L:×GVÆò"À¢&FVfVÇB#¢$Æ–æ† ¢ÒÀ¢'FW‡B#¢°¢&Æ&VÂ#¢%FW‡Fò"À¢&FVfVÇB#¢#Çä6öÖ&–æRVÒFW‡Fò6öÒVÖ–ÖvVÒ&FW7F6"ò&öGWFòÂ6öÆ\:|:6ò÷Rò÷7BFò&ÆörW66öÆ†–FòâF–6–öæR–æf÷&Ö:|;VW26ö'&RF—7öæ–&–Æ–FFRÂW7F–Æò÷RL:’ÖW6ÖòVÖfÆ–:|:6òãÂ÷â ¢ÒÀ¢&'WGFöåöÆ&VÂ#¢°¢&Æ&VÂ#¢$WF—VWFFR&÷L:6ò"À¢&FVfVÇB#¢$WF—VWFFR&÷L:6ò"À¢&–æfò#¢$FV—†RVÒ'&æ6ò&ö7VÇF" ¢ÒÀ¢&'WGFöåöÆ–æ²#¢°¢&Æ&VÂ#¢$Æ–æ²FR&÷L:6ò ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢%l:&–2Æ–æ†2 ¢Ğ¢ÒÀ¢'V–6²Ö÷&FW"ÖÆ—7B#¢°¢&æÖR#¢$Æ—7FFRVF–F÷2,:–F÷2"À¢'6WGF–æw2#¢°¢'6†÷uö–ÖvR#¢°¢&Æ&VÂ#¢$–ÖvVç2 ¢ÒÀ¢'6†÷u÷6·R#¢°¢&Æ&VÂ#¢%4µW2 ¢ÒÀ¢'f&–çG5÷W%÷vR#¢°¢&Æ&VÂ#¢%f&–çFW2÷":v–æ ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢$Æ—7FFRVF–F÷2,:–F÷2 ¢Ğ¢ÒÀ¢&F—66Æ÷7W&W2#¢°¢&æÖR#¢$F—gVÆv:|;VW2"À¢'6WGF–æw2#¢°¢'&w&‚#¢°¢&6öçFVçB#¢$f—6÷2FR6VwW&ì:vRF—gVÆv:|;VW2&VwVÆL;7&–2ö'&–vL;7&–÷2&W7FR&öGWFòâ ¢ÒÀ¢&†VF–ær#¢°¢&Æ&VÂ#¢%L:×GVÆò ¢ÒÀ¢&÷Våö'•öFVfVÇB#¢°¢&Æ&VÂ#¢$&W'Fò÷"G,:6ò ¢Ğ¢Ğ¢Ğ¢Ğ§Ğ 

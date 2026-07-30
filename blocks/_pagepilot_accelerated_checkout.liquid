@@ -1,0 +1,511 @@
+{% comment %}
+	@pp blocks/static-pagepilot-accelerated-checkout 1.0.6
+{% endcomment %}
+
+{%- doc -%}
+	@param {object} product - The product object to be added to the cart
+	@param form_obj - The form object
+{%- enddoc -%}
+
+{% liquid
+	assign variant = product.selected_or_first_available_variant
+	assign inventory_quantity = variant.inventory_quantity
+	assign inventory_policy = variant.inventory_policy
+
+	if variant.inventory_management == 'shopify'
+		assign inventory_managed = true
+	endif
+
+	if variant.quantity_rule.min > variant.inventory_quantity and inventory_managed and inventory_policy == 'deny'
+		assign quantity_rule_soldout = true
+	endif
+
+	if inventory_managed
+		if inventory_quantity <= 0 and inventory_policy == 'deny' or quantity_rule_soldout
+			assign can_add_to_cart = false
+		else
+			assign can_add_to_cart = true
+		endif
+	else
+		if variant != null
+			assign can_add_to_cart = true
+		else
+			assign can_add_to_cart = false
+		endif
+	endif
+%}
+
+{% liquid
+	capture properties
+		echo '--button-height: ' | append: block.settings.button_height | append: 'px;'
+		echo '--icon-size: ' | append: block.settings.icon_size | append: 'px;'
+		echo '--font-size: ' | append: block.settings.font_size | append: 'px;'
+		echo '--font-size-mobile: ' | append: block.settings.font_size_mobile | append: 'px;'
+		echo '--font-weight: ' | append: block.settings.weight | append: ';'
+		echo '--text-color: ' | append: block.settings.text_color | append: ';'
+		echo '--hover-text-color: ' | append: block.settings.hover_text_color | append: ';'
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign classes = 'pp-accelerated-checkout_button'
+	if block.settings.custom_class != blank
+		assign classes = classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign classes = classes | append: ' pp:decoration-none pp:h-(--button-height) pp:w-full pp:cursor-pointer pp:scroll-m-20 pp:appearance-none pp:content-center pp:text-center pp:wrap-anywhere pp:text-(--text-color)! pp:hover:text-(--hover-text-color)!'
+	assign classes = classes | append: ' pp:text-(length:--font-size-mobile) pp:font-(--font-weight) pp:@3xl:text-(length:--font-size)'
+
+	assign classes = classes | append: ' pp:relative pp:z-1 pp:overflow-hidden pp:before:absolute pp:before:inset-0 pp:before:z-[-1] pp:before:bg-white/0 pp:before:content-[""]'
+	assign classes = classes | append: ' pp:transition-all pp:duration-200 pp:before:transition-all pp:before:duration-200 pp:hover:before:bg-white/20'
+
+	if block.settings.hover_animation
+		assign classes = classes | append: ' pp:scale-100 pp:hover:scale-101'
+	endif
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.letter_spacing
+	endcapture
+	assign classes = classes | append: ' ' | append: letter_spacing
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign classes = classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign classes = classes | append: ' ' | append: border_radius
+
+	if block.settings.box_shadow_color != blank
+		assign classes = classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.case
+	endcapture
+	assign classes = classes | append: ' ' | append: text_transform
+
+	assign classes = classes | append: ' pp:col-span-full pp:group-has-[.hidden]:col-span-1'
+
+	if block.settings.show_accelerated_checkout == false
+		assign classes = classes | append: ' pp:hidden'
+	endif
+
+	assign classes = classes | append: ' ' | append: block.id
+%}
+
+{% liquid
+	assign dynamic_checkout_button_classes = 'accelerated-checkout-block pp:flex pp:flex-col pp:items-center pp:justify-center pp:gap-1'
+	assign dynamic_checkout_button_classes = dynamic_checkout_button_classes | append: ' pp:col-span-full pp:group-has-[.hidden]:col-span-1'
+%}
+
+{% liquid
+	assign button_classes = 'pp:relative pp:flex pp:h-full pp:w-full pp:items-center pp:justify-center pp:gap-3 pp:leading-none'
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.case
+	endcapture
+	assign button_classes = button_classes | append: ' ' | append: text_transform
+%}
+
+{% liquid
+	assign icon_classes = 'pp:size-(--icon-size)'
+
+	case block.settings.icon_variant
+		when 'light'
+			assign icon_classes = icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign icon_classes = icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign icon_classes = icon_classes | append: ' pp:stroke-3'
+	endcase
+%}
+
+{% if block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == true %}
+	<div
+		{{ block.shopify_attributes }}
+		{% if request.visual_preview_mode %}
+			data-shopify-visual-preview
+		{% endif %}
+		{% unless can_add_to_cart %}
+			hidden
+		{% endunless %}
+	>
+		<div class='{{ dynamic_checkout_button_classes }}'>
+			{% if product != blank and form_obj != blank %}
+				{{ form_obj | payment_button }}
+			{% endif %}
+		</div>
+	</div>
+{% endif %}
+
+{% if block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false %}
+	<div
+		class='{{ classes }}'
+		style='{{ properties }}'
+		{{ block.shopify_attributes }}
+		{% if request.visual_preview_mode %}
+			data-shopify-visual-preview
+		{% endif %}
+		{% unless can_add_to_cart %}
+			hidden
+		{% endunless %}
+	>
+		<button
+			type='button'
+			id='pp-accelerated-checkout-button'
+			class='{{ button_classes }}'
+		>
+			{% if block.settings.icon_show %}
+				<i data-lucide='{{ block.settings.icon }}' class='{{ icon_classes }}' aria-hidden='true'></i>
+			{% endif %}
+			{% if block.settings.text != blank %}
+				{{ block.settings.text }}
+			{% endif %}
+		</button>
+
+		<script>
+			document.addEventListener('DOMContentLoaded', () => {
+				const el = document.querySelector('#pp-accelerated-checkout-button');
+				if (!el) return;
+				el.addEventListener('click', () => {
+					const atc = document.querySelector('form[action$="/cart/add"]');
+					if (!atc) return;
+					const form = new FormData(atc);
+
+					fetch(window.Shopify.routes.root + 'cart/add.js', {
+						method: 'POST',
+						body: form,
+					})
+						.then((response) => response.json())
+						.then((data) => {
+							window.location.href = '/checkout';
+						})
+						.catch((error) => {
+							console.error('Error:', error);
+						});
+				});
+			});
+		</script>
+	</div>
+{% endif %}
+
+{% stylesheet %}
+	.shopify-payment-button,
+	.accelerated-checkout-block button {
+		width: 100% !important;
+	}
+{% endstylesheet %}
+
+{% schema %}
+{
+	"name": "Accelerated Checkout (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "checkbox",
+			"id": "show_accelerated_checkout",
+			"label": "Show Accelerated Checkout",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "dynamic_checkout_button",
+			"label": "Dynamic Checkout Button",
+			"default": true,
+			"info": "The dynamic checkout button allows customers to proceed to checkout, directly from a product page to pay for that product. Customers can also use accelerated checkout buttons such as Shop Pay, Apple Pay, or Google Pay, to check out using the details attached to their chosen payment method.",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Icon",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "icon_show",
+			"label": "Show icon",
+			"default": false,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "text",
+			"id": "icon",
+			"label": "Icon",
+			"default": "shopping-cart",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.icon_show == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 18,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.icon_show == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "select",
+			"id": "icon_variant",
+			"label": "Variant",
+			"options": [
+				{ "value": "light", "label": "Light" },
+				{ "value": "regular", "label": "Regular" },
+				{ "value": "bold", "label": "Bold" }
+			],
+			"default": "regular",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.icon_show == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "header",
+			"content": "Button",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Text",
+			"default": "Buy It Now",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "range",
+			"id": "button_height",
+			"label": "Height",
+			"min": 30,
+			"max": 52,
+			"step": 1,
+			"unit": "px",
+			"default": 52,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Text Color",
+			"default": "#ffffff",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "color",
+			"id": "hover_text_color",
+			"label": "Hover Text Color",
+			"default": "#ffffff",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "checkbox",
+			"id": "hover_animation",
+			"label": "Hover Animation",
+			"default": false
+		},
+		{
+			"type": "header",
+			"content": "Borders",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.border != \"none\" and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.border != \"none\" and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "header",
+			"content": "Typography",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "range",
+			"id": "font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 16,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "range",
+			"id": "font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 16,
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "select",
+			"id": "weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "select",
+			"id": "letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "select",
+			"id": "case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none",
+			"visible_if": "{{ block.settings.show_accelerated_checkout == true and block.settings.dynamic_checkout_button == false }}"
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the custom HTML. Multiple classes can be added by separating them with a space."
+		}
+	]
+}
+{% endschema %}

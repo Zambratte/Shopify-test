@@ -1,0 +1,609 @@
+{% comment %}
+	@pp blocks/pagepilot-modal 1.0.1
+{% endcomment %}
+
+{% liquid
+	assign file_url = block.settings.file_url | default: ''
+	assign file_path = file_url | split: '?' | first | downcase
+	assign is_pdf = false
+	if file_path contains '.pdf'
+		assign is_pdf = true
+	endif
+
+	assign root_classes = 'pp-modal'
+	if block.settings.custom_class != blank
+		assign root_classes = root_classes | append: ' ' | append: block.settings.custom_class
+	endif
+	assign root_classes = root_classes | append: ' ' | append: block.id
+%}
+
+<pagepilot-modal class='{{ root_classes }}'>
+	<div class='pp:contents' data-pp-modal-trigger>
+		{% render 'pagepilot-button',
+			settings: block.settings,
+			button_type: 'link',
+			shopify_attributes: block.shopify_attributes,
+			drawer_checkout: true,
+			cart_empty: false
+		%}
+	</div>
+
+	<dialog
+		class='pp-modal-dialog pp:fixed pp:inset-0 pp:m-auto pp:h-fit pp:max-h-[90vh] pp:w-full pp:max-w-2xl pp:border-none pp:bg-transparent pp:p-3 pp:backdrop:bg-black/60'
+		data-pp-modal
+	>
+		<div class='pp:relative pp:overflow-hidden pp:rounded-lg pp:bg-white pp:p-6 pp:pt-12 pp:shadow-xl'>
+			{% if block.settings.show_close_button %}
+				<button
+					type='button'
+					aria-label='Close'
+					class='pp-modal-close pp:absolute pp:top-3 pp:right-3 pp:z-10 pp:flex pp:size-8 pp:cursor-pointer pp:items-center pp:justify-center pp:rounded-full pp:border-none pp:bg-black/5 pp:hover:bg-black/10'
+					data-pp-modal-close
+				>
+					<i data-lucide='x' class='pp:size-5'></i>
+				</button>
+			{% endif %}
+
+			<div class='pp:max-h-[calc(90vh-3rem)] pp:overflow-auto'>
+				{% if block.settings.custom_html != blank %}
+					<div class='pp-modal-html pp:mb-4'>{{ block.settings.custom_html }}</div>
+				{% endif %}
+
+				{% if file_url != blank %}
+					{% if is_pdf %}
+						<iframe src='{{ file_url }}' title='File' class='pp:h-[70vh] pp:w-full'></iframe>
+					{% else %}
+						{% # theme-check-disable %}
+						<img src='{{ file_url }}' alt='' loading='lazy' class='pp:mx-auto pp:max-w-full'>
+						{% # theme-check-enable %}
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+	</dialog>
+</pagepilot-modal>
+
+{% schema %}
+{
+	"name": "Modal (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Trigger"
+		},
+		{
+			"type": "header",
+			"content": "Icon"
+		},
+		{
+			"type": "checkbox",
+			"id": "icon_show",
+			"label": "Show icon",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "icon_type",
+			"label": "Type",
+			"options": [
+				{
+					"value": "icon",
+					"label": "Icon"
+				},
+				{
+					"value": "svg",
+					"label": "SVG"
+				}
+			],
+			"default": "icon",
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "text",
+			"id": "icon",
+			"label": "Icon",
+			"default": "ruler",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == \"icon\" }}"
+		},
+		{
+			"type": "textarea",
+			"id": "icon_svg",
+			"label": "SVG",
+			"info": "Enter the SVG icon you want to display. You can find the SVG icons here: https://simpleicons.org",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == \"svg\" }}"
+		},
+		{
+			"type": "select",
+			"id": "icon_position",
+			"label": "Icon Position",
+			"options": [
+				{
+					"value": "left",
+					"label": "Left"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				}
+			],
+			"default": "left",
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "icon_variant",
+			"label": "Variant",
+			"options": [
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "regular",
+					"label": "Regular"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				}
+			],
+			"default": "bold",
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Button"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Text",
+			"default": "Size Guide",
+			"placeholder": "e.g. Open"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Text Color",
+			"default": "#000000"
+		},
+		{
+			"type": "color",
+			"id": "hover_text_color",
+			"label": "Hover Text Color",
+			"default": "#000000"
+		},
+		{
+			"type": "checkbox",
+			"id": "hover_animation",
+			"label": "Hover Animation",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "header",
+			"content": "Typography"
+		},
+		{
+			"type": "range",
+			"id": "font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 13
+		},
+		{
+			"type": "range",
+			"id": "font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 13
+		},
+		{
+			"type": "select",
+			"id": "weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "500"
+		},
+		{
+			"type": "select",
+			"id": "letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "text_alignment",
+			"id": "text_alignment",
+			"label": "Alignment",
+			"default": "left"
+		},
+		{
+			"type": "text_alignment",
+			"id": "text_alignment_mobile",
+			"label": "Mobile Alignment",
+			"default": "left"
+		},
+		{
+			"type": "header",
+			"content": "Size"
+		},
+		{
+			"type": "select",
+			"id": "width",
+			"label": "Desktop Width",
+			"options": [
+				{
+					"value": "fit-content",
+					"label": "Fit"
+				},
+				{
+					"value": "full-width",
+					"label": "Full"
+				},
+				{
+					"value": "custom",
+					"label": "Custom"
+				}
+			],
+			"default": "full-width"
+		},
+		{
+			"type": "range",
+			"id": "custom_width",
+			"label": "Custom width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.width == \"custom\" }}"
+		},
+		{
+			"type": "select",
+			"id": "width_mobile",
+			"label": "Mobile Width",
+			"options": [
+				{
+					"value": "fit-content",
+					"label": "Fit"
+				},
+				{
+					"value": "full-width",
+					"label": "Full"
+				},
+				{
+					"value": "custom",
+					"label": "Custom"
+				}
+			],
+			"default": "full-width"
+		},
+		{
+			"type": "range",
+			"id": "custom_width_mobile",
+			"label": "Custom width",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.width_mobile == \"custom\" }}"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Modal"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_close_button",
+			"label": "Show Close Button",
+			"default": true
+		},
+		{
+			"type": "text",
+			"id": "file_url",
+			"label": "File URL (accepts images and pdf)"
+		},
+		{
+			"type": "textarea",
+			"id": "custom_html",
+			"label": "Custom HTML",
+			"info": "You can use this to add custom HTML to the modal. This will be displayed above the file."
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the modal. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Modal (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

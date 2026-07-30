@@ -1,0 +1,729 @@
+{% comment %}
+	@pp blocks/pagepilot-product-differences 1.0.11
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--divider-color: ' | append: block.settings.divider_color | append: ';'
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | default: 1 | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		if block.settings.highlighted_column_background_color != blank
+			echo '--highlighted-column-background-color: ' | append: block.settings.highlighted_column_background_color | append: ';'
+		endif
+
+		if block.settings.background_color != blank
+			echo '--background-color: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		echo '--column-1-text-size: ' | append: block.settings.column_1_text_size | append: 'px;'
+		echo '--column-1-text-color: ' | append: block.settings.column_1_text_color | append: ';'
+		echo '--column-1-text-weight: ' | append: block.settings.column_1_text_weight | append: ';'
+
+		echo '--column-2-heading-text-size: ' | append: block.settings.column_2_heading_text_size | append: 'px;'
+		echo '--column-2-heading-text-weight: ' | append: block.settings.column_2_heading_text_weight | append: ';'
+		echo '--column-2-heading-text-color: ' | append: block.settings.column_2_heading_text_color | append: ';'
+		echo '--column-2-icon-size: ' | append: block.settings.column_2_icon_size | append: 'px;'
+		echo '--column-2-icon-color: ' | append: block.settings.column_2_icon_color | append: ';'
+
+		echo '--column-3-heading-text-size: ' | append: block.settings.column_3_heading_text_size | append: 'px;'
+		echo '--column-3-heading-text-weight: ' | append: block.settings.column_3_heading_text_weight | append: ';'
+		echo '--column-3-heading-text-color: ' | append: block.settings.column_3_heading_text_color | append: ';'
+		echo '--column-3-icon-size: ' | append: block.settings.column_3_icon_size | append: 'px;'
+		echo '--column-3-icon-color: ' | append: block.settings.column_3_icon_color | append: ';'
+	endcapture
+
+	assign container_classes = 'pp-product-differences pp:w-full'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' ' | append: block.id
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+
+	assign highlighted_column_classes = 'pp:absolute pp:-top-10 pp:-bottom-10 pp:z-0 pp:w-1/4 pp:end-1/4'
+	assign highlighted_column_classes = highlighted_column_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+
+	assign columns_classes = border_radius | append: ' ' | append: border
+	assign columns_classes = columns_classes | append: ' pp:divide-y pp:divide-(--divider-color) pp:bg-(--background-color) pp:*:flex pp:*:items-center pp:*:justify-center pp:*:text-center'
+	assign columns_classes = columns_classes | append: ' pp:*:h-14'
+
+	assign column1_text_classes = 'pp:col-span-2 pp:rounded-e-none pp:border-e-0 pp:*:px-4! pp:rtl:order-3 pp:text-(length:--column-1-text-size) pp:font-(--column-1-text-weight) pp:text-(--column-1-text-color)'
+	assign column2_heading_classes = 'pp:p-4 pp:text-center rtl:order-0 pp:text-(length:--column-2-heading-text-size) pp:font-(--column-2-heading-text-weight) pp:text-(--column-2-heading-text-color)'
+	assign column3_heading_classes = 'pp:text-(length:--column-3-heading-text-size) pp:font-(--column-3-heading-text-weight) pp:text-(--column-3-heading-text-color)'
+
+	assign column2_icon_classes = 'pp:size-(--column-2-icon-size) pp:text-(--column-2-icon-color)'
+	case block.settings.column_2_icon_variant
+		when 'light'
+			assign column2_icon_classes = column2_icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign column2_icon_classes = column2_icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign column2_icon_classes = column2_icon_classes | append: ' pp:stroke-3'
+	endcase
+
+	assign column3_icon_classes = 'pp:size-(--column-3-icon-size) pp:text-(--column-3-icon-color)'
+	case block.settings.column_3_icon_variant
+		when 'light'
+			assign column3_icon_classes = column3_icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign column3_icon_classes = column3_icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign column3_icon_classes = column3_icon_classes | append: ' pp:stroke-3'
+	endcase
+%}
+
+{% liquid
+	assign has_content = false
+
+	for i in (1..8)
+		assign row_key = 'row_text_' | append: i
+		assign row_value = block.settings[row_key]
+		if row_value != blank
+			assign has_content = true
+		endif
+	endfor
+%}
+
+<div class='{{ container_classes }}' style='{{ properties }}' {{ block.shopify_attributes }}>
+	<div class='pp:relative pp:mx-auto pp:mt-10 pp:mb-10 pp:w-full'>
+		<div
+			class='{{ highlighted_column_classes }}'
+			style='background: var(--highlighted-column-background-color);'
+		>
+			&nbsp;
+		</div>
+
+		<div class='pp:relative pp:grid pp:grid-cols-4'>
+			{% if block.settings.column_2_heading_text != blank and block.settings.column_3_heading_text != blank %}
+				<div class='pp:col-span-2'>&nbsp;</div>
+				<div class='{{ column2_heading_classes }}'>
+					{{ block.settings.column_2_heading_text }}
+				</div>
+				<div class='pp:p-4 pp:text-center rtl:order-1 {{ column3_heading_classes }}'>
+					{{ block.settings.column_3_heading_text }}
+				</div>
+			{% endif %}
+
+			<div class='{{ columns_classes }} {{ column1_text_classes }}'>
+				{% for i in (1..8) %}
+					{% liquid
+						assign row_key = 'row_text_' | append: i
+						assign row_value = block.settings[row_key]
+
+						if row_value == blank and has_content == false and i <= 5
+							assign row_value = 'Feature ' | append: i
+						endif
+					%}
+					{% if row_value != blank %}
+						<div>{{ row_value }}</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+
+			<div class='pp:divide-y pp:divide-(--divider-color)/40 pp:border-y pp:border-transparent pp:*:flex pp:*:h-14 pp:*:items-center pp:*:justify-center pp:*:text-center pp:rtl:order-4'>
+				{% for i in (1..8) %}
+					{% liquid
+						assign row_key = 'row_text_' | append: i
+						assign row_value = block.settings[row_key]
+
+						if row_value == blank and has_content == false and i <= 5
+							assign row_value = 'Feature ' | append: i
+						endif
+					%}
+					{% if row_value != blank %}
+						<div>
+							{% if block.settings.column_2_icon != blank %}
+								<i
+									data-lucide='{{ block.settings.column_2_icon }}'
+									class='{{ column2_icon_classes }}'
+								></i>
+							{% endif %}
+						</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+
+			<div class='{{ columns_classes }} pp:rounded-s-none pp:border-s-0 pp:rtl:order-5'>
+				{% for i in (1..8) %}
+					{% liquid
+						assign row_key = 'row_text_' | append: i
+						assign row_value = block.settings[row_key]
+
+						if row_value == blank and has_content == false and i <= 5
+							assign row_value = 'Feature ' | append: i
+						endif
+					%}
+					{% if row_value != blank %}
+						<div>
+							{% if block.settings.column_3_icon != blank %}
+								<i
+									data-lucide='{{ block.settings.column_3_icon }}'
+									class='{{ column3_icon_classes }}'
+								></i>
+							{% endif %}
+						</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Product Differences (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Rows"
+		},
+		{
+			"type": "text",
+			"id": "row_text_1",
+			"label": "Row 1 Text",
+			"placeholder": "Type your text here for first row",
+			"default": "Easy to use"
+		},
+		{
+			"type": "text",
+			"id": "row_text_2",
+			"label": "Row 2 Text",
+			"placeholder": "Type your text here for second row",
+			"default": "Durability"
+		},
+		{
+			"type": "text",
+			"id": "row_text_3",
+			"label": "Row 3 Text",
+			"placeholder": "Type your text here for third row",
+			"default": "Eco-Friendly"
+		},
+		{
+			"type": "text",
+			"id": "row_text_4",
+			"label": "Row 4 Text",
+			"placeholder": "Type your text here for fourth row",
+			"default": "Painless"
+		},
+		{
+			"type": "text",
+			"id": "row_text_5",
+			"label": "Row 5 Text",
+			"placeholder": "Type your text here for fifth row",
+			"default": "Costs $$$"
+		},
+		{
+			"type": "text",
+			"id": "row_text_6",
+			"label": "Row 6 Text",
+			"placeholder": "Type your text here for sixth row"
+		},
+		{
+			"type": "text",
+			"id": "row_text_7",
+			"label": "Row 7 Text",
+			"placeholder": "Type your text here for seventh row"
+		},
+		{
+			"type": "text",
+			"id": "row_text_8",
+			"label": "Row 8 Text",
+			"placeholder": "Type your text here for eighth row"
+		},
+		{
+			"type": "header",
+			"content": "Columns"
+		},
+		{
+			"type": "range",
+			"id": "column_1_text_size",
+			"min": 10,
+			"max": 35,
+			"step": 1,
+			"unit": "px",
+			"label": "Column 1 Text Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "column_1_text_weight",
+			"label": "Column 1 Text Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "color",
+			"id": "column_1_text_color",
+			"label": "Column 1 Text Color",
+			"default": "#212529"
+		},
+		{
+			"type": "text",
+			"id": "column_2_heading_text",
+			"label": "Column 2 Heading Text",
+			"placeholder": "Type your text here for column 2 heading",
+			"default": "Our product"
+		},
+		{
+			"type": "range",
+			"id": "column_2_heading_text_size",
+			"min": 10,
+			"max": 35,
+			"step": 1,
+			"unit": "px",
+			"label": "Column 2 Heading Text Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "column_2_heading_text_weight",
+			"label": "Column 2 Heading Text Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "700"
+		},
+		{
+			"type": "color",
+			"id": "column_2_heading_text_color",
+			"label": "Column 2 Heading Text Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "text",
+			"id": "column_2_icon",
+			"label": "Column 2 Icon",
+			"default": "circle-check"
+		},
+		{
+			"type": "range",
+			"id": "column_2_icon_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Column 2 Icon Size",
+			"default": 20
+		},
+		{
+			"type": "color",
+			"id": "column_2_icon_color",
+			"label": "Column 2 Icon Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "select",
+			"id": "column_2_icon_variant",
+			"label": "Column 2 Icon Variant",
+			"options": [
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "regular",
+					"label": "Regular"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "fill"
+		},
+		{
+			"type": "text",
+			"id": "column_3_heading_text",
+			"label": "Column 3 Heading Text",
+			"placeholder": "Type your text here for column 3 heading",
+			"default": "Others"
+		},
+		{
+			"type": "range",
+			"id": "column_3_heading_text_size",
+			"min": 10,
+			"max": 35,
+			"step": 1,
+			"unit": "px",
+			"label": "Column 3 Heading Text Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "column_3_heading_text_weight",
+			"label": "Column 3 Heading Text Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "500"
+		},
+		{
+			"type": "color",
+			"id": "column_3_heading_text_color",
+			"label": "Column 3 Heading Text Color",
+			"default": "#212529"
+		},
+		{
+			"type": "text",
+			"id": "column_3_icon",
+			"label": "Column 3 Icon",
+			"default": "x"
+		},
+		{
+			"type": "range",
+			"id": "column_3_icon_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Column 3 Icon Size",
+			"default": 20
+		},
+		{
+			"type": "color",
+			"id": "column_3_icon_color",
+			"label": "Column 3 Icon Color",
+			"default": "#FF383C"
+		},
+		{
+			"type": "select",
+			"id": "column_3_icon_variant",
+			"label": "Column 3 Icon Variant",
+			"options": [
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "regular",
+					"label": "Regular"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				}
+			],
+			"default": "bold"
+		},
+		{
+			"type": "header",
+			"content": "Table"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "color_background",
+			"id": "highlighted_column_background_color",
+			"label": "Highlighted Column Background",
+			"default": "linear-gradient(180deg, #7658ff 0%, rgba(118, 88, 255, 0.55) 100%)"
+		},
+		{
+			"type": "color",
+			"id": "divider_color",
+			"label": "Divider Color",
+			"default": "#DFDFDF"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "solid"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#DFDFDF",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 90,
+			"step": 10,
+			"unit": "%",
+			"default": 20
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Product Differences (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

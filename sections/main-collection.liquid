@@ -1,3 +1,0 @@
-<section><header class="collection-header"><div class="eyebrow">Entdecken</div><h1>{{ collection.title }}</h1>{% if collection.description != blank %}<div class="rte">{{ collection.description }}</div>{% endif %}</header>
-<div class="page-width product-grid collection-grid">{% for product in collection.products %}{% render 'product-card', product: product %}{% else %}<p>Dieser Kollektion wurden noch keine Produkte hinzugefügt.</p>{% endfor %}</div></section>
-{% schema %}{"name":"Kollektion","settings":[]}{% endschema %}

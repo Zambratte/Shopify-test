@@ -1,0 +1,688 @@
+{% comment %}
+	@pp blocks/pagepilot-carousel 1.0.10
+{% endcomment %}
+
+{% liquid
+	capture container_properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: block.settings.gap_mobile | append: 'px;'
+
+		echo '--navigation-offset: ' | append: block.settings.navigation_offset | append: 'px;'
+		echo '--navigation-size: calc(var(--navigation-icon-size) * 1.6);'
+		echo '--navigation-color: ' | append: block.settings.navigation_color | append: ';'
+		if block.settings.navigation_background_color != blank
+			echo '--navigation-background-color: ' | append: block.settings.navigation_background_color | append: ';'
+		else
+			echo '--navigation-background-color: transparent;'
+		endif
+
+		if block.settings.navigation_border != 'none'
+			echo '--navigation-border-width: ' | append: block.settings.navigation_border_width | append: 'px;'
+			echo '--navigation-border-color: ' | append: block.settings.navigation_border_color | default: 'transparent' | append: ';'
+		endif
+
+		echo '--navigation-icon-size: ' | append: block.settings.navigation_icon_size | append: 'px;'
+		echo '--navigation-spacing: calc(var(--navigation-size) + 10px);'
+
+		echo '--swiper-pagination-color: ' | append: block.settings.pagination_background_color | append: ';'
+		echo '--swiper-pagination-bullet-inactive-color: rgba(from var(--swiper-pagination-color) r g b / 0.9);'
+		echo '--swiper-pagination-bottom: 0.5rem;'
+		if block.settings.pagination_position == 'outside'
+			echo '--swiper-pagination-bottom: -1rem;'
+		endif
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-carousel pp:relative pp:w-full pp:scroll-m-6 pp:grid-cols-1'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:grid'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:grid'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:grid'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	assign carousel_wrapper_classes = 'pp:relative pp:min-w-0 pp:grid pp:grid-cols-1'
+
+	if block.settings.navigation_show == true and block.settings.navigation_position == 'outside'
+		assign carousel_wrapper_classes = carousel_wrapper_classes | append: ' pp:@3xl:px-(--navigation-spacing)!'
+	endif
+
+	if block.settings.pagination_show == true and block.settings.pagination_position == 'outside'
+		assign carousel_wrapper_classes = carousel_wrapper_classes | append: ' pp:mb-7'
+	endif
+
+	assign controls = 'previous,next' | split: ','
+
+	for control in controls
+		assign control_classes = 'swiper-custom-button-' | append: control
+		assign control_classes = control_classes | append: ' pp:absolute pp:top-1/2 pp:z-1 pp:-translate-y-1/2 pp:items-center pp:justify-center pp:cursor-pointer'
+
+		if block.settings.navigation_mobile_show
+			assign control_classes = control_classes | append: ' pp:flex!'
+		else
+			assign control_classes = control_classes | append: ' pp:hidden!'
+		endif
+
+		if block.settings.navigation_show
+			assign control_classes = control_classes | append: ' pp:@3xl:flex!'
+		else
+			assign control_classes = control_classes | append: ' pp:@3xl:hidden!'
+		endif
+
+		assign control_classes = control_classes | append: ' pp:size-(--navigation-size)'
+
+		if control == 'previous'
+			assign control_classes = control_classes | append: ' pp:left-(--navigation-offset)'
+		elsif control == 'next'
+			assign control_classes = control_classes | append: ' pp:right-(--navigation-offset)'
+		endif
+
+		case block.settings.navigation_border
+			when 'none'
+				assign control_classes = control_classes | append: ' pp:outline-none'
+			when 'solid'
+				assign control_classes = control_classes | append: ' pp:outline-solid'
+			when 'dashed'
+				assign control_classes = control_classes | append: ' pp:outline-dashed'
+			when 'dotted'
+				assign control_classes = control_classes | append: ' pp:outline-dotted'
+		endcase
+
+		if block.settings.navigation_border == 'solid' or block.settings.navigation_border == 'dashed' or block.settings.navigation_border == 'dotted'
+			assign control_classes = control_classes | append: ' pp:outline-(length:--navigation-border-width) pp:outline-(--navigation-border-color)'
+		endif
+
+		capture border_radius
+			render 'pagepilot-border-radius', value: block.settings.navigation_border_radius
+		endcapture
+		assign control_classes = control_classes | append: ' ' | append: border_radius
+
+		assign control_classes = control_classes | append: ' pp:[&_svg]:size-(--navigation-icon-size)'
+		assign control_classes = control_classes | append: ' pp:bg-(--navigation-background-color) pp:text-(--navigation-color)'
+
+		if control == 'previous'
+			assign carousel_controls_previous = control_classes
+		else
+			assign carousel_controls_next = control_classes
+		endif
+	endfor
+
+	assign carousel_classes = 'swiper pp:[&>.swiper-wrapper]:items-center pp:overflow-hidden'
+
+	if block.settings.pagination_mobile_show
+		assign carousel_classes = carousel_classes | append: ' pp:[&_.swiper-pagination]:block!'
+	else
+		assign carousel_classes = carousel_classes | append: ' pp:[&_.swiper-pagination]:hidden!'
+	endif
+
+	if block.settings.pagination_show
+		assign carousel_classes = carousel_classes | append: ' pp:[&_.swiper-pagination]:@3xl:block!'
+	else
+		assign carousel_classes = carousel_classes | append: ' pp:[&_.swiper-pagination]:@3xl:hidden!'
+	endif
+
+	assign carousel_pagination_classes = 'swiper-pagination-' | append: block.id
+	assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:justify-center pp:gap-2 pp:absolute pp:right-0 pp:left-0 pp:z-1'
+
+	if block.settings.pagination_position == 'inside'
+		assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:bottom-2'
+	elsif block.settings.pagination_position == 'outside'
+		assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:-bottom-4'
+	endif
+
+	if block.settings.pagination_mobile_show
+		assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:flex'
+	else
+		assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.pagination_show
+		assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:@3xl:flex'
+	else
+		assign carousel_pagination_classes = carousel_pagination_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	assign columns = block.settings.columns
+	if block.settings.reveal_last_slide == true
+		assign columns = columns | plus: 0.5
+	endif
+
+	assign columns_mobile = block.settings.columns_mobile
+	if block.settings.reveal_last_slide_mobile == true
+		assign columns_mobile = columns_mobile | plus: 0.5
+	endif
+%}
+
+<pagepilot-carousel
+	id='swiper-{{ block.id }}'
+>
+	<div
+		style='{{ container_properties }}'
+		class='{{ container_classes }}'
+		{{ block.shopify_attributes }}
+	>
+		<div class='{{ carousel_wrapper_classes }}'>
+			<div
+				ref='swiper'
+				class='{{ carousel_classes }}'
+				data-autoplay='{{ block.settings.autoplay }}'
+				data-pause-on-hover='true'
+				data-columns='{{ columns }}'
+				data-columns-mobile='{{ columns_mobile }}'
+				data-gap='{{ block.settings.gap }}'
+				data-gap-mobile='{{ block.settings.gap_mobile }}'
+			>
+				<div class='swiper-wrapper'>
+					{% for block in block.blocks %}
+						<div class='swiper-slide'>
+							{% render block %}
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+
+			{% if block.blocks.size > block.settings.columns %}
+				<button
+					ref='previous'
+					type='button'
+					class='{{ carousel_controls_previous }}'
+				>
+					<i data-lucide='chevron-left'></i>
+				</button>
+				<button
+					ref='next'
+					type='button'
+					class='{{ carousel_controls_next }}'
+				>
+					<i data-lucide='chevron-right'></i>
+				</button>
+
+				<div ref='pagination' class='{{ carousel_pagination_classes }}'></div>
+			{% endif %}
+		</div>
+	</div>
+</pagepilot-carousel>
+{% schema %}
+{
+	"name": "Carousel (PP)",
+	"class": "pagepilot-block",
+	"blocks": [
+		{
+			"type": "pagepilot_image"
+		},
+		{
+			"type": "pagepilot_review_card"
+		},
+		{
+			"type": "pagepilot_video"
+		},
+		{
+			"type": "pagepilot_text"
+		},
+		{
+			"type": "pagepilot_button"
+		},
+		{
+			"type": "pagepilot_group"
+		}
+	],
+	"settings": [
+		{
+			"type": "range",
+			"id": "autoplay",
+			"label": "Autoplay",
+			"info": "The number of seconds between each slide. 0 to disable.",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "s",
+			"default": 3
+		},
+		{
+			"type": "range",
+			"id": "columns",
+			"label": "Columns",
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"unit": "col",
+			"default": 3
+		},
+		{
+			"type": "range",
+			"id": "columns_mobile",
+			"label": "Mobile Columns",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "col",
+			"default": 1
+		},
+		{
+			"type": "checkbox",
+			"id": "reveal_last_slide",
+			"label": "Reveal Last Slide",
+			"info": "If enabled, the last slide will be revealed with a half column width",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "reveal_last_slide_mobile",
+			"label": "Mobile Reveal Last Slide",
+			"info": "If enabled, the last slide will be revealed with a half column width",
+			"default": false
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "header",
+			"content": "Pagination Dots"
+		},
+		{
+			"type": "checkbox",
+			"id": "pagination_show",
+			"label": "Show Pagination",
+			"default": false
+		},
+		{
+			"type": "checkbox",
+			"id": "pagination_mobile_show",
+			"label": "Mobile Show Pagination",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "pagination_position",
+			"label": "Pagination position",
+			"options": [
+				{
+					"value": "outside",
+					"label": "Outside"
+				},
+				{
+					"value": "inside",
+					"label": "Inside"
+				}
+			],
+			"default": "outside",
+			"visible_if": "{{ block.settings.pagination_show == true or block.settings.pagination_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "pagination_background_color",
+			"label": "Background Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.pagination_show == true or block.settings.pagination_mobile_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Navigation Arrows"
+		},
+		{
+			"type": "checkbox",
+			"id": "navigation_show",
+			"label": "Show Navigation",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "navigation_mobile_show",
+			"label": "Mobile Show Navigation",
+			"default": false
+		},
+		{
+			"type": "select",
+			"id": "navigation_position",
+			"label": "Navigation position",
+			"options": [
+				{
+					"value": "outside",
+					"label": "Outside"
+				},
+				{
+					"value": "inside",
+					"label": "Inside"
+				}
+			],
+			"default": "outside",
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "navigation_background_color",
+			"label": "Background Color",
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "navigation_color",
+			"label": "Color",
+			"default": "#7C7C7C",
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "navigation_icon_size",
+			"label": "Icon size",
+			"min": 14,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 18,
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "navigation_offset",
+			"label": "Offset",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "navigation_border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "solid",
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "navigation_border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.navigation_border != \"none\" and block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "navigation_border_color",
+			"label": "Border Color",
+			"default": "#DFDFDF",
+			"visible_if": "{{ block.settings.navigation_border != \"none\" and block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "navigation_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 30,
+			"visible_if": "{{ block.settings.navigation_show == true or block.settings.navigation_mobile_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 90,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Carousel (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

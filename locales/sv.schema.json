@@ -1,0 +1,593 @@
+{
+  "settings_schema": {
+    "colors": {
+      "name": "FÃ¤rger",
+      "settings": {
+        "background": {
+          "label": "Bakgrund"
+        },
+        "background_gradient": {
+          "label": "Tonad bakgrund",
+          "info": "Tonad bakgrund ersÃ¤tter om mÃ¶jligt bakgrund."
+        },
+        "text": {
+          "label": "Text"
+        },
+        "button_background": {
+          "label": "EnfÃ¤rgad knappbakgrund"
+        },
+        "button_label": {
+          "label": "EnfÃ¤rgad knappetikett"
+        },
+        "secondary_button_label": {
+          "label": "Knappkontur"
+        },
+        "shadow": {
+          "label": "Skugga"
+        }
+      }
+    },
+    "typography": {
+      "name": "Typografi",
+      "settings": {
+        "type_header_font": {
+          "label": "Typsnitt"
+        },
+        "header__1": {
+          "content": "Rubriker"
+        },
+        "header__2": {
+          "content": "BrÃ¶dtext"
+        },
+        "type_body_font": {
+          "label": "Typsnitt"
+        },
+        "heading_scale": {
+          "label": "Skala"
+        },
+        "body_scale": {
+          "label": "Skala"
+        }
+      }
+    },
+    "social-media": {
+      "name": "Sociala medier",
+      "settings": {
+        "social_twitter_link": {
+          "label": "X / Twitter",
+          "info": "https://x.com/shopify"
+        },
+        "social_facebook_link": {
+          "label": "Facebook",
+          "info": "https://facebook.com/shopify"
+        },
+        "social_pinterest_link": {
+          "label": "Pinterest",
+          "info": "https://pinterest.com/shopify"
+        },
+        "social_instagram_link": {
+          "label": "Instagram",
+          "info": "https://instagram.com/shopify"
+        },
+        "social_tiktok_link": {
+          "label": "TikTok",
+          "info": "https://tiktok.com/@shopify"
+        },
+        "social_tumblr_link": {
+          "label": "Tumblr",
+          "info": "http://shopify.tumblr.com"
+        },
+        "social_snapchat_link": {
+          "label": "Snapchat",
+          "info": "https://www.snapchat.com/add/shopify"
+        },
+        "social_youtube_link": {
+          "label": "YouTube",
+          "info": "https://www.youtube.com/user/shopify"
+        },
+        "social_vimeo_link": {
+          "label": "Vimeo",
+          "info": "https://vimeo.com/shopify"
+        },
+        "header": {
+          "content": "Sociala konton"
+        }
+      }
+    },
+    "currency_format": {
+      "name": "Valutaformat",
+      "settings": {
+        "currency_code_enabled": {
+          "label": "Valutakoder"
+        },
+        "paragraph": "Priser i varukorgen och kassan visar alltid valutakoder"
+      }
+    },
+    "layout": {
+      "name": "Layout",
+      "settings": {
+        "page_width": {
+          "label": "Sidbredd"
+        },
+        "spacing_sections": {
+          "label": "Mellanrum mellan mallavsnitt"
+        },
+        "header__grid": {
+          "content": "RutnÃ¤t"
+        },
+        "paragraph__grid": {
+          "content": "PÃ¥verkar omrÃ¥den med flera kolumner eller rader"
+        },
+        "spacing_grid_horizontal": {
+          "label": "Horisontellt utrymme"
+        },
+        "spacing_grid_vertical": {
+          "label": "Vertikalt utrymme"
+        }
+      }
+    },
+    "search_input": {
+      "name": "SÃ¶kbeteende",
+      "settings": {
+        "predictive_search_enabled": {
+          "label": "SÃ¶kfÃ¶rslag"
+        },
+        "predictive_search_show_vendor": {
+          "label": "ProduktsÃ¤ljare",
+          "info": "Visas nÃ¤r sÃ¶kfÃ¶rslag Ã¤r aktiverat"
+        },
+        "predictive_search_show_price": {
+          "label": "Produktpris",
+          "info": "Visas nÃ¤r sÃ¶kfÃ¶rslag Ã¤r aktiverat"
+        }
+      }
+    },
+    "global": {
+      "settings": {
+        "header__border": {
+          "content": "Kant"
+        },
+        "header__shadow": {
+          "content": "Skugga"
+        },
+        "blur": {
+          "label": "Suddighet"
+        },
+        "corner_radius": {
+          "label": "HÃ¶rnradie"
+        },
+        "horizontal_offset": {
+          "label": "Horisontell kompensation"
+        },
+        "vertical_offset": {
+          "label": "Vertikal kompensation"
+        },
+        "thickness": {
+          "label": "Tjocklek"
+        },
+        "opacity": {
+          "label": "Opacitet"
+        },
+        "image_padding": {
+          "label": "Bild-padding"
+        },
+        "text_alignment": {
+          "options__1": {
+            "label": "VÃ¤nster"
+          },
+          "options__2": {
+            "label": "Centrera"
+          },
+          "options__3": {
+            "label": "HÃ¶ger"
+          },
+          "label": "Textjustering"
+        }
+      }
+    },
+    "badges": {
+      "name": "Brickor",
+      "settings": {
+        "position": {
+          "options__1": {
+            "label": "Nere till vÃ¤nster"
+          },
+          "options__2": {
+            "label": "Nere till hÃ¶ger"
+          },
+          "options__3": {
+            "label": "Ã–verst till vÃ¤nster"
+          },
+          "options__4": {
+            "label": "Ã–verst till hÃ¶ger"
+          },
+          "label": "Position pÃ¥ kort"
+        },
+        "sale_badge_color_scheme": {
+          "label": "FÃ¤rgschema fÃ¶r fÃ¶rsÃ¤ljningsbricka"
+        },
+        "sold_out_badge_color_scheme": {
+          "label": "UtsÃ¥lt fÃ¤rgschema fÃ¶r bricka"
+        }
+      }
+    },
+    "buttons": {
+      "name": "Knappar"
+    },
+    "variant_pills": {
+      "name": "Variantkapslar",
+      "paragraph": "Variantpiller Ã¤r ett sÃ¤tt att visa dina [produktvarianter](https://help.shopify.com/manual/online-store/themes/theme-structure/page-types/product-pages#variant-picker-block)"
+    },
+    "inputs": {
+      "name": "Inmatningar"
+    },
+    "content_containers": {
+      "name": "InnehÃ¥llsbehÃ¥llare"
+    },
+    "popups": {
+      "name": "Rullgardinsmenyer och popup-rutor",
+      "paragraph": "PÃ¥verkar omrÃ¥den som rullgardinsmenyer fÃ¶r navigering, popup-modalfÃ¶nster och popup-rutor fÃ¶r varukorg"
+    },
+    "media": {
+      "name": "Media"
+    },
+    "drawers": {
+      "name": "LÃ¥dor"
+    },
+    "cart": {
+      "name": "Varukorg",
+      "settings": {
+        "cart_type": {
+          "label": "Typ",
+          "drawer": {
+            "label": "LÃ¥da"
+          },
+          "page": {
+            "label": "Sida"
+          },
+          "notification": {
+            "label": "Popup-avisering"
+          }
+        },
+        "show_vendor": {
+          "label": "SÃ¤ljare"
+        },
+        "show_cart_note": {
+          "label": "Varukorgsanteckning"
+        },
+        "cart_drawer": {
+          "header": "Varukorgspanel",
+          "collection": {
+            "label": "Produktserie",
+            "info": "Visas nÃ¤r varukorgspanelen Ã¤r tom"
+          }
+        }
+      }
+    },
+    "cards": {
+      "name": "Produktkort",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "Standard"
+          },
+          "options__2": {
+            "label": "Kort"
+          },
+          "label": "Stil"
+        }
+      }
+    },
+    "collection_cards": {
+      "name": "Produktseriekort",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "Standard"
+          },
+          "options__2": {
+            "label": "Kort"
+          },
+          "label": "Stil"
+        }
+      }
+    },
+    "blog_cards": {
+      "name": "Bloggkort",
+      "settings": {
+        "style": {
+          "options__1": {
+            "label": "Standard"
+          },
+          "options__2": {
+            "label": "Kort"
+          },
+          "label": "Stil"
+        }
+      }
+    },
+    "logo": {
+      "name": "Logotyp",
+      "settings": {
+        "logo_image": {
+          "label": "Logotyp"
+        },
+        "logo_width": {
+          "label": "Bredd"
+        },
+        "favicon": {
+          "label": "Favicon",
+          "info": "Visas med 32 x 32 px"
+        }
+      }
+    },
+    "brand_information": {
+      "name": "VarumÃ¤rkesinformation",
+      "settings": {
+        "brand_headline": {
+          "label": "Rubrik"
+        },
+        "brand_description": {
+          "label": "Beskrivning"
+        },
+        "brand_image": {
+          "label": "Bild"
+        },
+        "brand_image_width": {
+          "label": "Bildbredd"
+        },
+        "paragraph": {
+          "content": "Visas i sidfotens block med information om varumÃ¤rke"
+        }
+      }
+    },
+    "animations": {
+      "name": "Animeringar",
+      "settings": {
+        "animations_reveal_on_scroll": {
+          "label": "Visa avsnitt under blÃ¤ddring"
+        },
+        "animations_hover_elements": {
+          "options__1": {
+            "label": "Inga"
+          },
+          "options__2": {
+            "label": "Vertikalt lyft"
+          },
+          "label": "Hovringseffekt",
+          "info": "PÃ¥verkar kort och knappar",
+          "options__3": {
+            "label": "3D-lyft"
+          }
+        }
+      }
+    }
+  },
+  "sections": {
+    "all": {
+      "padding": {
+        "section_padding_heading": "Utfyllnad",
+        "padding_top": "HÃ¶gst upp",
+        "padding_bottom": "LÃ¤ngst ner"
+      },
+      "spacing": "RadavstÃ¥nd",
+      "colors": {
+        "label": "FÃ¤rgschema",
+        "has_cards_info": "Uppdatera dina temainstÃ¤llningar fÃ¶r att Ã¤ndra kortets fÃ¤rgsÃ¤ttning."
+      },
+      "heading_size": {
+        "label": "Rubrikstorlek",
+        "options__1": {
+          "label": "Liten"
+        },
+        "options__2": {
+          "label": "Medel"
+        },
+        "options__3": {
+          "label": "Stor"
+        },
+        "options__4": {
+          "label": "Extra stor"
+        },
+        "options__5": {
+          "label": "Extra extra stor"
+        }
+      },
+      "image_shape": {
+        "options__1": {
+          "label": "Standard"
+        },
+        "options__2": {
+          "label": "VÃ¤lvd"
+        },
+        "options__3": {
+          "label": "Droppe"
+        },
+        "options__4": {
+          "label": "Sparre vÃ¤nster"
+        },
+        "options__5": {
+          "label": "Sparre hÃ¶ger"
+        },
+        "options__6": {
+          "label": "Diamant"
+        },
+        "options__7": {
+          "label": "Parallelogram"
+        },
+        "options__8": {
+          "label": "Rund"
+        },
+        "label": "Bildform"
+      },
+      "animation": {
+        "content": "Animeringar",
+        "image_behavior": {
+          "options__1": {
+            "label": "Inga"
+          },
+          "options__2": {
+            "label": "Omgivande rÃ¶relse"
+          },
+          "label": "Animering",
+          "options__3": {
+            "label": "Fast bakgrundsplacering"
+          },
+          "options__4": {
+            "label": "Zooma in vid skrollning"
+          }
+        }
+      }
+    },
+    "announcement-bar": {
+      "name": "MeddelandefÃ¤lt",
+      "blocks": {
+        "announcement": {
+          "settings": {
+            "text": {
+              "label": "Text",
+              "default": "VÃ¤lkommen till vÃ¥r butik"
+            },
+            "text_alignment": {
+              "label": "Textjustering",
+              "options__1": {
+                "label": "VÃ¤nster"
+              },
+              "options__2": {
+                "label": "Centrera"
+              },
+              "options__3": {
+                "label": "HÃ¶ger"
+              }
+            },
+            "link": {
+              "label": "LÃ¤nk"
+            }
+          },
+          "name": "Meddelande"
+        }
+      },
+      "settings": {
+        "auto_rotate": {
+          "label": "Rotera meddelanden automatiskt"
+        },
+        "change_slides_speed": {
+          "label": "Byt varje"
+        },
+        "show_social": {
+          "label": "Sociala medier-ikoner",
+          "info": "[Hantera sociala konton](/editor?context=theme&category=social%20media)"
+        },
+        "enable_country_selector": {
+          "label": "Land-/regionvÃ¤ljare",
+          "info": "[Hantera lÃ¤nder/regioner](/admin/settings/markets)"
+        },
+        "enable_language_selector": {
+          "label": "SprÃ¥kvÃ¤ljare",
+          "info": "[Hantera sprÃ¥k](/admin/settings/languages)"
+        },
+        "heading_utilities": {
+          "content": "Verktyg"
+        },
+        "paragraph": {
+          "content": "Visas endast pÃ¥ stora skÃ¤rmar"
+        }
+      },
+      "presets": {
+        "name": "MeddelandefÃ¤lt"
+      }
+    },
+    "collage": {
+      "name": "Kollage",
+      "settings": {
+        "heading": {
+          "label": "Rubrik",
+          "default": "Multimediakollage"
+        },
+        "desktop_layout": {
+          "label": "Layout",
+          "options__1": {
+            "label": "Stort block fÃ¶rst"
+          },
+          "options__2": {
+            "label": "Stort block sist"
+          }
+        },
+        "mobile_layout": {
+          "label": "Mobil layout",
+          "options__1": {
+            "label": "Kollage"
+          },
+          "options__2": {
+            "label": "Kolumn"
+          }
+        },
+        "card_styles": {
+          "label": "Kortstil",
+          "info": "Hantera individuella kortstilar i [temainstÃ¤llningarna](/editor?context=theme&category=product%20cards)",
+          "options__1": {
+            "label": "AnvÃ¤nd individuella kortstilar"
+          },
+          "options__2": {
+            "label": "Styla alla som produktkort"
+          }
+        },
+        "header_layout": {
+          "content": "Layout"
+        }
+      },
+      "blocks": {
+        "image": {
+          "settings": {
+            "image": {
+              "label": "Bild"
+            }
+          },
+          "name": "Bild"
+        },
+        "product": {
+          "settings": {
+            "product": {
+              "label": "Produkt"
+            },
+            "secondary_background": {
+              "label": "Visa sekundÃ¤r bakgrund"
+            },
+            "second_image": {
+              "label": "Visa andra bild pÃ¥ hovring"
+            }
+          },
+          "name": "Produkt"
+        },
+        "collection": {
+          "settings": {
+            "collection": {
+              "label": "Produktserie"
+            }
+          },
+          "name": "Produktserie"
+        },
+        "video": {
+          "settings": {
+            "cover_image": {
+              "label": "Omslagsbild"
+            },
+            "video_url": {
+              "label": "URL",
+              "info": "Video spelas i en pop-up om avsnittet innehÃ¥ller andra block.",
+              "placeholder": "AnvÃ¤nd en YouTube- eller en Vimeo-URL"
+            },
+            "description": {
+              "label": "Alternativtext fÃ¶r video",
+              "info": "Beskriv videon fÃ¶r kunder som anvÃ¤nder skÃ¤rmlÃ¤sare. [Mer information](https://help.shopify.com/manual/online-store/themes/theme-structure/theme-features#video-block)",
+              "default": "Beskriv videon"
+            }
+          },
+          "name": "Video"
+        }
+      },
+      "presets": {
+        "name": "Kollage"
+      }
+    },
+    "collection-ÛMtòÚ$z{-®éÜj×VÇB#¢$¶æWF–¶WGB ¢ÒÀ¢&Æ–æ²#¢°¢&Æ&VÂ#¢$Ì:Fæ² ¢ÒÀ¢'6V6öæF'•÷7G–ÆR#¢°¢&Æ&VÂ#¢$¶öçGW'7F–Â ¢ÒÀ¢&&÷…öÆ–vâ#¢°¢&Æ&VÂ#¢$–ææVŒ:VÆÆWG2÷6—F–öâ"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢,9gfW'7BF–ÆÂl:Fç7FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$Ì:Fæw7BW’Ö—GFVâ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢,9gfW'7BF–ÆÂŒ;fvW" ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$Ö—GFVâF–ÆÂl:Fç7FW" ¢ÒÀ¢&÷F–öç5õóR#¢°¢&Æ&VÂ#¢$Ö—GFVâ6VçG&W&B ¢ÒÀ¢&÷F–öç5õób#¢°¢&Æ&VÂ#¢$Ö—GFVâF–ÆÂŒ;fvW" ¢ÒÀ¢&÷F–öç5õór#¢°¢&Æ&VÂ#¢$æW&RF–ÆÂl:Fç7FW" ¢ÒÀ¢&÷F–öç5õó‚#¢°¢&Æ&VÂ#¢$Ì:Fæw7BæW"’Ö—GFVâ ¢ÒÀ¢&÷F–öç5õó’#¢°¢&Æ&VÂ#¢$æW&RF–ÆÂŒ;fvW" ¢Ğ¢ÒÀ¢'6†÷u÷FW‡Eö&÷‚#¢°¢&Æ&VÂ#¢$&VŒ:VÆÆ&R ¢ÒÀ¢'FW‡EöÆ–væÖVçB#¢°¢&Æ&VÂ#¢$–ææVŒ:VÆÇ6§W7FW&–ær"À¢&÷F–öåó#¢°¢&Æ&VÂ#¢%l:Fç7FW" ¢ÒÀ¢&÷F–öåó"#¢°¢&Æ&VÂ#¢$6VçG&W& ¢ÒÀ¢&÷F–öåó2#¢°¢&Æ&VÂ#¢$Œ;fvW" ¢Ğ¢ÒÀ¢&–ÖvUö÷fW&Æ•ö÷6—G’#¢°¢&Æ&VÂ#¢,9gfW&Æw&–ærb÷6—FWB ¢ÒÀ¢'FW‡EöÆ–væÖVçEöÖö&–ÆR#¢°¢&Æ&VÂ#¢$Æ–æ¦W&–ærb–ææVŒ:VÆÂ:RÖö&–Â"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%l:Fç7FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&W& ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Œ;fvW" ¢Ğ¢ÒÀ¢&†VFW%ö'WGFöâ#¢°¢&6öçFVçB#¢$¶æ ¢ÒÀ¢&†VFW%öÆ–÷WB#¢°¢&6öçFVçB#¢$Æ–÷WB ¢ÒÀ¢&†VFW%÷FW‡B#¢°¢&6öçFVçB#¢%FW‡B ¢ÒÀ¢&†VFW%ö6öÆ÷'2#¢°¢&6öçFVçB#¢$l:G&vW" ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢$&–ÆG7VÂ ¢Ğ¢ÒÀ¢&6öÆÆ6–&ÆUö6öçFVçB#¢°¢&æÖR#¢$–ææVŒ:VÆÂ6öÒ¶âL;fÆ¦2"À¢'6WGF–æw2#¢°¢&6F–öâ#¢°¢&Æ&VÂ#¢%'V'&–² ¢ÒÀ¢&†VF–ær#¢°¢&Æ&VÂ#¢%'V'&–²"À¢&FVfVÇB#¢$–ææVŒ:VÆÂ6öÒ¶âL;fÆ¦2 ¢ÒÀ¢&†VF–æuöÆ–væÖVçB#¢°¢&Æ&VÂ#¢%'V'&–¶Æ–æ¦W&–ær"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%l:Fç7FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&W& ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Œ;fvW" ¢Ğ¢ÒÀ¢&Æ–÷WB#¢°¢&Æ&VÂ#¢$&VŒ:VÆÆ&R"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$–ævVâ&VŒ:VÆÆ&R ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%&FŒ:VÆÆ&R ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$g6æ—GG6Œ:VÆÆ&R ¢Ğ¢ÒÀ¢&÷Våöf—'7Eö6öÆÆ6–&ÆU÷&÷r#¢°¢&Æ&VÂ#¢,9gæl;g'7F&FVâ ¢ÒÀ¢&†VFW"#¢°¢&6öçFVçB#¢$&–ÆB ¢ÒÀ¢&–ÖvR#¢°¢&Æ&VÂ#¢$&–ÆB ¢ÒÀ¢&–ÖvU÷&F–ò#¢°¢&Æ&VÂ#¢$&–ÆFl;g&Œ:VÆÆæFR"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ç76F–ÆÂ&–ÆB ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$Æ—FVâ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢%7F÷" ¢Ğ¢ÒÀ¢&FW6·F÷öÆ–÷WB#¢°¢&Æ&VÂ#¢%Æ6W&–ær"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$&–ÆBl;g'7B ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$æG&&–ÆB ¢Ğ¢ÒÀ¢&6öçF–æW%ö6öÆ÷%÷66†VÖR#¢°¢&Æ&VÂ#¢$l:G&w66†VÖl;g"6öçF–æW" ¢ÒÀ¢&Æ–÷WEö†VFW"#¢°¢&6öçFVçB#¢$Æ–÷WB ¢ÒÀ¢'6V7F–öåö6öÆ÷%÷66†VÖR#¢°¢&Æ&VÂ#¢$l:G&wFVÖl;g"g6æ—GB ¢Ğ¢ÒÀ¢&&Æö6·2#¢°¢&6öÆÆ6–&ÆU÷&÷r#¢°¢&æÖR#¢%&B6öÒ¶âL;fÆ¦2"À¢'6WGF–æw2#¢°¢&†VF–ær#¢°¢&Æ&VÂ#¢%'V'&–²"À¢&FVfVÇB#¢%&B6öÒ¶âL;fÆ¦2 ¢ÒÀ¢'&÷uö6öçFVçB#¢°¢&Æ&VÂ#¢%&F–ææVŒ:VÆÂ ¢ÒÀ¢'vR#¢°¢&Æ&VÂ#¢%&F–ææVŒ:VÆÂg,:Vâ6–F ¢ÒÀ¢&–6öâ#¢°¢&Æ&VÂ#¢$–¶öâ"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$–æv ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢,8GÆR ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$&æâ ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$fÆ6¶ ¢ÒÀ¢&÷F–öç5õóR#¢°¢&Æ&VÂ#¢$Ì:VF ¢ÒÀ¢&÷F–öç5õób#¢°¢&Æ&VÂ#¢$Ö÷&÷B ¢ÒÀ¢&÷F–öç5õór#¢°¢&Æ&VÂ#¢$6†GF'V&&Æ ¢ÒÀ¢&÷F–öç5õó‚#¢°¢&Æ&VÂ#¢$&ö6² ¢ÒÀ¢&÷F–öç5õó’#¢°¢&Æ&VÂ#¢%W&¶Æ— ¢ÒÀ¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ÖV¦W&—&öGV·B ¢ÒÀ¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$g&’g,:VâÖV¦W&—&öGV·FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%F÷&¶&R ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢,9fv ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$VÆB ¢ÒÀ¢&÷F–öç5õóR#¢°¢&Æ&VÂ#¢$vÇWFVæg&’ ¢ÒÀ¢&÷F–öç5õób#¢°¢&Æ&VÂ#¢$†¬:G'F ¢ÒÀ¢&÷F–öç5õór#¢°¢&Æ&VÂ#¢%7G'–¶¬:G&â ¢ÒÀ¢&÷F–öç5õó‚#¢°¢&Æ&VÂ#¢$&ÆB ¢ÒÀ¢&÷F–öç5õó’#¢°¢&Æ&VÂ#¢$Ì:FFW" ¢ÒÀ¢&÷F–öç5õó##¢°¢&Æ&VÂ#¢$&Æ—‡B ¢ÒÀ¢&÷F–öç5õó##¢°¢&Æ&VÂ#¢$Ì:G7F–gB ¢ÒÀ¢&÷F–öç5õó#"#¢°¢&Æ&VÂ#¢$Ì:W2 ¢ÒÀ¢&÷F–öç5õó#2#¢°¢&Æ&VÂ#¢$¶'Fì:VÂ ¢ÒÀ¢&÷F–öç5õó#B#¢°¢&Æ&VÂ#¢%WFâì;gGFW" ¢ÒÀ¢&÷F–öç5õó#R#¢°¢&Æ&VÂ#¢$'—†÷" ¢ÒÀ¢&÷F–öç5õó#b#¢°¢&Æ&VÂ#¢%F76gG'–6² ¢ÒÀ¢&÷F–öç5õó#r#¢°¢&Æ&VÂ#¢%W" ¢ÒÀ¢&÷F–öç5õó#‚#¢°¢&Æ&VÂ#¢%&g–Ò ¢ÒÀ¢&÷F–öç5õó#’#¢°¢&Æ&VÂ#¢$fÇ–wÆâ ¢ÒÀ¢&÷F–öç5õó3#¢°¢&Æ&VÂ#¢%l:G‡B ¢ÒÀ¢&÷F–öç5õó3#¢°¢&Æ&VÂ#¢%&—6Æ ¢ÒÀ¢&÷F–öç5õó3"#¢°¢&Æ&VÂ#¢$g,:VvWFV6¶Vâ ¢ÒÀ¢&÷F–öç5õó32#¢°¢&Æ&VÂ#¢,8WFW'f–æâ ¢ÒÀ¢&÷F–öç5õó3B#¢°¢&Æ&VÂ#¢$|:RF–ÆÆ&¶ ¢ÒÀ¢&÷F–öç5õó3R#¢°¢&Æ&VÂ#¢$Æ–æ¦Â ¢ÒÀ¢&÷F–öç5õó3b#¢°¢&Æ&VÂ#¢%6W'fW&–æw6fB ¢ÒÀ¢&÷F–öç5õó3r#¢°¢&Æ&VÂ#¢%6¶¦÷'F ¢ÒÀ¢&÷F–öç5õó3‚#¢°¢&Æ&VÂ#¢%6¶ò ¢ÒÀ¢&÷F–öç5õó3’#¢°¢&Æ&VÂ#¢%6–ÇVWGB ¢ÒÀ¢&÷F–öç5õóC#¢°¢&Æ&VÂ#¢%6ì;ffÆ–æv ¢ÒÀ¢&÷F–öç5õóC#¢°¢&Æ&VÂ#¢%7F¬:G&æ ¢ÒÀ¢&÷F–öç5õóC"#¢°¢&Æ&VÂ#¢%7F÷W" ¢ÒÀ¢&÷F–öç5õóC2#¢°¢&Æ&VÂ#¢$Æ7F&–Â ¢ÒÀ¢&÷F–öç5õóCB#¢°¢&Æ&VÂ#¢%Gl:GGB ¢Ğ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢$–ææVŒ:VÆÂ6öÒ¶âL;fÆ¦2 ¢Ğ¢ÒÀ¢&Ö–âÖ66÷VçB#¢°¢&æÖR#¢$¶öçFò ¢ÒÀ¢&Ö–âÖ7F—fFRÖ66÷VçB#¢°¢&æÖR#¢$¶öçFö·F—fW&–ær ¢ÒÀ¢&Ö–âÖFG&W76W2#¢°¢&æÖR#¢$G&W76W" ¢ÒÀ¢&Ö–âÖÆöv–â#¢°¢&æÖR#¢$–æÆövvæ–ær"À¢'6†÷öÆöv–åö'WGFöâ#¢°¢&Væ&ÆR#¢$·F—fW&–æÆövvæ–ærÖVB6†÷ ¢Ğ¢ÒÀ¢&Ö–âÖ÷&FW"#¢°¢&æÖR#¢$÷&FW" ¢ÒÀ¢&Ö–â×&Vv—7FW"#¢°¢&æÖR#¢%&Vv—7G&W&–ær ¢ÒÀ¢&Ö–â×&W6WB×77v÷&B#¢°¢&æÖR#¢$Ì;g6Væ÷&G<:WFW'7L:FÆÆæ–ær ¢ÒÀ¢'&VÆFVB×&öGV7G2#¢°¢&æÖR#¢%&VÆFW&FR&öGV·FW""À¢'6WGF–æw2#¢°¢&†VF–ær#¢°¢&Æ&VÂ#¢%'V'&–² ¢ÒÀ¢'&öGV7G5÷Fõ÷6†÷r#¢°¢&Æ&VÂ#¢%&öGV·G,:F¶æ–ær ¢ÒÀ¢&6öÇVÖç5öFW6·F÷#¢°¢&Æ&VÂ#¢$¶öÇVÖæW" ¢ÒÀ¢'&w&…õó#¢°¢&6öçFVçB#¢%&VÆFW&FR&öGV·FW"¶â†çFW&2’µ6V&6‚bF—66÷fW'’ÖVåÒ†‡GG3¢òö†VÇç6†÷–g’æ6öÒöÖçVÂööæÆ–æR×7F÷&R÷6V&6‚ÖæBÖF—66÷fW'’÷&öGV7B×&V6öÖÖVæFF–öç2’"À¢&FVfVÇB#¢$GR¶ç6¶Rö6·<:Rv–ÆÆ" ¢ÒÀ¢&†VFW%õó"#¢°¢&6öçFVçB#¢%&öGV·F¶÷'B ¢ÒÀ¢&–ÖvU÷&F–ò#¢°¢&Æ&VÂ#¢$&–ÆFl;g&Œ:VÆÆæFR"À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ç76F–ÆÂ&–ÆB ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%÷'G,:GGB ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$g—&¶çF–r ¢Ğ¢ÒÀ¢'6†÷u÷6V6öæF'•ö–ÖvR#¢°¢&Æ&VÂ#¢%f—6æG&&–ÆB:R†÷g&–ær ¢ÒÀ¢'6†÷u÷fVæF÷"#¢°¢&Æ&VÂ#¢%<:FÆ¦&R ¢ÒÀ¢'6†÷u÷&F–ær#¢°¢&Æ&VÂ#¢%&öGV·F&WG–r"À¢&–æfò#¢$Vâ·,:Gg2l;g"&öGV·F&VL;fÖæ–æv"â´ÖW"–æf÷&ÖF–öåÒ†‡GG3¢òö†VÇç6†÷–g’æ6öÒöÖçVÂööæÆ–æR×7F÷&R÷F†VÖW2ö7W7FöÖ—¦–ær×F†VÖW2öFB×&öGV7B×&V6öÖÖVæFF–öç2’ ¢ÒÀ¢&6öÇVÖç5öÖö&–ÆR#¢°¢&Æ&VÂ#¢$Öö&–Æ¶öÇVÖæW""À¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢# ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢#" ¢Ğ¢Ğ¢Ğ¢ÒÀ¢&×VÇF—&÷r#¢°¢&æÖR#¢$fÆW&&FW""À¢'6WGF–æw2#¢°¢&–ÖvR#¢°¢&Æ&VÂ#¢$&–ÆB ¢ÒÀ¢&–ÖvUö†V–v‡B#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ç76F–ÆÂ&–ÆB ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$Æ—FVâ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$ÖVFVÂ ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢%7F÷" ¢ÒÀ¢&Æ&VÂ#¢$Œ;f¦B ¢ÒÀ¢&FW6·F÷ö–ÖvU÷v–GF‚#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$Æ—FVâ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$ÖVFVÂ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢%7F÷" ¢ÒÀ¢&Æ&VÂ#¢$'&VFB ¢ÒÀ¢'FW‡E÷7G–ÆR#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$',;fGFW‡B ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢%VæFW''V'&–² ¢ÒÀ¢&Æ&VÂ#¢%FW‡G7F–Â ¢ÒÀ¢&'WGFöå÷7G–ÆR#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%G–FÆ–r¶æ ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$¶æ¶öçGW" ¢ÒÀ¢&Æ&VÂ#¢$¶æ7F–Â ¢ÒÀ¢&FW6·F÷ö6öçFVçEöÆ–væÖVçB#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%l:Fç7FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&W& ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Œ;fvW" ¢ÒÀ¢&Æ&VÂ#¢$§W7FW&–ær ¢ÒÀ¢&FW6·F÷ö6öçFVçE÷÷6—F–öâ#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$Œ;fw7BW ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$Ö—GFVâ ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Ì:Fæw7BæW" ¢ÒÀ¢&Æ&VÂ#¢%÷6—F–öâ ¢ÒÀ¢&–ÖvUöÆ–÷WB#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢$ÇFW&æW&g,:Vâl:Fç7FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$ÇFW&æW&g,:VâŒ;fvW" ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢%l:Fç7FW&§W7FW&B ¢ÒÀ¢&÷F–öç5õóB#¢°¢&Æ&VÂ#¢$Œ;fvW&§W7FW&B ¢ÒÀ¢&Æ&VÂ#¢%Æ6W&–ær ¢ÒÀ¢&6öçF–æW%ö6öÆ÷%÷66†VÖR#¢°¢&Æ&VÂ#¢$l:G&w66†VÖl;g"6öçF–æW" ¢ÒÀ¢&Öö&–ÆUö6öçFVçEöÆ–væÖVçB#¢°¢&÷F–öç5õó#¢°¢&Æ&VÂ#¢%l:Fç7FW" ¢ÒÀ¢&÷F–öç5õó"#¢°¢&Æ&VÂ#¢$6VçG&W& ¢ÒÀ¢&÷F–öç5õó2#¢°¢&Æ&VÂ#¢$Œ;fvW" ¢ÒÀ¢&Æ&VÂ#¢$Öö&–ÂÆ–æ¦W&–ær ¢ÒÀ¢&†VFW"#¢°¢&6öçFVçB#¢$&–ÆB ¢ÒÀ¢&†VFW%ó"#¢°¢&6öçFVçB#¢$–ææVŒ:VÆÂ ¢ÒÀ¢&†VFW%ó2#¢°¢&6öçFVçB#¢$l:G&vW" ¢Ğ¢ÒÀ¢&&Æö6·2#¢°¢'&÷r#¢°¢&æÖR#¢%&B"À¢'6WGF–æw2#¢°¢&–ÖvR#¢°¢&Æ&VÂ#¢$&–ÆB ¢ÒÀ¢&6F–öâ#¢°¢&Æ&VÂ#¢%'V'&–²"À¢&FVfVÇB#¢%'V'&–² ¢ÒÀ¢&†VF–ær#¢°¢&Æ&VÂ#¢%'V'&–²"À¢&FVfVÇB#¢%&B ¢ÒÀ¢'FW‡B#¢°¢&Æ&VÂ#¢%FW‡B"À¢&FVfVÇB#¢#Çå&–†÷FW‡BÖVBVâ&–ÆBl;g"GBvRfö·W2:WBfÆB&öGV·BÂ&öGV·G6W&–RVÆÆW"&Æövv–æÌ:FvrâÌ:FvrF–ÆÂ–æf÷&ÖF–öâöÒF–ÆÆ|:FævÆ–v†WBÂ7F–ÂVÆÆW"F–ÆÆ†æFŒ:VÆÂVâ&V6Vç6–öâãÂ÷â ¢ÒÀ¢&'WGFöåöÆ&VÂ#¢°¢&Æ&VÂ#¢$¶æWF–¶WGB"À¢&FVfVÇB#¢$¶æWF–¶WGB"À¢&–æfò#¢$Ì:FÖæFö×Bl;g"GBL;fÆ¦ ¢ÒÀ¢&'WGFöåöÆ–æ²#¢°¢&Æ&VÂ#¢$¶æÌ:Fæ² ¢Ğ¢Ğ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢$fÆW&&FW" ¢Ğ¢ÒÀ¢'V–6²Ö÷&FW"ÖÆ—7B#¢°¢&æÖR#¢%6æ&"÷&FW&Æ—7F"À¢'6WGF–æw2#¢°¢'6†÷uö–ÖvR#¢°¢&Æ&VÂ#¢$&–ÆFW" ¢ÒÀ¢'6†÷u÷6·R#¢°¢&Æ&VÂ#¢%4µS¦W" ¢ÒÀ¢'f&–çG5÷W%÷vR#¢°¢&Æ&VÂ#¢%f&–çFW"W"6–F ¢Ğ¢ÒÀ¢'&W6WG2#¢°¢&æÖR#¢%6æ&"÷&FW&Æ—7F ¢Ğ¢ÒÀ¢&F—66Æ÷7W&W2#¢°¢&æÖR#¢%WÇ—6æ–æv""À¢'6WGF–æw2#¢°¢'&w&‚#¢°¢&6öçFVçB#¢$ö&Æ–vF÷&—6¶<:F¶W&†WG7f&æ–æv"ö6‚Æw7FFvB–æf÷&ÖF–öâl;g"FVææ&öGV·Bâ ¢ÒÀ¢&†VF–ær#¢°¢&Æ&VÂ#¢%'V'&–² ¢ÒÀ¢&÷Våö'•öFVfVÇB#¢°¢&Æ&VÂ#¢,9gVâ6öÒ7FæF&B ¢Ğ¢Ğ¢Ğ¢Ğ§Ğ 

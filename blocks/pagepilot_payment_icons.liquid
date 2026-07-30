@@ -1,0 +1,410 @@
+{% comment %}
+	@pp blocks/pagepilot-payment-icons 1.0.6
+{% endcomment %}
+ 
+{% liquid
+	capture container_styles
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--icon-gap: ' | append: block.settings.icon_gap | append: 'px;'
+		echo '--icon-size: ' | append: block.settings.icon_size | append: 'px;'
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | append: ';'
+		endif
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-payment-icons pp:relative pp:flex-wrap pp:items-center pp:gap-x-(--icon-gap)'
+
+	assign container_classes = container_classes | append: ' ' | append: block.id
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:flex'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:flex'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top) pp:pr-(--padding-right) pp:pb-(--padding-bottom) pp:pl-(--padding-left)'
+
+	if block.settings.icon_horizontal_alignment == 'flex-start'
+		assign container_classes = container_classes | append: ' pp:justify-start'
+	elsif block.settings.icon_horizontal_alignment == 'center'
+		assign container_classes = container_classes | append: ' pp:justify-center'
+	elsif block.settings.icon_horizontal_alignment == 'flex-end'
+		assign container_classes = container_classes | append: ' pp:justify-end'
+	elsif block.settings.icon_horizontal_alignment == 'space-between'
+		assign container_classes = container_classes | append: ' pp:justify-between'
+	elsif block.settings.icon_horizontal_alignment == 'space-around'
+		assign container_classes = container_classes | append: ' pp:justify-around'
+	endif
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	assign payment_icon_classes = 'pp:size-(length:--icon-size)!'
+%}
+
+
+<style>
+	.pp-payment-icons.{{ block.id }} > img {
+		max-width: var(--icon-size-mobile) !important;
+	}
+
+	@media (min-width: 768px) {
+		.pp-payment-icons.{{ block.id }} > img {
+			max-width: var(--icon-size) !important;
+		}
+	}
+</style>
+
+<div class='{{ container_classes }} {{ block.id }}' style='{{ container_styles }}' {{ block.shopify_attributes }}>
+	{% if block.settings.show_american_express %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-american-express.svg'
+			class='{{ payment_icon_classes }}'
+			alt='American Express'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+	{% if block.settings.show_apple_pay %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-apple-pay.svg'
+			class='{{ payment_icon_classes }}'
+			alt='Apple Pay'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+	{% if block.settings.show_visa %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-visa.svg'
+			class='{{ payment_icon_classes }}'
+			alt='Visa'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+	{% if block.settings.show_mastercard %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-mastercard.svg'
+			class='{{ payment_icon_classes }}'
+			alt='Mastercard'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+	{% if block.settings.show_paypal %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-paypal.svg'
+			class='{{ payment_icon_classes }}'
+			alt='PayPal'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+	{% if block.settings.show_google_pay %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-google-pay.svg'
+			class='{{ payment_icon_classes }}'
+			alt='Google Pay'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+	{% if block.settings.show_shop_pay %}
+		<img
+			src='https://shopify-assets-cdn.pagepilot.ai/assets/pagepilot/pagepilot-shop-pay.svg'
+			class='{{ payment_icon_classes }}'
+			alt='Shop Pay'
+			width='{{ block.settings.icon_size }}'
+			height='{{ block.settings.icon_size }}'
+		>
+	{% endif %}
+</div>
+
+{% schema %}
+{
+	"name": "Payment Icons (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Payment Providers"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_american_express",
+			"label": "American Express",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_apple_pay",
+			"label": "Apple Pay",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_visa",
+			"label": "Visa",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_mastercard",
+			"label": "Mastercard",
+			"default": true
+		},
+
+		{
+			"type": "checkbox",
+			"id": "show_paypal",
+			"label": "PayPal",
+			"default": true
+		},
+
+		{
+			"type": "checkbox",
+			"id": "show_google_pay",
+			"label": "Google Pay",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_shop_pay",
+			"label": "Shop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Icons"
+		},
+		{
+			"type": "select",
+			"id": "icon_horizontal_alignment",
+			"label": "Alignment",
+			"options": [
+				{
+					"value": "flex-start",
+					"label": "Left"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "flex-end",
+					"label": "Right"
+				},
+				{
+					"value": "space-between",
+					"label": "Space between"
+				},
+				{
+					"value": "space-around",
+					"label": "Space around"
+				}
+			],
+			"default": "center"
+		},
+		{
+			"type": "range",
+			"id": "icon_gap",
+			"label": "Gap",
+			"min": 1,
+			"max": 35,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Size",
+			"min": 10,
+			"max": 60,
+			"step": 1,
+			"unit": "px",
+			"default": 32
+		},
+
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the image. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Payment Icons (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

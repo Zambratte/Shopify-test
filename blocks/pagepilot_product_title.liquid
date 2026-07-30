@@ -1,0 +1,393 @@
+{% comment %}
+	@pp blocks/pagepilot-product-title 1.0.5
+{% endcomment %}
+
+{% render 'pagepilot-text', settings: block.settings, shopify_attributes: block.shopify_attributes, use_product: true %}
+
+{% schema %}
+{
+	"name": "Product Title (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Typography"
+		},
+		{
+			"type": "richtext",
+			"id": "text",
+			"label": "Text",
+			"default": "<h1>Product Title</h1>"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 32
+		},
+		{
+			"type": "range",
+			"id": "font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 26
+		},
+		{
+			"type": "select",
+			"id": "weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "600"
+		},
+		{
+			"type": "select",
+			"id": "letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "select",
+			"id": "line_height",
+			"label": "Line Height",
+			"options": [
+				{
+					"value": "auto",
+					"label": "Auto"
+				},
+				{
+					"value": "custom",
+					"label": "Custom"
+				}
+			],
+			"default": "auto"
+		},
+		{
+			"type": "range",
+			"id": "line_height_custom",
+			"min": 10,
+			"max": 50,
+			"step": 1,
+			"unit": "-",
+			"label": "Line Height",
+			"default": 16,
+			"visible_if": "{{ block.settings.line_height == \"custom\" }}"
+		},
+		{
+			"type": "range",
+			"id": "line_height_custom_mobile",
+			"min": 10,
+			"max": 50,
+			"step": 1,
+			"unit": "-",
+			"label": "Mobile Line Height",
+			"default": 16,
+			"visible_if": "{{ block.settings.line_height == \"custom\" }}"
+		},
+		{
+			"type": "select",
+			"id": "wrap",
+			"label": "Wrap",
+			"options": [
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "nowrap",
+					"label": "No Wrap"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "select",
+			"id": "width",
+			"label": "Width",
+			"options": [
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "fit",
+					"label": "Fit"
+				}
+			],
+			"default": "fill"
+		},
+		{
+			"type": "text_alignment",
+			"id": "text_alignment",
+			"label": "Alignment",
+			"default": "left"
+		},
+		{
+			"type": "text_alignment",
+			"id": "text_alignment_mobile",
+			"label": "Mobile Alignment",
+			"default": "left"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Product Title (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

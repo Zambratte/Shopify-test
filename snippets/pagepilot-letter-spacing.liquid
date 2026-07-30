@@ -1,0 +1,15 @@
+{% comment %}
+	@pp snippets/pagepilot-letter-spacing 1.0.5
+{% endcomment %}
+
+{%- assign ls_value = value | default: 'normal' -%}
+{%- assign ls_prefix = prefix | default: 'pp:' -%}
+
+{%- case ls_value -%}
+	{%- when 'tight' -%}
+		{{ ls_prefix }}tracking-tighter
+	{%- when 'normal' -%}
+		{{ ls_prefix }}tracking-normal
+	{%- when 'loose' -%}
+		{{ ls_prefix }}tracking-wider
+{%- endcase -%}

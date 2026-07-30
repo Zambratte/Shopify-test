@@ -1,0 +1,29 @@
+{% comment %}
+	@pp snippets/pagepilot-border 1.0.5
+{% endcomment %}
+
+{%- liquid
+	assign value = value | default: 'none'
+	assign prefix = prefix | default: 'pp:'
+	assign width_property = width_property | default: '--border-width'
+	assign color_property = color_property | default: '--border-color'
+
+	assign border_classes = ''
+
+	case value
+		when 'none'
+			assign border_classes = prefix | append: 'border-none'
+		when 'solid'
+			assign border_classes = prefix | append: 'border-solid'
+		when 'dashed'
+			assign border_classes = prefix | append: 'border-dashed'
+		when 'dotted'
+			assign border_classes = prefix | append: 'border-dotted'
+	endcase
+
+	if value == 'solid' or value == 'dashed' or value == 'dotted'
+		assign border_classes = border_classes | append: ' ' | append: prefix | append: 'border-(length:' | append: width_property | append: ')' | append: ' ' | append: prefix | append: 'border-(' | append: color_property | append: ')'
+	endif
+-%}
+
+{{- border_classes -}}

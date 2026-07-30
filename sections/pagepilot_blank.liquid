@@ -1,0 +1,513 @@
+{% comment %}
+	@pp sections/pagepilot-blank 1.0.8
+{% endcomment %}
+
+{% liquid
+	capture properties
+		echo '--padding-top: ' | append: section.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: section.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: section.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: section.settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: section.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: section.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: section.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: section.settings.padding_right_mobile | append: 'px;'
+
+		assign margin_top = section.settings.margin_top | times: 2
+		assign margin_bottom = section.settings.margin_bottom | times: 2
+		assign margin_top_mobile = section.settings.margin_top_mobile | times: 2
+		assign margin_bottom_mobile = section.settings.margin_bottom_mobile | times: 2
+
+		echo '--margin-top: ' | append: margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: margin_bottom | append: 'px;'
+		echo '--margin-top-mobile: ' | append: margin_top_mobile | append: 'px;'
+		echo '--margin-bottom-mobile: ' | append: margin_bottom_mobile | append: 'px;'
+
+		echo '--columns: ' | append: section.settings.columns | append: ';'
+		echo '--columns-mobile: ' | append: section.settings.columns_mobile | append: ';'
+		echo '--gap: ' | append: section.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: section.settings.gap_mobile | append: 'px;'
+
+		if section.settings.background_color != blank
+			echo 'background: ' | append: section.settings.background_color | append: ';'
+		endif
+
+		if section.settings.background_image != blank
+			assign bg_image = section.settings.background_image | image_url: width: 1000
+			echo '--background-image: url(' | append: bg_image | append: ');'
+		endif
+
+		echo '--background-overlay-color: ' | append: section.settings.background_overlay_color | append: ';'
+	endcapture
+
+	assign container_classes = 'pp-blank pp:block pp:relative pp:w-full pp:mx-auto pp:scroll-m-20'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) pp:@3xl:pr-(--padding-right)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:pr-(--padding-right-mobile)'
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top-mobile) pp:mb-(--margin-bottom-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mb-(--margin-bottom)'
+	if section.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: section.settings.custom_class
+	endif
+	assign container_classes = container_classes | append: ' ' | append: section.id
+
+	capture border_radius_mobile
+		render 'pagepilot-border-radius', value: section.settings.border_radius_mobile, prefix: 'pp:'
+	endcapture
+
+	capture border_radius_desktop
+		render 'pagepilot-border-radius', value: section.settings.border_radius, prefix: 'pp:@3xl:'
+	endcapture
+
+	assign container_classes = container_classes | append: ' ' | append: border_radius_mobile
+	assign container_classes = container_classes | append: ' ' | append: border_radius_desktop
+
+	case section.settings.layout
+		when 'page'
+			assign container_classes = container_classes | append: ' pp:max-w-6xl'
+		when 'full'
+			assign container_classes = container_classes | append: ' pp:max-w-full'
+	endcase
+
+	assign block_classes = 'pp:w-full pp:mx-auto pp:gap-(--gap-mobile) pp:@3xl:gap-(--gap)'
+	assign block_classes = block_classes | append: ' pp:grid pp:grid-cols-[repeat(var(--columns-mobile),_minmax(0,1fr))] pp:@3xl:grid-cols-[repeat(var(--columns),_minmax(0,1fr))]'
+
+	case section.settings.content
+		when 'page'
+			assign block_classes = block_classes | append: ' pp:max-w-6xl'
+		when 'full'
+			assign block_classes = block_classes | append: ' pp:max-w-full'
+	endcase
+
+	assign background_image_classes = 'pp:absolute pp:inset-0 pp:bg-(image:--background-image)'
+
+	case section.settings.background_image_position
+		when 'top'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-top'
+		when 'center'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-center'
+		when 'bottom'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-bottom'
+	endcase
+
+	case section.settings.background_image_repeat
+		when 'no-repeat'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-no-repeat'
+		when 'repeat'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-repeat'
+		when 'repeat-x'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-repeat-x'
+		when 'repeat-y'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-repeat-y'
+	endcase
+
+	case section.settings.background_image_size
+		when 'cover'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-cover'
+		when 'contain'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-contain'
+	endcase
+
+	case section.settings.background_image_attachment
+		when 'local'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-local'
+		when 'fixed'
+			assign background_image_classes = background_image_classes | append: ' pp:bg-fixed'
+	endcase
+
+	assign background_image_classes = background_image_classes | append: ' ' | append: border_radius_mobile
+	assign background_image_classes = background_image_classes | append: ' ' | append: border_radius_desktop
+
+	assign background_overlay_classes = 'pp:absolute pp:inset-0 pp:bg-(--background-overlay-color)'
+	assign background_overlay_classes = background_overlay_classes | append: ' ' | append: border_radius_mobile
+	assign background_overlay_classes = background_overlay_classes | append: ' ' | append: border_radius_desktop
+%}
+
+<div
+	{{ section.shopify_attributes }}
+	class='{{ container_classes }}'
+	style='{{ properties }}'
+	dir='{{ settings.pagepilot.dir }}'
+>
+	{% if section.settings.background_image != blank %}
+		<div class='{{ background_image_classes }}'></div>
+	{% endif %}
+
+	{% if section.settings.background_overlay_show %}
+		<div class='{{ background_overlay_classes }}'></div>
+	{% endif %}
+
+	<div class='{{ block_classes }}'>
+		{% content_for 'blocks' %}
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Section (PP)",
+	"class": "pagepilot-section",
+	"disabled_on": {
+		"groups": ["header", "footer"]
+	},
+	"blocks": [
+		{
+			"type": "@theme"
+		},
+		{
+			"type": "@app"
+		}
+	],
+	"settings": [
+		{
+			"type": "select",
+			"id": "layout",
+			"label": "Layout",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "full"
+		},
+		{
+			"type": "select",
+			"id": "content",
+			"label": "Content",
+			"options": [
+				{
+					"value": "page",
+					"label": "Page"
+				},
+				{
+					"value": "full",
+					"label": "Full"
+				}
+			],
+			"default": "page",
+			"visible_if": "{{ section.settings.layout == \"full\" }}"
+		},
+		{
+			"type": "range",
+			"id": "columns",
+			"label": "Columns",
+			"min": 1,
+			"max": 6,
+			"step": 1,
+			"unit": "col",
+			"default": 2
+		},
+		{
+			"type": "range",
+			"id": "columns_mobile",
+			"label": "Mobile Columns",
+			"min": 1,
+			"max": 3,
+			"step": 1,
+			"unit": "col",
+			"default": 1
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "border_radius_mobile",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Background"
+		},
+
+		{
+			"type": "color_background",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+
+		{
+			"type": "image_picker",
+			"id": "background_image",
+			"label": "Background Image"
+		},
+
+		{
+			"type": "select",
+			"id": "background_image_position",
+			"label": "Background Image Position",
+			"options": [
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "bottom",
+					"label": "Bottom"
+				}
+			],
+			"default": "center"
+		},
+
+		{
+			"type": "select",
+			"id": "background_image_repeat",
+			"label": "Background Image Repeat",
+			"options": [
+				{
+					"value": "no-repeat",
+					"label": "No repeat"
+				},
+				{
+					"value": "repeat",
+					"label": "Repeat"
+				},
+				{
+					"value": "repeat-x",
+					"label": "Repeat X"
+				},
+				{
+					"value": "repeat-y",
+					"label": "Repeat Y"
+				}
+			],
+			"default": "repeat"
+		},
+
+		{
+			"type": "select",
+			"id": "background_image_size",
+			"label": "Background Image Size",
+			"options": [
+				{
+					"value": "auto",
+					"label": "Auto"
+				},
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "contain",
+					"label": "Contain"
+				}
+			],
+			"default": "auto"
+		},
+		{
+			"type": "select",
+			"id": "background_image_attachment",
+			"label": "Background Image Attachment",
+			"options": [
+				{
+					"value": "local",
+					"label": "Local"
+				},
+				{
+					"value": "fixed",
+					"label": "Fixed"
+				}
+			],
+			"default": "local"
+		},
+
+		{
+			"type": "checkbox",
+			"id": "background_overlay_show",
+			"label": "Show Background Overlay",
+			"default": false
+		},
+		{
+			"type": "color",
+			"id": "background_overlay_color",
+			"label": "Background Overlay Color",
+			"default": "#00000035",
+			"visible_if": "{{ section.settings.background_overlay_show == true }}"
+		},
+
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_top_mobile",
+			"label": "Mobile Top",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": -50,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "Add custom classes for styling. Use with or without leading dots (.my-class or my-class). Multiple classes: separate with spaces or commas."
+		}
+	],
+	"presets": [
+		{
+			"name": "Section (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

@@ -1,0 +1,890 @@
+{% comment %}
+	@pp blocks/pagepilot-review-card 1.0.13
+{% endcomment %}
+
+{% liquid
+	capture container_properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--gap: ' | append: block.settings.gap | append: 'px;'
+		echo '--gap-mobile: ' | append: block.settings.gap_mobile | append: 'px;'
+
+		assign image_width_calc = block.settings.image_width | times: 1.5
+		echo '--image-width: ' | append: image_width_calc | append: 'px;'
+		echo '--image-gap: ' | append: block.settings.image_gap | append: 'px;'
+
+		echo '--star-size: ' | append: block.settings.star_size | append: 'px;'
+		echo '--star-color: ' | append: block.settings.star_color | default: 'transparent' | append: ';'
+		echo '--star-color-inactive: ' | append: block.settings.star_color_inactive | default: 'transparent' | append: ';'
+		echo '--star-order: ' | append: block.settings.star_order | default: 2 | append: ';'
+
+		echo '--review-text-color: ' | append: block.settings.review_text_color | default: 'transparent' | append: ';'
+		echo '--review-font-size: ' | append: block.settings.review_font_size | append: 'px;'
+		echo '--review-font-size-mobile: ' | append: block.settings.review_font_size_mobile | append: 'px;'
+		echo '--review-font-weight: ' | append: block.settings.review_weight | default: 'normal' | append: ';'
+
+		if block.settings.review_line_height == 'custom'
+			echo '--review-line-height-custom: ' | append: block.settings.review_line_height_custom | append: 'px;'
+			echo '--review-line-height-custom-mobile: ' | append: block.settings.review_line_height_custom_mobile | append: 'px;'
+		endif
+
+		echo '--review-order: ' | append: block.settings.review_order | default: 3 | append: ';'
+
+		echo '--author-verified-icon-size: ' | append: block.settings.author_verified_icon_size | append: 'px;'
+		echo '--author-verified-icon-color: ' | append: block.settings.author_verified_icon_color | default: 'transparent' | append: ';'
+
+		echo '--author-text-color: color-mix(in srgb, var(--review-text-color) 90%, white);'
+
+		echo '--author-text-size: ' | append: block.settings.author_text_size | append: 'px;'
+		echo '--author-text-weight: ' | append: block.settings.author_text_weight | default: 'normal' | append: ';'
+		echo '--author-order: ' | append: block.settings.author_order | default: 1 | append: ';'
+
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | default: 0 | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-review-card pp:flex pp:w-full pp:gap-(--image-gap)'
+
+	if block.settings.direction == 'column'
+		assign container_classes = container_classes | append: ' pp:flex-col'
+	endif
+
+	if block.settings.image_position == 'flex-start'
+		assign container_classes = container_classes | append: ' pp:items-start'
+	elsif block.settings.image_position == 'center'
+		assign container_classes = container_classes | append: ' pp:items-center'
+	elsif block.settings.image_position == 'flex-end'
+		assign container_classes = container_classes | append: ' pp:items-end'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	assign review_image_classes = 'pp-image pp:shrink-0 pp:object-(--image-object-fit)'
+	if block.settings.direction == 'row'
+		assign review_image_classes = review_image_classes | append: ' pp:size-(--image-width)!'
+	elsif block.settings.direction == 'column'
+		assign review_image_classes = review_image_classes | append: ' pp:w-full'
+	endif
+
+	capture object_fit
+		render 'pagepilot-object-fit', value: block.settings.image_object_fit
+	endcapture
+	assign review_image_classes = review_image_classes | append: ' ' | append: object_fit
+
+	capture image_border_radius
+		render 'pagepilot-border-radius', value: block.settings.image_border_radius
+	endcapture
+	assign review_image_classes = review_image_classes | append: ' ' | append: image_border_radius
+
+	assign review_wrapper_classes = 'pp:flex pp:w-full pp:flex-col pp:gap-(--gap-mobile) pp:@3xl:gap-(--gap)'
+
+	assign stars_container_classes = 'pp:flex pp:gap-0.5'
+	if block.settings.star_order != blank
+		assign stars_container_classes = stars_container_classes | append: ' pp:order-(--star-order)'
+	endif
+
+	assign review_text_classes = 'pp:text-pretty pp:wrap-anywhere'
+	assign review_text_classes = review_text_classes | append: ' pp:text-(length:--review-font-size-mobile) pp:font-(--review-font-weight) pp:text-(--review-text-color) pp:@3xl:text-(length:--review-font-size)'
+
+	capture line_height
+		render 'pagepilot-line-height', value: block.settings.review_line_height, height_property: '--review-line-height-custom', height_property_mobile: '--review-line-height-custom-mobile'
+	endcapture
+	assign review_text_classes = review_text_classes | append: ' ' | append: line_height
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.review_case
+	endcapture
+	assign review_text_classes = review_text_classes | append: ' ' | append: text_transform
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.review_letter_spacing
+	endcapture
+	assign review_text_classes = review_text_classes | append: ' ' | append: letter_spacing
+
+	if block.settings.review_order != blank
+		assign review_text_classes = review_text_classes | append: ' pp:order-(--review-order)'
+	endif
+
+	assign author_wrapper_classes = 'pp:flex pp:items-center pp:gap-1'
+	if block.settings.author_order != blank
+		assign author_wrapper_classes = author_wrapper_classes | append: ' pp:order-(--author-order)'
+	endif
+
+	assign author_name_classes = 'pp:text-(length:--author-text-size) pp:font-(--author-text-weight) pp:text-(--author-text-color)'
+	if block.settings.author_order != blank
+		assign author_name_classes = author_name_classes | append: ' pp:order-(--author-order)'
+	endif
+
+	assign author_verified_icon_classes = 'pp:size-(--author-verified-icon-size) pp:text-(--author-verified-icon-color)'
+%}
+
+<div class='{{ container_classes }} {{ block.id }}' style='{{ container_properties }}' {{ block.shopify_attributes }}>
+	{% if block.settings.image_show and block.settings.image != blank %}
+		<img
+			class='{{ review_image_classes }}'
+			style='opacity: 0;'
+			src='{{ block.settings.image | image_url: width: 1000 }}'
+			alt='Review Card'
+			width='96'
+			height='96'
+		>
+	{% endif %}
+	<div class='{{ review_wrapper_classes }}'>
+		<div class='{{ stars_container_classes }}'>
+			{% assign star_count_floor = block.settings.star_count | floor %}
+			{% assign star_count_mod = block.settings.star_count | modulo: 1 %}
+			{% assign star_has_half = false %}
+			{% if star_count_mod != 0 %}
+				{% assign star_has_half = true %}
+				{% assign star_half_position = star_count_floor | plus: 1 %}
+			{% endif %}
+
+			{% for i in (1..5) %}
+				{% if i <= star_count_floor %}
+					<i
+						data-lucide='star'
+						class='pp:size-(--star-size) pp:fill-(--star-color) pp:text-(--star-color) pp:order-(--star-order)'
+					></i>
+				{% elsif star_has_half and i == star_half_position %}
+					<div class='pp:relative pp:size-(--star-size) pp:order-(--star-order)'>
+						<i
+							data-lucide='star'
+							class='pp:size-(--star-size) pp:absolute pp:inset-0 pp:fill-(--star-color-inactive) pp:text-(--star-color-inactive)'
+						></i>
+						<i
+							data-lucide='star-half'
+							class='pp:size-(--star-size) pp:absolute pp:inset-0 pp:fill-(--star-color) pp:text-(--star-color)'
+						></i>
+					</div>
+				{% else %}
+					<i
+						data-lucide='star'
+						class='pp:size-(--star-size) pp:fill-(--star-color-inactive) pp:text-(--star-color-inactive) pp:order-(--star-order)'
+					></i>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<div class='{{ review_text_classes }}'>
+			{{ block.settings.review_text }}
+		</div>
+		{% if block.settings.author_name != blank %}
+			<div class='{{ author_wrapper_classes }}'>
+				{% if block.settings.author_verified_icon_show %}
+					<svg
+						xmlns='http://www.w3.org/2000/svg'
+						width='32'
+						height='32'
+						fill='currentColor'
+						viewBox='0 0 256 256'
+						class='{{ author_verified_icon_classes }}'
+					>
+						<path d="M225.86,102.82c-3.77-3.94-7.67-8-9.14-11.57-1.36-3.27-1.44-8.69-1.52-13.94-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52-3.56-1.47-7.63-5.37-11.57-9.14C146.28,23.51,138.44,16,128,16s-18.27,7.51-25.18,14.14c-3.94,3.77-8,7.67-11.57,9.14C88,40.64,82.56,40.72,77.31,40.8c-9.76.15-20.82.31-28.51,8S41,67.55,40.8,77.31c-.08,5.25-.16,10.67-1.52,13.94-1.47,3.56-5.37,7.63-9.14,11.57C23.51,109.72,16,117.56,16,128s7.51,18.27,14.14,25.18c3.77,3.94,7.67,8,9.14,11.57,1.36,3.27,1.44,8.69,1.52,13.94.15,9.76.31,20.82,8,28.51s18.75,7.85,28.51,8c5.25.08,10.67.16,13.94,1.52,3.56,1.47,7.63,5.37,11.57,9.14C109.72,232.49,117.56,240,128,240s18.27-7.51,25.18-14.14c3.94-3.77,8-7.67,11.57-9.14,3.27-1.36,8.69-1.44,13.94-1.52,9.76-.15,20.82-.31,28.51-8s7.85-18.75,8-28.51c.08-5.25.16-10.67,1.52-13.94,1.47-3.56,5.37-7.63,9.14-11.57C232.49,146.28,240,138.44,240,128S232.49,109.73,225.86,102.82Zm-52.2,6.84-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"></path>
+					</svg>
+				{% endif %}
+				<div class='{{ author_name_classes }}'>{{ block.settings.author_name }}</div>
+			</div>
+		{% endif %}
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Review Card (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Layout"
+		},
+		{
+			"type": "select",
+			"id": "direction",
+			"label": "Direction",
+			"options": [
+				{
+					"value": "row",
+					"label": "Horizontal"
+				},
+				{
+					"value": "column",
+					"label": "Vertical"
+				}
+			],
+			"default": "row"
+		},
+		{
+			"type": "range",
+			"id": "gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "header",
+			"content": "Image"
+		},
+		{
+			"type": "checkbox",
+			"id": "image_show",
+			"label": "Show Image",
+			"default": true
+		},
+		{
+			"type": "image_picker",
+			"id": "image",
+			"label": "Image",
+			"visible_if": "{{ block.settings.image_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "image_position",
+			"label": "Image Position",
+			"options": [
+				{
+					"value": "flex-start",
+					"label": "Top"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "flex-end",
+					"label": "Bottom"
+				}
+			],
+			"default": "flex-start",
+			"visible_if": "{{ block.settings.image_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "image_width",
+			"label": "Image Width",
+			"min": 20,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 40,
+			"visible_if": "{{ block.settings.image_show == true and block.settings.direction == 'row' }}"
+		},
+		{
+			"type": "range",
+			"id": "image_border_radius",
+			"label": "Image Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.image_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "image_gap",
+			"label": "Image Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 16,
+			"visible_if": "{{ block.settings.image_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "image_object_fit",
+			"options": [
+				{
+					"value": "contain",
+					"label": "Contain"
+				},
+				{
+					"value": "cover",
+					"label": "Cover"
+				},
+				{
+					"value": "fill",
+					"label": "Fill"
+				},
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "scale-down",
+					"label": "Scale down"
+				}
+			],
+			"default": "cover",
+			"label": "Object fit",
+			"visible_if": "{{ block.settings.image_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "image_object_position",
+			"label": "Object position",
+			"options": [
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "top",
+					"label": "Top"
+				},
+				{
+					"value": "right",
+					"label": "Right"
+				},
+				{
+					"value": "bottom",
+					"label": "Bottom"
+				},
+				{
+					"value": "left",
+					"label": "Left"
+				}
+			],
+			"default": "center",
+			"visible_if": "{{ block.settings.image_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Review"
+		},
+		{
+			"type": "richtext",
+			"id": "review_text",
+			"label": "Review Text",
+			"default": "<p>\"Using PagePilot changed my business forever. It feels like I'm working at super speed when creating product pages and it literally doubled my conversion rate! It's a must-have tool for every e-commerce entrepreneur!\"</p>"
+		},
+		{
+			"type": "color",
+			"id": "review_text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "review_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "review_font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 12
+		},
+		{
+			"type": "select",
+			"id": "review_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "review_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "review_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "select",
+			"id": "review_line_height",
+			"label": "Line Height",
+			"options": [
+				{
+					"value": "auto",
+					"label": "Auto"
+				},
+				{
+					"value": "custom",
+					"label": "Custom"
+				}
+			],
+			"default": "auto"
+		},
+		{
+			"type": "range",
+			"id": "review_line_height_custom",
+			"min": 10,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"label": "Line Height",
+			"default": 16,
+			"visible_if": "{{ block.settings.review_line_height == \"custom\" }}"
+		},
+		{
+			"type": "range",
+			"id": "review_line_height_custom_mobile",
+			"min": 10,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Line Height",
+			"default": 16,
+			"visible_if": "{{ block.settings.review_line_height == \"custom\" }}"
+		},
+		{
+			"type": "range",
+			"id": "review_order",
+			"label": "Order",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"default": 2
+		},
+
+		{
+			"type": "header",
+			"content": "Stars"
+		},
+		{
+			"type": "range",
+			"id": "star_count",
+			"label": "Star Count",
+			"min": 0,
+			"max": 5,
+			"step": 0.5,
+			"default": 5
+		},
+		{
+			"type": "range",
+			"id": "star_size",
+			"label": "Star Size",
+			"min": 10,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 14
+		},
+		{
+			"type": "color",
+			"id": "star_color",
+			"label": "Star Color",
+			"default": "#FFCD00"
+		},
+		{
+			"type": "color",
+			"id": "star_color_inactive",
+			"label": "Star Color Inactive",
+			"default": "#DFDFDF"
+		},
+		{
+			"type": "range",
+			"id": "star_order",
+			"label": "Order",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"default": 1
+		},
+		{
+			"type": "header",
+			"content": "Author"
+		},
+		{
+			"type": "checkbox",
+			"id": "author_verified_icon_show",
+			"label": "Show Verified Icon",
+			"default": true
+		},
+		{
+			"type": "color",
+			"id": "author_verified_icon_color",
+			"label": "Icon Color",
+			"default": "#1497ff",
+			"visible_if": "{{ block.settings.author_verified_icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "author_verified_icon_size",
+			"label": "Icon Size",
+			"min": 10,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 14,
+			"visible_if": "{{ block.settings.author_verified_icon_show == true }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "author_name",
+			"label": "Name",
+			"default": "John Doe"
+		},
+		{
+			"type": "range",
+			"id": "author_text_size",
+			"label": "Text Size",
+			"min": 10,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 12
+		},
+		{
+			"type": "select",
+			"id": "author_text_weight",
+			"label": "Text Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "500"
+		},
+		{
+			"type": "range",
+			"id": "author_order",
+			"label": "Order",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"default": 3
+		},
+
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the advertorial content. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Featured Review (PP)",
+			"category": "PagePilot"
+		},
+		{
+			"name": "Review Card (PP)",
+			"category": "PagePilot",
+			"settings": {
+				"direction": "column",
+				"gap": 10,
+				"image_border_radius": 60,
+				"star_order": 3,
+				"review_font_size": 14,
+				"review_order": 4,
+				"author_text_size": 14,
+				"author_order": 1,
+				"border": "solid",
+				"border_radius": 40,
+				"padding_top": 10,
+				"padding_bottom": 10,
+				"padding_left": 10,
+				"padding_right": 10,
+				"padding_top_mobile": 10,
+				"padding_bottom_mobile": 10,
+				"padding_left_mobile": 10,
+				"padding_right_mobile": 10,
+				"border_color": "#ebebeb",
+				"custom_class": ""
+			}
+		}
+	]
+}
+{% endschema %}

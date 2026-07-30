@@ -1,0 +1,356 @@
+{% comment %}
+	@pp blocks/pagepilot-number-circle 1.0.0
+{% endcomment %}
+
+{% liquid
+	assign text = block.settings.text | default: '1'
+	assign circle_size = block.settings.circle_size | times: 5 | default: 70
+
+	capture styles
+		echo '--margin-top: ' | append: block.settings.margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: block.settings.margin_bottom | append: 'px;'
+		echo '--margin-left: ' | append: block.settings.margin_left | append: 'px;'
+		echo '--margin-right: ' | append: block.settings.margin_right | append: 'px;'
+
+		echo '--background-color: ' | append: block.settings.background_color | default: '#000000' | append: ';'
+		echo '--text-color: ' | append: block.settings.text_color | default: '#ffffff' | append: ';'
+		echo '--text-size: ' | append: block.settings.text_size | append: 'px;'
+		echo '--text-weight: ' | append: block.settings.text_weight | default: '700' | append: ';'
+		echo '--circle-size: ' | append: circle_size | append: 'px;'
+
+		if block.settings.border != 'none'
+			echo '--border-width: ' | append: block.settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-number-circle pp:shrink-0'
+
+	if block.settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:inline-flex'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden'
+	endif
+
+	if block.settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:inline-flex'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign block_classes = 'pp:flex pp:aspect-square pp:size-(--circle-size) pp:items-center pp:justify-center pp:bg-(--background-color)'
+	assign block_classes = block_classes | append: ' pp:text-(length:--text-size) pp:font-(--text-weight) pp:text-(--text-color)'
+	assign block_classes = block_classes | append: ' pp:mt-(--margin-top) pp:mr-(--margin-right) pp:mb-(--margin-bottom) pp:ml-(--margin-left)'
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.text_letter_spacing
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: letter_spacing
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.text_case
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: text_transform
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: border
+
+	if block.settings.box_shadow_color != blank
+		assign block_classes = block_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+%}
+
+<div
+	class='{{ container_classes }} {{ block_classes }} {{ block.id }}'
+	style='{{ styles }}'
+	{{ block.shopify_attributes }}
+>
+	<span>{{ text }}</span>
+</div>
+
+{% schema %}
+{
+	"name": "Number Circle (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "range",
+			"id": "circle_size",
+			"label": "Circle Size",
+			"min": 5,
+			"max": 50,
+			"step": 1,
+			"unit": "rem",
+			"default": 8
+		},
+		{
+			"type": "header",
+			"content": "Typography"
+		},
+		{
+			"type": "text",
+			"id": "text",
+			"label": "Text",
+			"default": "1"
+		},
+		{
+			"type": "range",
+			"id": "text_size",
+			"label": "Size",
+			"min": 5,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Text Color",
+			"default": "#ffffff"
+		},
+		{
+			"type": "select",
+			"id": "text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "700"
+		},
+		{
+			"type": "select",
+			"id": "text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "header",
+			"content": "Background"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color",
+			"default": "#212529"
+		},
+		{
+			"type": "header",
+			"content": "Borders"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"label": "Border Thickness",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "header",
+			"content": "Visibility"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_mobile",
+			"label": "Show on mobile",
+			"default": true
+		},
+		{
+			"type": "checkbox",
+			"id": "show_on_desktop",
+			"label": "Show on desktop",
+			"default": true
+		},
+		{
+			"type": "header",
+			"content": "Margin"
+		},
+		{
+			"type": "range",
+			"id": "margin_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "margin_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the number circle. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Number Circle (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

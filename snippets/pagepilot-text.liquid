@@ -1,0 +1,126 @@
+{% comment %}
+	@pp snippets/pagepilot-text 1.0.9
+{% endcomment %}
+
+{%- doc -%}
+	@param {object} settings - The settings object (required)
+	@param {object} shopify_attributes - The shopify attributes object (required)
+	@param {boolean} use_product - Whether to use the product title (optional, defaults to false)
+{%- enddoc -%}
+
+{% liquid
+	capture container_styles
+		echo '--padding-top: ' | append: settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: settings.padding_right_mobile | append: 'px;'
+
+		if settings.line_height == 'custom'
+			echo '--line-height-custom: ' | append: settings.line_height_custom | append: 'px;'
+			echo '--line-height-custom-mobile: ' | append: settings.line_height_custom_mobile | append: 'px;'
+		endif
+
+		echo '--font-size: ' | append: settings.font_size | append: 'px;'
+		echo '--font-size-mobile: ' | append: settings.font_size_mobile | append: 'px;'
+
+		echo '--font-color: ' | append: settings.text_color | default: 'transparent' | append: ';'
+		echo '--font-weight: ' | append: settings.weight | append: ';'
+
+		if settings.border != 'none' and settings.border_color != blank
+			echo '--border-width: ' | append: settings.border_width | default: 0 | append: 'px;'
+			echo '--border-color: ' | append: settings.border_color | default: 'transparent' | append: ';'
+		endif
+
+		if settings.background_color != blank
+			echo 'background: ' | append: settings.background_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-text'
+
+	if settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: settings.custom_class
+	endif
+
+	if settings.show_on_mobile
+		assign container_classes = container_classes | append: ' pp:block'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:block'
+	endif
+
+	if settings.show_on_desktop
+		assign container_classes = container_classes | append: ' pp:@3xl:block'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	capture border
+		render 'pagepilot-border', value: settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if settings.width == 'fill'
+		assign container_classes = container_classes | append: ' pp:w-full'
+	endif
+
+	if settings.width == 'fit'
+		assign container_classes = container_classes | append: ' pp:w-fit'
+	endif
+
+	assign block_classes = 'pp:wrap-anywhere pp:text-pretty'
+	assign block_classes = block_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left) pp:@3xl:pr-(--padding-right)'
+	assign block_classes = block_classes | append: ' pp:pt-(--padding-top-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile) pp:pr-(--padding-right-mobile)'
+	assign block_classes = block_classes | append: ' pp:@3xl:text-(length:--font-size) pp:text-(length:--font-size-mobile) pp:font-(--font-weight) pp:text-(--font-color)'
+
+	capture line_height
+		render 'pagepilot-line-height', value: settings.line_height
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: line_height
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: settings.case
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: text_transform
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: settings.letter_spacing
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: letter_spacing
+
+	capture text_alignment_mobile
+		render 'pagepilot-text-alignment', value: settings.text_alignment_mobile
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: text_alignment_mobile
+
+	capture text_alignment
+		render 'pagepilot-text-alignment', value: settings.text_alignment, breakpoint: '@3xl:'
+	endcapture
+	assign block_classes = block_classes | append: ' ' | append: text_alignment
+
+	if use_product == true
+		if closest.product != null
+			assign product = closest.product
+		endif
+
+		assign text_content = product.title
+	else
+		assign text_content = settings.text | replace: '[shop_name]', shop.name | replace: '[SHOP_NAME]', shop.name | replace: '[store_name]', shop.name | replace: '[STORE_NAME]', shop.name
+		assign text_content = text_content | strip_newlines | strip
+	endif
+%}
+
+<div class='{{ container_classes }}' style='{{ container_styles }}' {{ shopify_attributes }}>
+	<div class='{{ block_classes }}'>
+		{{ text_content }}
+	</div>
+</div>

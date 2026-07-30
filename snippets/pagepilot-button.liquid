@@ -1,0 +1,229 @@
+{% comment %}
+	@pp snippets/pagepilot-button 1.0.8
+{% endcomment %}
+
+{%- doc -%}
+	@param {object} settings - The block settings object (required)
+	@param {string} button_type - 'link' for link buttons, 'submit' for form submit buttons (required)
+	@param {object} shopify_attributes - The block.shopify_attributes (required)
+	@param {boolean} drawer_checkout - For submit buttons, whether the button is a drawer checkout button (optional, defaults to false)
+	@param {boolean} cart_empty - For submit buttons, whether the cart is empty (optional, defaults to false)
+{%- enddoc -%}
+
+{% liquid
+	capture container_properties
+		echo '--margin-top: ' | append: settings.margin_top | append: 'px;'
+		echo '--margin-bottom: ' | append: settings.margin_bottom | append: 'px;'
+		echo '--margin-top-mobile: ' | append: settings.margin_top_mobile | append: 'px;'
+		echo '--margin-bottom-mobile: ' | append: settings.margin_bottom_mobile | append: 'px;'
+
+		echo '--padding-top: ' | append: settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: settings.padding_right | append: 'px;'
+
+		echo '--padding-top-mobile: ' | append: settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: settings.padding_right_mobile | append: 'px;'
+
+		echo '--icon-size: ' | append: settings.icon_size | append: 'px;'
+		echo '--font-size: ' | append: settings.font_size | append: 'px;'
+		echo '--font-size-mobile: ' | append: settings.font_size_mobile | append: 'px;'
+		echo '--font-weight: ' | append: settings.weight | append: ';'
+
+		echo '--text-color: ' | append: settings.text_color | append: ';'
+
+		if settings.hover_text_color != blank
+			echo '--hover-text-color: ' | append: settings.hover_text_color | append: ';'
+		endif
+
+		if settings.background_color != blank
+			echo 'background: ' | append: settings.background_color | append: ';'
+		endif
+
+		echo '--custom-width: ' | append: settings.custom_width | append: '%;'
+		echo '--custom-width-mobile: ' | append: settings.custom_width_mobile | append: '%;'
+
+		if settings.border != 'none' and settings.border_color != blank
+			echo '--border-width: ' | append: settings.border_width | append: 'px;'
+			echo '--border-color: ' | append: settings.border_color | append: ';'
+		endif
+
+		if settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-button pp:decoration-none pp:cursor-pointer pp:appearance-none pp:content-center pp:items-center pp:gap-3 pp:wrap-anywhere pp:text-(--text-color)! pp:hover:text-(--hover-text-color)!'
+
+	if settings.show_on_mobile or drawer_checkout == true
+		assign container_classes = container_classes | append: ' pp:flex'
+	else
+		assign container_classes = container_classes | append: ' pp:hidden pp:@3xl:flex'
+	endif
+
+	if settings.show_on_desktop or drawer_checkout == true
+		assign container_classes = container_classes | append: ' pp:@3xl:flex'
+	else
+		assign container_classes = container_classes | append: ' pp:@3xl:hidden'
+	endif
+
+	if settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:mt-(--margin-top-mobile) pp:mb-(--margin-bottom-mobile) pp:@3xl:mt-(--margin-top) pp:@3xl:mb-(--margin-bottom)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	assign container_classes = container_classes | append: ' pp:text-(length:--font-size-mobile) pp:font-(--font-weight) pp:@3xl:text-(length:--font-size)'
+
+	assign container_classes = container_classes | append: ' pp:relative pp:z-1 pp:overflow-hidden pp:before:absolute pp:before:inset-0 pp:before:z-[-1] pp:before:bg-white/0 pp:before:content-[""]'
+	assign container_classes = container_classes | append: ' pp:transition-all pp:duration-200 pp:before:transition-all pp:before:duration-200 pp:hover:before:bg-white/20'
+
+	if settings.hover_animation
+		assign container_classes = container_classes | append: ' pp:scale-100 pp:hover:scale-101'
+	endif
+
+	case settings.width
+		when 'fit-content'
+			assign container_classes = container_classes | append: ' pp:@3xl:w-fit'
+		when 'full-width'
+			assign container_classes = container_classes | append: ' pp:@3xl:w-full'
+		when 'custom'
+			assign container_classes = container_classes | append: ' pp:@3xl:w-(--custom-width)'
+	endcase
+
+	case settings.width_mobile
+		when 'fit-content'
+			assign container_classes = container_classes | append: ' pp:w-fit'
+		when 'full-width'
+			assign container_classes = container_classes | append: ' pp:w-full'
+		when 'custom'
+			assign container_classes = container_classes | append: ' pp:w-(--custom-width-mobile)'
+	endcase
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: settings.letter_spacing
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: letter_spacing
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+
+	case settings.text_alignment
+		when 'left'
+			assign container_classes = container_classes | append: ' pp:@3xl:justify-start pp:@3xl:text-left'
+		when 'center'
+			assign container_classes = container_classes | append: ' pp:@3xl:justify-center pp:@3xl:text-center'
+		when 'right'
+			assign container_classes = container_classes | append: ' pp:@3xl:justify-end pp:@3xl:text-right'
+	endcase
+
+	case settings.text_alignment_mobile
+		when 'left'
+			assign container_classes = container_classes | append: ' pp:justify-start pp:text-left'
+		when 'center'
+			assign container_classes = container_classes | append: ' pp:justify-center pp:text-center'
+		when 'right'
+			assign container_classes = container_classes | append: ' pp:justify-end pp:text-right'
+	endcase
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: settings.case
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: text_transform
+
+	capture border
+		render 'pagepilot-border', value: settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	if settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	assign container_classes = container_classes | append: ' ' | append: ' pp:disabled:opacity-50 pp:disabled:cursor-not-allowed'
+
+	assign icon_classes = 'pp:size-(--icon-size)'
+
+	case settings.icon_variant
+		when 'light'
+			assign icon_classes = icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign icon_classes = icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign icon_classes = icon_classes | append: ' pp:stroke-3'
+	endcase
+	
+	assign svg_classes = 'pp:contents pp:[&>svg]:w-full pp:[&>svg]:max-w-(length:--icon-size)! pp:[&>svg]:fill-current'
+%}
+
+{% if button_type == 'link' %}
+	<pagepilot-button
+		data-type='{{ settings.type }}'
+		data-action='{{ settings.action }}'
+	>
+		<a
+			ref='button'
+			{% if settings.link == blank %}
+				role='link'
+				aria-disabled='true'
+			{% else %}
+				href='{{ settings.link }}'
+			{% endif %}
+			{%- if settings.link_open_in_new_tab or settings.open_in_new_tab -%}
+				target='_blank'
+				rel='noopener noreferrer'
+			{%- endif -%}
+			class='{{ container_classes }}'
+			style='{{ container_properties }}'
+			{{ shopify_attributes }}
+		>
+			{% if settings.icon_show and settings.icon_position == 'left' %}
+				{% if settings.icon_type == 'icon' %}
+					<i data-lucide='{{ settings.icon }}' class='{{ icon_classes }}'></i>
+				{% elsif settings.icon_type == 'svg' %}
+					<div class='{{ svg_classes }}'>
+						{{ settings.icon_svg }}
+					</div>
+				{% endif %}
+			{% endif %}
+			{{ settings.text }}
+			{% if settings.icon_show and settings.icon_position == 'right' %}
+				{% if settings.icon_type == 'icon' %}
+					<i data-lucide='{{ settings.icon }}' class='{{ icon_classes }}'></i>
+				{% elsif settings.icon_type == 'svg' %}
+					<div class='{{ svg_classes }}'>
+						{{ settings.icon_svg }}
+					</div>
+				{% endif %}
+			{% endif %}
+		</a>
+	</pagepilot-button>
+{% else %}
+	{% if cart.empty? == false %}
+		<button
+			type='submit'
+			id='checkout'
+			class='{{ container_classes }}'
+			style='{{ container_properties }}'
+			name='checkout'
+			{% if cart_empty %}
+				disabled
+			{% endif %}
+			form='cart-form'
+			{{ shopify_attributes }}
+		>
+			{% if settings.icon_show and settings.icon_position == 'left' %}
+				<i data-lucide='{{ settings.icon }}' class='{{ icon_classes }}'></i>
+			{% endif %}
+			{{ settings.text }}
+			{% if settings.icon_show and settings.icon_position == 'right' %}
+				<i data-lucide='{{ settings.icon }}' class='{{ icon_classes }}'></i>
+			{% endif %}
+		</button>
+	{% endif %}
+{% endif %}

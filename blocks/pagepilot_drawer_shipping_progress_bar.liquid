@@ -1,0 +1,707 @@
+{% comment %}
+	@pp blocks/pagepilot-drawer-shipping-progress-bar 1.0.8
+{% endcomment %}
+
+{% liquid
+	assign cart_total = cart.total_price | divided_by: 100.0
+	assign free_shipping_amount = block.settings.free_shipping_amount | default: 100 | times: 1
+
+	if cart_total >= free_shipping_amount
+		assign upsell_amount = 0
+		assign progress_percent = 100
+		assign has_free_shipping = true
+	else
+		assign upsell_amount = free_shipping_amount | minus: cart_total
+		assign progress_percent = cart_total | times: 100.0 | divided_by: free_shipping_amount
+		assign has_free_shipping = false
+	endif
+
+	assign container_classes = 'pp-shipping-progress-bar pp:relative pp:w-full pp:scroll-m-20 pp:space-y-(--progress-gap-mobile) pp:@3xl:space-y-(--progress-gap)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+	if has_free_shipping
+		assign container_classes = container_classes | append: ' pp:bg-(--free-shipping-background)'
+	else
+		assign container_classes = container_classes | append: ' pp:bg-(--not-free-shipping-background)'
+	endif
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	capture container_properties
+		echo '--padding-top: ' | append: block.settings.padding_top | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | append: 'px;'
+
+		echo '--progress-percent: ' | append: progress_percent | append: '%;'
+		echo '--progress-height: ' | append: block.settings.progress_height | append: 'px;'
+		echo '--progress-height-mobile: ' | append: block.settings.progress_height_mobile | append: 'px;'
+		echo '--progress-gap: ' | append: block.settings.progress_gap | append: 'px;'
+		echo '--progress-gap-mobile: ' | append: block.settings.progress_gap_mobile | append: 'px;'
+		echo '--progress-track-color: ' | append: block.settings.progress_track_color | default: '#e5e7eb' | append: ';'
+		echo '--progress-active-color: ' | append: block.settings.progress_active_color | default: '#3b82f6' | append: ';'
+
+		echo '--free-shipping-text-color: ' | append: block.settings.free_shipping_text_color | default: '#16a34a' | append: ';'
+		echo '--free-shipping-text-size: ' | append: block.settings.free_shipping_text_font_size | append: 'px;'
+		echo '--free-shipping-text-size-mobile: ' | append: block.settings.free_shipping_text_font_size_mobile | append: 'px;'
+		echo '--free-shipping-text-weight: ' | append: block.settings.free_shipping_text_weight | append: ';'
+		echo '--free-shipping-background: ' | append: block.settings.free_shipping_background | default: '#ffffff' | append: ';'
+
+		echo '--not-free-shipping-text-color: ' | append: block.settings.not_free_shipping_text_color | default: '#363636' | append: ';'
+		echo '--not-free-shipping-text-size: ' | append: block.settings.not_free_shipping_text_font_size | append: 'px;'
+		echo '--not-free-shipping-text-size-mobile: ' | append: block.settings.not_free_shipping_text_font_size_mobile | append: 'px;'
+		echo '--not-free-shipping-text-weight: ' | append: block.settings.not_free_shipping_text_weight | append: ';'
+		echo '--not-free-shipping-background: ' | append: block.settings.not_free_shipping_background | default: '#ffffff' | append: ';'
+
+		echo '--values-text-color: ' | append: block.settings.values_text_color | default: '#6b7280' | append: ';'
+		echo '--values-text-size: ' | append: block.settings.values_text_size | append: 'px;'
+		echo '--values-text-size-mobile: ' | append: block.settings.values_text_size_mobile | append: 'px;'
+		echo '--values-text-weight: ' | append: block.settings.values_text_weight | append: ';'
+		echo '--values-gap: ' | append: block.settings.values_gap | append: 'px;'
+		echo '--values-gap-mobile: ' | append: block.settings.values_gap_mobile | append: 'px;'
+
+		if block.settings.show_progress_indicator
+			echo '--indicator-size: ' | append: block.settings.indicator_size | append: 'px;'
+			echo '--indicator-size-mobile: ' | append: block.settings.indicator_size_mobile | append: 'px;'
+			echo '--indicator-icon-size: ' | append: block.settings.indicator_icon_size | append: 'px;'
+			echo '--indicator-icon-size-mobile: ' | append: block.settings.indicator_icon_size_mobile | append: 'px;'
+			echo '--indicator-background: ' | append: block.settings.indicator_background | default: '#ffffff' | append: ';'
+			echo '--indicator-icon-color: ' | append: block.settings.indicator_icon_color | default: '#212529' | append: ';'
+		endif
+	endcapture
+
+	assign formatted_upsell_amount = upsell_amount | times: 100 | money
+	assign formatted_free_shipping = free_shipping_amount | times: 100 | money
+
+	assign text_not_free_shipping = block.settings.not_free_shipping_text | default: "You're [amount] away from free shipping!"
+	assign text_not_free_shipping = text_not_free_shipping | replace: '[amount]', formatted_upsell_amount
+	assign text_free_shipping = block.settings.free_shipping_text | default: "You've unlocked free shipping!"
+%}
+
+{% liquid
+	capture progress_bar_border_radius
+		render 'pagepilot-border-radius', value: block.settings.progress_border_radius
+	endcapture
+
+	assign progress_bar_classes = 'pp:relative pp:flex pp:h-(--progress-height-mobile) pp:w-full pp:items-center pp:justify-between pp:overflow-visible pp:bg-(--progress-track-color) pp:@3xl:h-(--progress-height)'
+	assign progress_bar_classes = progress_bar_classes | append: ' ' | append: progress_bar_border_radius
+
+	assign progress_bar_active_color_classes = 'pp:absolute pp:top-0 pp:left-0 pp:h-full pp:w-[var(--progress-percent)] pp:bg-(--progress-active-color)'
+	assign progress_bar_active_color_classes = progress_bar_active_color_classes | append: ' ' | append: progress_bar_border_radius
+	if block.settings.progress_animate
+		assign progress_bar_active_color_classes = progress_bar_active_color_classes | append: ' pp:animate-[progress-bar-animation_4s_linear_infinite] pp:bg-[linear-gradient(45deg,rgba(255,255,255,.4)_25%,transparent_0,transparent_50%,rgba(255,255,255,.4)_0,rgba(255,255,255,.4)_75%,transparent_0,transparent)] pp:bg-size-[1rem_1rem]'
+	endif
+%}
+
+{% liquid
+	capture indicator_border_radius
+		render 'pagepilot-border-radius', value: block.settings.indicator_border_radius
+	endcapture
+
+	assign indicator_classes = 'pp:absolute pp:top-1/2 pp:-translate-y-1/2 pp:flex pp:size-(--indicator-size-mobile) pp:items-center pp:justify-center pp:border pp:border-gray-200 pp:bg-(--indicator-background) pp:shadow-md pp:@3xl:size-(--indicator-size)'
+	assign indicator_classes = indicator_classes | append: ' ' | append: indicator_border_radius
+%}
+
+<div
+	class='{{ container_classes }} {{ block.id }}'
+	style='{{ container_properties }}'
+	{{ block.shopify_attributes }}
+>
+	{% if has_free_shipping %}
+		{% capture free_ship_align %}
+			{% render 'pagepilot-text-alignment', value: block.settings.free_shipping_text_alignment %}
+		{% endcapture %}
+		<div class='pp:block pp:text-(length:--free-shipping-text-size-mobile) pp:@3xl:text-(length:--free-shipping-text-size) pp:font-(--free-shipping-text-weight) pp:text-(--free-shipping-text-color) {{ free_ship_align | strip }}'>
+			{{ text_free_shipping }}
+		</div>
+	{% else %}
+		{% capture not_free_ship_align %}
+			{% render 'pagepilot-text-alignment', value: block.settings.not_free_shipping_text_alignment %}
+		{% endcapture %}
+		<div class='pp:block pp:text-(length:--not-free-shipping-text-size-mobile) pp:@3xl:text-(length:--not-free-shipping-text-size) pp:font-(--not-free-shipping-text-weight) pp:text-(--not-free-shipping-text-color) {{ not_free_ship_align | strip }}'>
+			{{ text_not_free_shipping }}
+		</div>
+	{% endif %}
+
+	{% liquid
+		assign grid_classes = 'pp:grid pp:grid-cols-1 pp:items-center'
+		if block.settings.show_values_inline
+			assign grid_classes = grid_classes | append: ' [&>*]:pp:col-start-1 [&>*]:pp:row-start-1'
+		else
+			assign grid_classes = grid_classes | append: ' pp:gap-(--values-gap-mobile) pp:@3xl:gap-(--values-gap)'
+		endif
+
+		assign bar_wrapper_classes = progress_bar_classes | append: ' pp:justify-self-center'
+		if block.settings.show_values_inline and block.settings.show_values_mobile
+			assign bar_wrapper_classes = bar_wrapper_classes | append: ' pp:w-[calc(100%-var(--values-text-size-mobile)*8-var(--values-gap-mobile)*2)]'
+		else
+			assign bar_wrapper_classes = bar_wrapper_classes | append: ' pp:w-full'
+		endif
+		if block.settings.show_values_inline and block.settings.show_values
+			assign bar_wrapper_classes = bar_wrapper_classes | append: ' pp:@3xl:w-[calc(100%-var(--values-text-size)*8-var(--values-gap)*2)]'
+		else
+			assign bar_wrapper_classes = bar_wrapper_classes | append: ' pp:@3xl:w-full'
+		endif
+	%}
+
+	<div class='{{ grid_classes }}'>
+		<div class='{{ bar_wrapper_classes }}'>
+			<div class='{{ progress_bar_active_color_classes }}'>&nbsp;</div>
+
+			{% if block.settings.show_progress_indicator and has_free_shipping == false %}
+				<div
+					class='{{ indicator_classes }} pp:left-[calc(var(--progress-percent)-calc(var(--indicator-size-mobile)/2))] pp:@3xl:left-[calc(var(--progress-percent)-calc(var(--indicator-size)/2))]'
+				>
+					{% if block.settings.indicator_type == 'icon' %}
+						<i
+							data-lucide='{{ block.settings.indicator_icon | default: "truck" }}'
+							class='pp:size-(--indicator-icon-size-mobile) pp:stroke-2 pp:text-(--indicator-icon-color) pp:@3xl:size-(--indicator-icon-size)'
+							aria-hidden='true'
+						></i>
+					{% elsif block.settings.indicator_type == 'emoji' %}
+						<span
+							class='pp:text-(length:--indicator-icon-size-mobile) pp:@3xl:text-(length:--indicator-icon-size)'
+							aria-hidden='true'
+						>
+							{{- block.settings.indicator_emoji | default: '🚚' -}}
+						</span>
+					{% endif %}
+				</div>
+			{% endif %}
+		</div>
+
+		{% liquid
+			assign values_row_classes = 'pp:w-full pp:items-center pp:justify-between'
+			if block.settings.show_values_mobile
+				assign values_row_classes = values_row_classes | append: ' pp:flex'
+			else
+				assign values_row_classes = values_row_classes | append: ' pp:hidden'
+			endif
+			if block.settings.show_values
+				assign values_row_classes = values_row_classes | append: ' pp:@3xl:flex'
+			else
+				assign values_row_classes = values_row_classes | append: ' pp:@3xl:hidden'
+			endif
+		%}
+		<div class='{{ values_row_classes }}'>
+			<div class='pp:shrink-0 pp:text-left pp:text-(length:--values-text-size-mobile) pp:font-(--values-text-weight) pp:text-(--values-text-color) pp:@3xl:text-(length:--values-text-size)'>
+				{{ 0 | money }}
+			</div>
+			<div class='pp:shrink-0 pp:text-right pp:text-(length:--values-text-size-mobile) pp:font-(--values-text-weight) pp:text-(--values-text-color) pp:@3xl:text-(length:--values-text-size)'>
+				{{ formatted_free_shipping }}
+			</div>
+		</div>
+	</div>
+</div>
+
+{% schema %}
+{
+	"name": "Shipping Progress Bar",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "header",
+			"content": "Free Shipping"
+		},
+		{
+			"type": "number",
+			"id": "free_shipping_amount",
+			"label": "Free Shipping Amount",
+			"default": 100,
+			"info": "Enter the amount required for free shipping (without currency symbol)."
+		},
+		{
+			"type": "text",
+			"id": "free_shipping_text",
+			"label": "Text",
+			"default": "You've unlocked free shipping!"
+		},
+		{
+			"type": "color",
+			"id": "free_shipping_text_color",
+			"label": "Color",
+			"default": "#16a34a"
+		},
+		{
+			"type": "range",
+			"id": "free_shipping_text_font_size",
+			"min": 10,
+			"max": 32,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "free_shipping_text_font_size_mobile",
+			"min": 10,
+			"max": 32,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 12
+		},
+		{
+			"type": "select",
+			"id": "free_shipping_text_weight",
+			"label": "Weight",
+			"options": [
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" }
+			],
+			"default": "600"
+		},
+		{
+			"type": "text_alignment",
+			"id": "free_shipping_text_alignment",
+			"label": "Alignment",
+			"default": "center"
+		},
+		{
+			"type": "color",
+			"id": "free_shipping_background",
+			"label": "Background Color",
+			"info": "Background color of the not free shipping text."
+		},
+		{
+			"type": "header",
+			"content": "Not Free Shipping"
+		},
+		{
+			"type": "text",
+			"id": "not_free_shipping_text",
+			"label": "Text",
+			"default": "You're [amount] away from free shipping!",
+			"info": "Use [amount] as placeholder for the remaining amount."
+		},
+		{
+			"type": "color",
+			"id": "not_free_shipping_text_color",
+			"label": "Color",
+			"default": "#363636"
+		},
+		{
+			"type": "range",
+			"id": "not_free_shipping_text_font_size",
+			"min": 10,
+			"max": 32,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 12
+		},
+		{
+			"type": "range",
+			"id": "not_free_shipping_text_font_size_mobile",
+			"min": 10,
+			"max": 32,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 12
+		},
+		{
+			"type": "select",
+			"id": "not_free_shipping_text_weight",
+			"label": "Weight",
+			"options": [
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" }
+			],
+			"default": "500"
+		},
+		{
+			"type": "text_alignment",
+			"id": "not_free_shipping_text_alignment",
+			"label": "Alignment",
+			"default": "left"
+		},
+		{
+			"type": "color",
+			"id": "not_free_shipping_background",
+			"label": "Background Color",
+			"info": "Background color of the not free shipping text."
+		},
+		{
+			"type": "header",
+			"content": "Progress Bar"
+		},
+		{
+			"type": "checkbox",
+			"id": "progress_animate",
+			"label": "Animate Progress Bar",
+			"default": true
+		},
+		{
+			"type": "range",
+			"id": "progress_gap",
+			"label": "Gap",
+			"min": 4,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "progress_gap_mobile",
+			"label": "Mobile Gap",
+			"min": 4,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "progress_height",
+			"min": 4,
+			"max": 24,
+			"step": 1,
+			"unit": "px",
+			"label": "Height",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "progress_height_mobile",
+			"label": "Mobile Height",
+			"min": 4,
+			"max": 24,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "progress_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100
+		},
+		{
+			"type": "color",
+			"id": "progress_track_color",
+			"label": "Remaining Color",
+			"default": "#e5e7eb",
+			"info": "Background color of the track."
+		},
+		{
+			"type": "color",
+			"id": "progress_active_color",
+			"label": "Active Color",
+			"default": "#3b82f6",
+			"info": "Color of the filled progress. Supports gradients."
+		},
+		{
+			"type": "header",
+			"content": "Values Display"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_values",
+			"label": "Show Values",
+			"default": false,
+			"info": "Display $0 and goal amount."
+		},
+		{
+			"type": "checkbox",
+			"id": "show_values_mobile",
+			"label": "Show Mobile Values",
+			"default": false,
+			"info": "Display $0 and goal amount on mobile."
+		},
+		{
+			"type": "checkbox",
+			"id": "show_values_inline",
+			"label": "Show Values Inline",
+			"default": false,
+			"info": "Display $0 and goal amount inline with progress bar instead of below it.",
+			"visible_if": "{{ block.settings.show_values == true or block.settings.show_values_mobile == true }}"
+		},
+		{
+			"type": "color",
+			"id": "values_text_color",
+			"label": "Color",
+			"default": "#6b7280",
+			"visible_if": "{{ block.settings.show_values == true or block.settings.show_values_mobile == true }}"
+		},
+		{
+			"type": "range",
+			"id": "values_text_size",
+			"min": 8,
+			"max": 18,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 12,
+			"visible_if": "{{ block.settings.show_values == true }}"
+		},
+		{
+			"type": "range",
+			"id": "values_text_size_mobile",
+			"min": 8,
+			"max": 18,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 12,
+			"visible_if": "{{ block.settings.show_values_mobile == true }}"
+		},
+		{
+			"type": "select",
+			"id": "values_text_weight",
+			"label": "Values Text Weight",
+			"options": [
+				{ "value": "300", "label": "Light" },
+				{ "value": "400", "label": "Regular" },
+				{ "value": "500", "label": "Medium" },
+				{ "value": "600", "label": "Semibold" },
+				{ "value": "700", "label": "Bold" }
+			],
+			"default": "400",
+			"visible_if": "{{ block.settings.show_values == true }}"
+		},
+		{
+			"type": "range",
+			"id": "values_gap",
+			"label": "Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "values_gap_mobile",
+			"label": "Mobile Gap",
+			"min": 0,
+			"max": 50,
+			"step": 1,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "header",
+			"content": "Progress Indicator"
+		},
+		{
+			"type": "checkbox",
+			"id": "show_progress_indicator",
+			"label": "Show Indicator",
+			"default": true,
+			"info": "Display an icon/emoji that moves with progress."
+		},
+		{
+			"type": "select",
+			"id": "indicator_type",
+			"label": "Indicator Type",
+			"options": [
+				{ "value": "icon", "label": "Icon" },
+				{ "value": "emoji", "label": "Emoji" }
+			],
+			"default": "icon",
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "text",
+			"id": "indicator_icon",
+			"label": "Icon",
+			"default": "truck",
+			"visible_if": "{{ block.settings.show_progress_indicator == true and block.settings.indicator_type == \"icon\" }}"
+		},
+		{
+			"type": "text",
+			"id": "indicator_emoji",
+			"label": "Emoji",
+			"default": "🚚",
+			"visible_if": "{{ block.settings.show_progress_indicator == true and block.settings.indicator_type == \"emoji\" }}"
+		},
+		{
+			"type": "range",
+			"id": "indicator_size",
+			"min": 20,
+			"max": 60,
+			"step": 2,
+			"unit": "px",
+			"label": "Indicator Size",
+			"default": 26,
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "range",
+			"id": "indicator_size_mobile",
+			"min": 20,
+			"max": 60,
+			"step": 2,
+			"unit": "px",
+			"label": "Mobile Indicator Size",
+			"default": 26,
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "range",
+			"id": "indicator_icon_size",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Icon Size",
+			"default": 16,
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "range",
+			"id": "indicator_icon_size_mobile",
+			"min": 10,
+			"max": 40,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Icon Size",
+			"default": 16,
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "color",
+			"id": "indicator_icon_color",
+			"label": "Icon Color",
+			"default": "#212529",
+			"visible_if": "{{ block.settings.show_progress_indicator == true and block.settings.indicator_type == \"icon\" }}"
+		},
+		{
+			"type": "color",
+			"id": "indicator_background",
+			"label": "Background",
+			"default": "#ffffff",
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "range",
+			"id": "indicator_border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.show_progress_indicator == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 6
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "Add custom classes separated by spaces."
+		}
+	],
+	"presets": [
+		{
+			"name": "Shipping Progress Bar (PP)",
+			"category": "PagePilot"
+		}
+	]
+}
+{% endschema %}

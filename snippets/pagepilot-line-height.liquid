@@ -1,0 +1,22 @@
+{% comment %}
+	@pp snippets/pagepilot-line-height 1.0.5
+{% endcomment %}
+
+{%- liquid
+	assign value = value | default: 'auto'
+	assign prefix = prefix | default: 'pp:'
+	assign height_property = height_property | default: '--line-height-custom'
+	assign height_property_mobile = height_property_mobile | default: '--line-height-custom-mobile'
+
+	assign line_height_classes = ''
+
+	case value
+		when 'auto'
+			assign line_height_classes = prefix | append: 'leading-normal'
+		when 'custom'
+			assign line_height_classes = prefix | append: 'leading-(' | append: height_property_mobile | append: ')'
+			assign line_height_classes = line_height_classes | append: ' ' | append: prefix | append: '@3xl:leading-(' | append: height_property | append: ')'
+	endcase
+-%}
+
+{{- line_height_classes -}}

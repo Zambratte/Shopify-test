@@ -1,0 +1,996 @@
+{% comment %}
+	@pp blocks/pagepilot-icon-with-text-list 1.0.7
+{% endcomment %}
+
+{% liquid
+	capture container_styles
+		echo '--padding-top: ' | append: block.settings.padding_top | default: 0 | append: 'px;'
+		echo '--padding-bottom: ' | append: block.settings.padding_bottom | default: 0 | append: 'px;'
+		echo '--padding-left: ' | append: block.settings.padding_left | default: 0 | append: 'px;'
+		echo '--padding-right: ' | append: block.settings.padding_right | default: 0 | append: 'px;'
+		echo '--padding-top-mobile: ' | append: block.settings.padding_top_mobile | default: 0 | append: 'px;'
+		echo '--padding-bottom-mobile: ' | append: block.settings.padding_bottom_mobile | default: 0 | append: 'px;'
+		echo '--padding-left-mobile: ' | append: block.settings.padding_left_mobile | default: 0 | append: 'px;'
+		echo '--padding-right-mobile: ' | append: block.settings.padding_right_mobile | default: 0 | append: 'px;'
+		echo '--list-columns: ' | append: block.settings.list_columns | default: 1 | append: ';'
+		echo '--list-columns-mobile: ' | append: block.settings.list_columns_mobile | default: 1 | append: ';'
+		echo '--list-gap: ' | append: block.settings.list_gap | default: 0 | append: 'px;'
+		echo '--list-gap-mobile: ' | append: block.settings.list_gap_mobile | default: 0 | append: 'px;'
+		echo '--list-background-color: ' | append: block.settings.list_background_color | default: 'transparent' | append: ';'
+		echo '--list-border-radius: ' | append: block.settings.list_border_radius | default: 0 | append: '%;'
+		echo '--list-padding-x: ' | append: block.settings.list_padding_x | default: 0 | append: 'px;'
+		echo '--list-padding-y: ' | append: block.settings.list_padding_y | default: 0 | append: 'px;'
+		echo '--icon-gap: ' | append: block.settings.icon_gap | default: 0 | append: 'px;'
+		echo '--icon-gap-mobile: ' | append: block.settings.icon_gap_mobile | default: 0 | append: 'px;'
+		echo '--icon-offset: ' | append: block.settings.icon_offset | default: 0 | append: 'px;'
+		echo '--icon-offset-mobile: ' | append: block.settings.icon_offset_mobile | default: 0 | append: 'px;'
+		echo '--icon-color: ' | append: block.settings.icon_color | default: 'transparent' | append: ';'
+		echo '--icon-size: ' | append: block.settings.icon_size | default: 0 | append: 'px;'
+		echo '--icon-size-mobile: ' | append: block.settings.icon_size_mobile | default: 0 | append: 'px;'
+		echo '--icon-background-size: ' | append: block.settings.icon_background_size | default: 0 | append: 'px;'
+		echo '--icon-background-size-mobile: ' | append: block.settings.icon_background_size_mobile | default: 0 | append: 'px;'
+		echo '--icon-background-color: ' | append: block.settings.icon_background_color | default: 'transparent' | append: ';'
+		echo '--text-color: ' | append: block.settings.text_color | default: 'transparent' | append: ';'
+		echo '--text-font-size: ' | append: block.settings.text_font_size | default: 0 | append: 'px;'
+		echo '--text-font-size-mobile: ' | append: block.settings.text_font_size_mobile | default: 0 | append: 'px;'
+		echo '--text-weight: ' | append: block.settings.text_weight | default: '400' | append: ';'
+		echo '--text-letter-spacing: ' | append: block.settings.text_letter_spacing | default: 'normal' | append: ';'
+		if block.settings.border != 'none' and block.settings.border_color != blank
+			echo '--border-width: ' | append: block.settings.border_width | default: 0 | append: 'px;'
+			echo '--border-color: ' | append: block.settings.border_color | default: 'transparent' | append: ';'
+		endif
+		if block.settings.background_color != blank
+			echo 'background: ' | append: block.settings.background_color | append: ';'
+		endif
+		if block.settings.box_shadow_color != blank
+			echo '--box-shadow: ' | append: block.settings.box_shadow_color | append: ';'
+		endif
+	endcapture
+
+	assign container_classes = 'pp-icon-with-text-list'
+
+	if block.settings.custom_class != blank
+		assign container_classes = container_classes | append: ' ' | append: block.settings.custom_class
+	endif
+
+	assign container_classes = container_classes | append: ' pp:grid pp:grid-cols-[repeat(var(--list-columns-mobile),1fr)] pp:gap-(--list-gap-mobile) pp:@3xl:grid-cols-[repeat(var(--list-columns),1fr)] pp:@3xl:gap-(--list-gap)'
+	assign container_classes = container_classes | append: ' pp:pt-(--padding-top-mobile) pp:pr-(--padding-right-mobile) pp:pb-(--padding-bottom-mobile) pp:pl-(--padding-left-mobile)'
+	assign container_classes = container_classes | append: ' pp:@3xl:pt-(--padding-top) pp:@3xl:pr-(--padding-right) pp:@3xl:pb-(--padding-bottom) pp:@3xl:pl-(--padding-left)'
+
+	if block.settings.box_shadow_color != blank
+		assign container_classes = container_classes | append: ' pp:shadow-(--box-shadow)'
+	endif
+
+	capture border
+		render 'pagepilot-border', value: block.settings.border, width_property: '--border-width', color_property: '--border-color'
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border
+
+	capture border_radius
+		render 'pagepilot-border-radius', value: block.settings.border_radius
+	endcapture
+	assign container_classes = container_classes | append: ' ' | append: border_radius
+%}
+
+{% liquid
+	assign item_classes = 'pp:flex pp:w-full pp:gap-(length:--icon-gap-mobile) pp:@3xl:gap-(length:--icon-gap)'
+
+	if block.settings.list_direction_mobile == 'horizontal'
+		assign item_classes = item_classes | append: ' pp:flex-row'
+	elsif block.settings.list_direction_mobile == 'vertical'
+		assign item_classes = item_classes | append: ' pp:flex-col'
+	endif
+
+	if block.settings.list_direction == 'horizontal'
+		assign item_classes = item_classes | append: ' pp:@3xl:flex-row'
+	elsif block.settings.list_direction == 'vertical'
+		assign item_classes = item_classes | append: ' pp:@3xl:flex-col'
+	endif
+
+	if block.settings.icon_position_mobile == 'flex-start'
+		assign item_classes = item_classes | append: ' pp:items-start'
+	elsif block.settings.icon_position_mobile == 'center'
+		assign item_classes = item_classes | append: ' pp:items-center'
+	elsif block.settings.icon_position_mobile == 'flex-end'
+		assign item_classes = item_classes | append: ' pp:items-end'
+	endif
+
+	if block.settings.icon_position == 'flex-start'
+		assign item_classes = item_classes | append: ' pp:@3xl:items-start'
+	elsif block.settings.icon_position == 'center'
+		assign item_classes = item_classes | append: ' pp:@3xl:items-center'
+	elsif block.settings.icon_position == 'flex-end'
+		assign item_classes = item_classes | append: ' pp:@3xl:items-end'
+	endif
+
+	capture text_alignment_mobile
+		render 'pagepilot-text-alignment', value: block.settings.text_alignment_mobile
+	endcapture
+	assign item_classes = item_classes | append: ' ' | append: text_alignment_mobile
+
+	capture text_alignment
+		render 'pagepilot-text-alignment', value: block.settings.text_alignment, breakpoint: '@3xl:'
+	endcapture
+	assign item_classes = item_classes | append: ' ' | append: text_alignment
+	assign item_classes = item_classes | append: ' pp:bg-(--list-background-color) pp:px-(--list-padding-x)! pp:py-(--list-padding-y)!'
+
+	capture list_border_radius
+		render 'pagepilot-border-radius', value: block.settings.list_border_radius
+	endcapture
+	assign item_classes = item_classes | append: ' ' | append: list_border_radius
+
+	assign icon_wrapper_classes = 'pp:flex pp:shrink-0 pp:items-center pp:justify-center'
+	if block.settings.list_direction == 'horizontal'
+		assign icon_wrapper_classes = icon_wrapper_classes | append: ' pp:mt-(--icon-offset-mobile) pp:@3xl:mt-(--icon-offset)'
+	endif
+	assign icon_wrapper_classes = icon_wrapper_classes | append: ' pp:bg-(--icon-background-color)'
+	capture icon_wrapper_border_radius
+		render 'pagepilot-border-radius', value: block.settings.icon_border_radius
+	endcapture
+	assign icon_wrapper_classes = icon_wrapper_classes | append: ' ' | append: icon_wrapper_border_radius
+
+	assign icon_wrapper_classes = icon_wrapper_classes | append: ' pp:size-(length:--icon-background-size-mobile) pp:@3xl:size-(length:--icon-background-size)'
+
+	assign icon_classes = 'pp:size-(--icon-size-mobile) pp:text-(--icon-color) pp:@3xl:size-(--icon-size)'
+	case block.settings.icon_variant
+		when 'light'
+			assign icon_classes = icon_classes | append: ' pp:stroke-1'
+		when 'regular'
+			assign icon_classes = icon_classes | append: ' pp:stroke-2'
+		when 'bold'
+			assign icon_classes = icon_classes | append: ' pp:stroke-3'
+	endcase
+
+	assign emoji_classes = 'pp:flex pp:items-center pp:justify-center pp:text-(length:--icon-size-mobile) pp:@3xl:text-(length:--icon-size)'
+
+	assign text_classes = 'pp:w-full pp:leading-normal pp:text-(length:--text-font-size-mobile) pp:font-(--text-weight) pp:text-(--text-color) pp:@3xl:text-(length:--text-font-size)'
+
+	capture text_transform
+		render 'pagepilot-text-transform', value: block.settings.text_case
+	endcapture
+	assign text_classes = text_classes | append: ' ' | append: text_transform
+
+	capture letter_spacing
+		render 'pagepilot-letter-spacing', value: block.settings.text_letter_spacing
+	endcapture
+	assign text_classes = text_classes | append: ' ' | append: letter_spacing
+	assign text_classes = text_classes | append: ' pp:trim-text-both'
+%}
+
+<div class='{{ container_classes }} {{ block.id }}' style='{{ container_styles }}' {{ block.shopify_attributes }}>
+	{% for i in (1..8) %}
+		{% liquid
+			assign text_key = 'text_' | append: i
+			assign icon_key = 'icon_' | append: i
+			assign emoji_key = 'emoji_' | append: i
+			assign icon_value = block.settings[icon_key]
+			assign emoji_value = block.settings[emoji_key]
+			assign text_value = block.settings[text_key]
+		%}
+
+		{% if text_value != blank %}
+			<div class='{{ item_classes }}'>
+				{% if block.settings.icon_show and icon_value != blank or emoji_value != blank %}
+					<div class='{{ icon_wrapper_classes }}'>
+						{% if block.settings.icon_type == 'icon' %}
+							<i data-lucide='{{ icon_value }}' class='{{ icon_classes }}'></i>
+						{% elsif block.settings.icon_type == 'emoji' %}
+							<span class='{{ emoji_classes }}'>{{ emoji_value }}</span>
+						{% endif %}
+					</div>
+				{% endif %}
+				<div class='{{ text_classes }}'>{{ text_value }}</div>
+			</div>
+		{% endif %}
+	{% endfor %}
+</div>
+
+{% liquid
+
+%}
+
+{% schema %}
+{
+	"name": "Text List with Icons (PP)",
+	"class": "pagepilot-block",
+	"settings": [
+		{
+			"type": "select",
+			"id": "icon_type",
+			"label": "Type",
+			"options": [
+				{
+					"value": "icon",
+					"label": "Icon"
+				},
+				{
+					"value": "emoji",
+					"label": "Emoji"
+				}
+			],
+			"default": "icon"
+		},
+		{
+			"type": "text",
+			"id": "icon_1",
+			"label": "List Item 1",
+			"default": "heart",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}",
+			"info": "Icon name from https://pagepilot.ai/shopify/icons"
+		},
+		{
+			"type": "text",
+			"id": "emoji_1",
+			"label": "List Item 1",
+			"default": "💖",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_1",
+			"label": "List Item 1",
+			"default": "Loved by customers everywhere"
+		},
+		{
+			"type": "text",
+			"id": "icon_2",
+			"label": "List Item 2",
+			"default": "leaf",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_2",
+			"label": "List Item 2",
+			"default": "🍃",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_2",
+			"label": "List Item 2",
+			"default": "100% Natural ingredients used"
+		},
+		{
+			"type": "text",
+			"id": "icon_3",
+			"label": "List Item 3",
+			"default": "clock-4",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_3",
+			"label": "List Item 3",
+			"default": "🕒",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_3",
+			"label": "List Item 3",
+			"default": "Durable for long-term use"
+		},
+		{
+			"type": "text",
+			"id": "icon_4",
+			"label": "List Item 4",
+			"default": "trophy",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_4",
+			"label": "List Item 4",
+			"default": "🏆",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_4",
+			"label": "List Item 4"
+		},
+		{
+			"type": "text",
+			"id": "icon_5",
+			"label": "List Item 5",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_5",
+			"label": "List Item 5",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_5",
+			"label": "List Item 5"
+		},
+		{
+			"type": "text",
+			"id": "icon_6",
+			"label": "List Item 6",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_6",
+			"label": "List Item 6",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_6",
+			"label": "List Item 6"
+		},
+		{
+			"type": "text",
+			"id": "icon_7",
+			"label": "List Item 7",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_7",
+			"label": "List Item 7",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_7",
+			"label": "List Item 7"
+		},
+		{
+			"type": "text",
+			"id": "icon_8",
+			"label": "List Item 8",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "text",
+			"id": "emoji_8",
+			"label": "List Item 8",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'emoji' }}"
+		},
+		{
+			"type": "inline_richtext",
+			"id": "text_8",
+			"label": "List Item 8"
+		},
+		{
+			"type": "header",
+			"content": "List"
+		},
+		{
+			"type": "range",
+			"id": "list_columns",
+			"label": "List Columns",
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"default": 1
+		},
+		{
+			"type": "range",
+			"id": "list_columns_mobile",
+			"label": "Mobile List Columns",
+			"min": 1,
+			"max": 4,
+			"step": 1,
+			"default": 1
+		},
+		{
+			"type": "select",
+			"id": "list_direction",
+			"label": "List Direction",
+			"options": [
+				{
+					"value": "horizontal",
+					"label": "Horizontal"
+				},
+				{
+					"value": "vertical",
+					"label": "Vertical"
+				}
+			],
+			"default": "horizontal"
+		},
+		{
+			"type": "select",
+			"id": "list_direction_mobile",
+			"label": "Mobile List Direction",
+			"options": [
+				{
+					"value": "horizontal",
+					"label": "Horizontal"
+				},
+				{
+					"value": "vertical",
+					"label": "Vertical"
+				}
+			],
+			"default": "horizontal"
+		},
+		{
+			"type": "range",
+			"id": "list_gap",
+			"label": "List Gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 8
+		},
+		{
+			"type": "range",
+			"id": "list_gap_mobile",
+			"label": "Mobile List Gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 10
+		},
+		{
+			"type": "color",
+			"id": "list_background_color",
+			"label": "List Background Color",
+			"default": "transparent"
+		},
+		{
+			"type": "range",
+			"id": "list_border_radius",
+			"label": "List Rounded Corners",
+			"min": 0,
+			"max": 90,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "list_padding_x",
+			"label": "List Padding X",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "list_padding_y",
+			"label": "List Padding Y",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Texts"
+		},
+		{
+			"type": "color",
+			"id": "text_color",
+			"label": "Color",
+			"default": "#212529"
+		},
+		{
+			"type": "range",
+			"id": "text_font_size",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Size",
+			"default": 14
+		},
+		{
+			"type": "range",
+			"id": "text_font_size_mobile",
+			"min": 10,
+			"max": 70,
+			"step": 1,
+			"unit": "px",
+			"label": "Mobile Size",
+			"default": 14
+		},
+		{
+			"type": "select",
+			"id": "text_weight",
+			"label": "Weight",
+			"options": [
+				{
+					"value": "100",
+					"label": "Thin"
+				},
+				{
+					"value": "300",
+					"label": "Light"
+				},
+				{
+					"value": "400",
+					"label": "Regular"
+				},
+				{
+					"value": "500",
+					"label": "Medium"
+				},
+				{
+					"value": "600",
+					"label": "Semibold"
+				},
+				{
+					"value": "700",
+					"label": "Bold"
+				},
+				{
+					"value": "900",
+					"label": "Black"
+				}
+			],
+			"default": "400"
+		},
+		{
+			"type": "select",
+			"id": "text_letter_spacing",
+			"label": "Letter Spacing",
+			"options": [
+				{
+					"value": "tight",
+					"label": "Tight"
+				},
+				{
+					"value": "normal",
+					"label": "Normal"
+				},
+				{
+					"value": "loose",
+					"label": "Loose"
+				}
+			],
+			"default": "normal"
+		},
+		{
+			"type": "select",
+			"id": "text_case",
+			"label": "Case",
+			"options": [
+				{
+					"value": "none",
+					"label": "Default"
+				},
+				{
+					"value": "lowercase",
+					"label": "Lowercase"
+				},
+				{
+					"value": "uppercase",
+					"label": "Uppercase"
+				},
+				{
+					"value": "capitalize",
+					"label": "Capitalize"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "text_alignment",
+			"id": "text_alignment",
+			"label": "Alignment",
+			"default": "left"
+		},
+		{
+			"type": "text_alignment",
+			"id": "text_alignment_mobile",
+			"label": "Mobile Alignment",
+			"default": "left"
+		},
+		{
+			"type": "header",
+			"content": "Icons"
+		},
+		{
+			"type": "checkbox",
+			"id": "icon_show",
+			"label": "Show Icons",
+			"default": true
+		},
+		{
+			"type": "select",
+			"id": "icon_position",
+			"label": "Icons Position",
+			"options": [
+				{
+					"value": "flex-start",
+					"label": "Start"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "flex-end",
+					"label": "End"
+				}
+			],
+			"default": "center",
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "icon_position_mobile",
+			"label": "Mobile Icons Position",
+			"options": [
+				{
+					"value": "flex-start",
+					"label": "Start"
+				},
+				{
+					"value": "center",
+					"label": "Center"
+				},
+				{
+					"value": "flex-end",
+					"label": "End"
+				}
+			],
+			"default": "center",
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_gap",
+			"label": "Icons Gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 8,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_gap_mobile",
+			"label": "Mobile Icons Gap",
+			"min": 0,
+			"max": 30,
+			"step": 1,
+			"unit": "px",
+			"default": 8,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_offset",
+			"label": "Icons Offset",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.list_direction == 'horizontal' }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_offset_mobile",
+			"label": "Mobile Icons Offset",
+			"min": 0,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"default": 0,
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.list_direction == 'horizontal' }}"
+		},
+		{
+			"type": "color",
+			"id": "icon_color",
+			"label": "Icons Color",
+			"default": "#212529",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_size",
+			"label": "Icons Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_size_mobile",
+			"label": "Mobile Icons Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 16,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "select",
+			"id": "icon_variant",
+			"label": "Icons Variant",
+			"options": [
+				{
+					"value": "light",
+					"label": "Light"
+				},
+				{
+					"value": "regular",
+					"label": "Regular"
+				},
+				{
+					"value": "bold",
+					"label": "Bold"
+				}
+			],
+			"default": "regular",
+			"visible_if": "{{ block.settings.icon_show == true and block.settings.icon_type == 'icon' }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_background_size",
+			"label": "Icons Background Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 22,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_background_size_mobile",
+			"label": "Mobile Icons Background Size",
+			"min": 10,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 22,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "color",
+			"id": "icon_background_color",
+			"label": "Icons Background Color",
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "range",
+			"id": "icon_border_radius",
+			"label": "Icons Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 100,
+			"visible_if": "{{ block.settings.icon_show == true }}"
+		},
+		{
+			"type": "header",
+			"content": "Appearance"
+		},
+		{
+			"type": "color",
+			"id": "background_color",
+			"label": "Background Color"
+		},
+		{
+			"type": "text",
+			"id": "box_shadow_color",
+			"label": "Box Shadow"
+		},
+		{
+			"type": "select",
+			"id": "border",
+			"label": "Border Style",
+			"options": [
+				{
+					"value": "none",
+					"label": "None"
+				},
+				{
+					"value": "solid",
+					"label": "Solid"
+				},
+				{
+					"value": "dashed",
+					"label": "Dashed"
+				},
+				{
+					"value": "dotted",
+					"label": "Dotted"
+				}
+			],
+			"default": "none"
+		},
+		{
+			"type": "color",
+			"id": "border_color",
+			"label": "Border Color",
+			"default": "#000000",
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_width",
+			"min": 1,
+			"max": 10,
+			"step": 1,
+			"unit": "px",
+			"label": "Border Thickness",
+			"default": 1,
+			"visible_if": "{{ block.settings.border != \"none\" }}"
+		},
+		{
+			"type": "range",
+			"id": "border_radius",
+			"label": "Rounded Corners",
+			"min": 0,
+			"max": 100,
+			"step": 10,
+			"unit": "%",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Padding"
+		},
+		{
+			"type": "range",
+			"id": "padding_top",
+			"label": "Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom",
+			"label": "Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left",
+			"label": "Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right",
+			"label": "Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_top_mobile",
+			"label": "Mobile Top",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_bottom_mobile",
+			"label": "Mobile Bottom",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_left_mobile",
+			"label": "Mobile Left",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "range",
+			"id": "padding_right_mobile",
+			"label": "Mobile Right",
+			"min": 0,
+			"max": 100,
+			"step": 1,
+			"unit": "px",
+			"default": 0
+		},
+		{
+			"type": "header",
+			"content": "Custom"
+		},
+		{
+			"type": "text",
+			"id": "custom_class",
+			"label": "Class",
+			"info": "You can use this class to add custom styles to the text. Multiple classes can be added by separating them with a space."
+		}
+	],
+	"presets": [
+		{
+			"name": "Text List with Icons (PP)",
+			"category": "PagePilot"
+		},
+		{
+			"name": "Benefits (PP)",
+			"category": "PagePilot",
+			"settings": {
+				"icon_1": "truck",
+				"text_1": "Fast Shipping",
+				"icon_2": "heart",
+				"text_2": "100% Money Back Guarantee",
+				"icon_3": "package",
+				"text_3": "Free Returns",
+				"list_columns": 3,
+				"list_columns_mobile": 3,
+				"list_direction": "vertical",
+				"list_direction_mobile": "vertical",
+				"list_gap": 10,
+				"list_gap_mobile": 10,
+				"icon_show": true,
+				"icon_position": "center",
+				"icon_position_mobile": "center",
+				"icon_gap": 8,
+				"icon_gap_mobile": 8,
+				"icon_offset": 0,
+				"icon_offset_mobile": 0,
+				"icon_color": "#000000",
+				"icon_size": 24,
+				"icon_size_mobile": 18,
+				"icon_variant": "regular",
+				"text_color": "#000000",
+				"text_font_size": 14,
+				"text_font_size_mobile": 12,
+				"text_weight": "400",
+				"text_letter_spacing": "normal",
+				"text_case": "none",
+				"text_alignment": "center",
+				"text_alignment_mobile": "center",
+				"border": "none",
+				"border_color": "#000000",
+				"border_width": 1,
+				"border_radius": 0,
+				"padding_top": 0,
+				"padding_bottom": 0,
+				"padding_left": 0,
+				"padding_right": 0,
+				"padding_top_mobile": 0,
+				"padding_bottom_mobile": 0,
+				"padding_left_mobile": 0,
+				"padding_right_mobile": 0,
+				"box_shadow_color": ""
+			}
+		}
+	]
+}
+{% endschema %}
