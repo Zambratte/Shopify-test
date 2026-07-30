@@ -1,0 +1,6 @@
+<footer class="footer"><div class="page-width">
+  <div class="footer-grid"><div><h2>{{ section.settings.heading }}</h2><p>{{ section.settings.text }}</p></div>
+  {% for block in section.blocks %}<div><strong>{{ block.settings.heading }}</strong>{% for link in block.settings.menu.links %}<a href="{{ link.url }}">{{ link.title }}</a>{% endfor %}</div>{% endfor %}</div>
+  <div class="footer-bottom">© {{ 'now' | date: '%Y' }} {{ shop.name }} · Sichere Zahlung · Datenschutz · Impressum</div>
+</div></footer>
+{% schema %}{"name":"Footer","settings":[{"type":"text","id":"heading","label":"Überschrift","default":"Räume, die bleiben. Momente, die zählen."},{"type":"textarea","id":"text","label":"Text","default":"Kuratiertes Design für Outdoor-Living und ein besonderes Zuhause."}],"blocks":[{"type":"menu","name":"Menüspalte","limit":2,"settings":[{"type":"text","id":"heading","label":"Überschrift"},{"type":"link_list","id":"menu","label":"Menü"}]}]}{% endschema %}

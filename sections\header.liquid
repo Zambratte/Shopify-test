@@ -1,0 +1,13 @@
+<header class="site-header">
+  <div class="page-width header-inner">
+    <a class="logo" href="{{ routes.root_url }}">{{ section.settings.logo_text | default: shop.name }}</a>
+    <nav class="nav" aria-label="Hauptnavigation">
+      {% for link in section.settings.menu.links %}<a href="{{ link.url }}">{{ link.title }}</a>{% endfor %}
+    </nav>
+    <div class="header-actions">
+      <a href="{{ routes.search_url }}" aria-label="Suchen">Suchen</a>
+      <a href="{{ routes.cart_url }}">Warenkorb <span class="cart-count">{{ cart.item_count }}</span></a>
+    </div>
+  </div>
+</header>
+{% schema %}{"name":"Header","settings":[{"type":"text","id":"logo_text","label":"Markenname","default":"NORTH & HEARTH"},{"type":"link_list","id":"menu","label":"Menü","default":"main-menu"}]}{% endschema %}

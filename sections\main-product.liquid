@@ -1,0 +1,23 @@
+<section class="page-width product-page">
+  <div class="product-gallery">
+    {% for image in product.images %}{{ image | image_url: width: 1200 | image_tag: loading: 'lazy', widths: '500,800,1200' }}{% endfor %}
+  </div>
+  <div class="product-info">
+    <div class="eyebrow">{{ product.vendor }}</div><h1>{{ product.title }}</h1>
+    <div class="product-price" data-product-price>{{ product.selected_or_first_available_variant.price | money }}</div>
+    <div class="rte">{{ product.description }}</div>
+    {% form 'product', product, class: 'product-form' %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {% unless product.has_only_default_variant %}
+        <label for="variant-{{ section.id }}">Ausführung</label>
+        <select id="variant-{{ section.id }}" data-variant-select>
+          {% for variant in product.variants %}<option value="{{ variant.id }}" data-price="{{ variant.price | money }}" {% if variant == product.selected_or_first_available_variant %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>{{ variant.title }}{% unless variant.available %} – ausverkauft{% endunless %}</option>{% endfor %}
+        </select>
+      {% endunless %}
+      <button class="button" type="submit" {% unless product.available %}disabled{% endunless %}>{% if product.available %}In den Warenkorb{% else %}Ausverkauft{% endif %}</button>
+      {{ form | payment_button }}
+    {% endform %}
+    <div class="assurances"><div>✓ Sichere, versicherte Lieferung</div><div>✓ Persönlicher Produktsupport</div><div>✓ 30 Tage Rückgaberecht</div><div>✓ Herstellergarantie inklusive</div></div>
+  </div>
+</section>
+{% schema %}{"name":"Produktinformationen","settings":[]}{% endschema %}
